@@ -19,90 +19,100 @@ return array(
 	                'User\Entity' => 'entity',
 	            ),
 	        ),
-	    ),
-		'authentication' => array(
-            'orm_default' => array(
-                'object_manager' => 'Doctrine\ORM\EntityManager',
-                'identity_class' => 'User\Entity\User',
-                'identity_property' => 'username',
-                'credential_property' => 'password',
-                'credential_callable' => 'User\Entity\User::hashPassword'
-            ),
-        ),	    
+	    ),	    
 	),
     'router' => array(
         'routes' => array(
-            // 'profile' => array(
-                // 'type' => 'Segment',
-                // 'options' => array(
-                    // 'route'    => '/admin[/]',
-                    // 'defaults' => array(
-                        // 'controller' => 'User\Controller\User',
-                        // 'action'     => 'login',
-                    // ),
-                // ),
-            // ),
-            'account-login' => array(
-            	'type' => 'Segment',
-            	'options' => array(
-            		'route' => '/admin/login[/]',
-            		'defaults' => array(
-            			'controller' => 'User\Controller\User',
-            			'action'     => 'login',
-            		)
-            	)
-            ),
-            'account-register' => array(
-            	'type' => 'Segment',
-            	'options' => array(
-            		'route' => '/accounts[/]',
-            		'defaults' => array(
-            			'controller' => 'User\Controller\User',
-            			'action'     => 'list',
-            		)
-            	)
-            ),
-            'account-logout' => array(
-            	'type' => 'Segment',
-            	'options' => array(
-            		'route' => '/[admin/]logout[/]',
-            		'defaults' => array(
-            			'controller' => 'User\Controller\User',
-            			'action'     => 'logout',
-            		)
-            	)
-            ),                         
+        	'profile' => array(
+        		'type' => 'segment',
+        		'options' => array(
+        			'route' => '/:user[/]',
+        			'defaults' => array(
+        				'controller' => 'User\Controller\User',
+        				'action' => 'profile'		
+        			)
+        		)
+        	),  
+        	'user' => array(
+        		'type' => 'segment',
+        		'options' => array(
+        			'route' => '/user/',
+        			'defaults' => array(
+        				'contoller' => 'User\Controller\User',
+        			)
+        		),
+        		'may_terminate' => false,
+        		'child_routes' => array(
+        			'preferences' => array(
+        				'type' => 'literal',
+        				'options' => array(
+	        				'route' => 'preferences',
+	        				'defaults' => array(
+	        					'action' => 'preferences'
+	        				)
+        				)
+        			),
+        			'details' => array(
+        				'type' => 'literal',
+        				'options' => array(
+	        				'route' => 'details',
+	        				'defaults' => array(
+	        					'action' => 'details'
+	        				)
+        				)
+        			),
+        			'games' => array(
+        				'type' => 'literal',
+        				'options' => array(
+	        				'route' => 'games',
+	        				'defaults' => array(
+	        					'action' => 'games'
+	        				)
+        				)
+        			),
+        			'followers' => array(
+        				'type' => 'literal',
+        				'options' => array(
+	        				'route' => 'followers',
+	        				'defaults' => array(
+	        					'action' => 'followers'
+	        				)
+        				)
+        			),
+        			'follow' => array(
+        				'type' => 'literal',
+        				'options' => array(
+	        				'route' => 'follow',
+	        				'defaults' => array(
+	        					'action' => 'follow'
+	        				)
+        				)
+        			),
+        			'unfollow' => array(
+        				'type' => 'literal',
+        				'options' => array(
+	        				'route' => 'unfollow',
+	        				'defaults' => array(
+	        					'action' => 'unfollow'
+	        				)
+        				)
+        			),
+        			'feeds' => array(
+        				'type' => 'literal',
+        				'options' => array(
+	        				'route' => 'feeds',
+	        				'defaults' => array(
+	        					'action' => 'feeds'
+	        				)
+        				)
+        			),
+        		)
+        	),                      
         ),
     ),
-    'service_manager' => array(
-        'abstract_factories' => array(
-            'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
-            'Zend\Log\LoggerAbstractServiceFactory',
-        ),
-        'aliases' => array(
-            'translator' => 'MvcTranslator',
-        ),
-    ),
-    'translator' => array(
-        'locale' => 'en_US',
-        'translation_file_patterns' => array(
-            array(
-                'type'     => 'gettext',
-                'base_dir' => __DIR__ . '/../language',
-                'pattern'  => '%s.mo',
-            ),
-        ),
-    ),
-    'view_manager' => array(
-    	'template_map' => array(
-			'layout/login' => __DIR__ . '/../view/layout/login.phtml'
-		),     
+    'view_manager' => array(   
         'template_path_stack' => array(
             __DIR__ . '/../view',
         ),
-    ),
-	'zfcuser' => array(
-	    'user_entity_class'       => 'User\Entity\User',
-	    'enable_default_entities' => false,
-	),    
+    ),  
 );
