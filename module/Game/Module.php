@@ -1,42 +1,26 @@
 <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
-
-namespace Application;
+namespace Game;
 
 use Zend\Mvc\ModuleRouteListener;
-use Zend\Mvc\MvcEvent as MvcEvent;
-use Zend\Session\Container;
+use Zend\Mvc\MvcEvent;
 
-class Module {
-	public function onBootstrap(MvcEvent $e) {
-		$app = $e -> getApplication();
-		$eventManager = $app -> getEventManager();
+class Module
+{
+	public function onBootstrap(MvcEvent $e)
+	{
+		$eventManager        = $e->getApplication()->getEventManager();
 		$moduleRouteListener = new ModuleRouteListener();
-		$moduleRouteListener -> attach($eventManager);
-		$session = new Container('base');
-		$translator = $e -> getApplication() -> getServiceManager() -> get('translator');
-		if (empty($session -> locale)) {
-			$locale = 'nb_NO';
-		} else {
-			$locale = $session -> locale;
-		}
-		$translator -> setLocale($locale) -> setFallbackLocale('en_US');
+		$moduleRouteListener->attach($eventManager);
 	}
-	
+
 	public function getControllerConfig(){
 		return array(
-			'invokables' => array(
-					'Game\Controller\Game' => 'Game\Controller\GameController',
-			),
+				'invokables' => array(
+						'Game\Controller\Game' => 'Game\Controller\GameController'
+				)
 		);
-	}
-
+	}	
+	
 	public function getConfig()
 	{
 		return include __DIR__ . '/config/module.config.php';
@@ -55,5 +39,4 @@ class Module {
 				),
 		);
 	}
-
 }
