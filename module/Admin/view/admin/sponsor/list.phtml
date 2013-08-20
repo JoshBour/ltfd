@@ -1,0 +1,106 @@
+<div id="main">
+	<div id="controls">
+		<ul class="tab-list">
+			<li class="tableList tab-active"><?php echo $this -> translate("Sponsor List"); ?></li>
+			<li class="addForm"><?php echo $this -> translate("Add Sponsor"); ?></li>
+		</ul>
+	</div>	
+	<div id="tableList" class="tab">
+		<table>
+			<caption><?php echo $this -> translate("Sponsor List"); ?></caption>
+			<thead>
+				<tr>
+					<?php 
+						$headerParams = array(
+											$this->translate('name') => 'name',
+											$this->translate('url') => 'url',
+											$this->translate('image') => 'image',
+											);
+											
+						foreach($headerParams as $header => $sortName):
+							$isActiveSort = false;
+							$sortType = 'asc';
+							if(isset($sort) && ($sort == $header || $sort == $sortName)){
+								$isActiveSort = true;
+								if($type == 'asc') $sortType = 'desc';
+							}
+					?>
+					<th<?php echo $isActiveSort ? ' class="sortActive"' : ''; ?>>
+						<a href="<?php echo $this->url('admin_main/sponsors',array('action' => 'list','sort' => $sortName, 'type' => $sortType),null,true); ?>"><?php echo mb_convert_case($header, MB_CASE_TITLE, "UTF-8"); ?></a>
+					</th>
+					
+					<?php endforeach; ?>
+					<th><?php echo $this -> translate("Edit"); ?></th>
+					<th><?php echo $this -> translate("Delete"); ?></th>		
+				</tr>	
+			</thead>
+				<?php 
+				if($paginator->getTotalItemCount() > 0){
+					echo '<tbody>';
+					foreach($paginator as $entity): ?>				
+					<tr class="dataItem sponsors" id="data-<?php echo $entity->getId(); ?>">
+						<td class="name"><?php echo $this->escapeHtml($entity->getName()); ?></td>
+						<td class="name"><?php echo $this->escapeHtml($entity->getUrl()); ?></td>
+						<td class="avatar"><img src="<?php echo $this->basePath() . '/images/sponsors/' . $entity->getImage(); ?>" /></td>
+						<td class="edit"><img src="<?php echo $this->basePath() . '/images/edit-icon.png';?>" /></td>
+						<td class="delete"><img src="<?php echo $this->basePath() . '/images/delete-icon.png';?>" /></td>
+					</tr>
+					<?php 
+					endforeach; 
+					echo '</tbody></table>';
+				}else{ ?>
+					</table>
+					<div class="notFound"><?php echo $this -> translate("There are no sponsors available."); ?></div>
+				<?php } ?>
+		<?php echo $this->paginationControl($paginator,
+		                                    'Sliding',
+		                                    array('partial/paginator.phtml','Sponsor'), array('route' => 'admin_main/sponsors')); ?>	
+	</div>
+	<div id="addForm" class="tab inactive">
+		<h1><?php echo $this -> translate("Add A New Sponsor"); ?></h1>
+		<div id="actions">
+			<?php
+			$form -> prepare();
+			$form -> setAttribute('action', $this->url('admin_main/sponsors'));
+			?>
+			<?php 
+				echo $this->form()->openTag($form);
+			
+				$fieldSet = $form->get('sponsor');
+			
+				echo $this->formHidden($form->get('security')); 
+				echo $this->formHidden($fieldSet->get('id')); ?>
+			
+			<div class="element">
+				<?php 
+				 	echo $this->formElementErrors($fieldSet->get('name'),array('class'=>'formError')) ;
+					echo $this->formLabel($fieldSet->get('name'));
+					echo $this->formInput($fieldSet->get('name'));
+				?>
+			</div>	
+			
+			<div class="element">
+				<?php 
+				 	echo $this->formElementErrors($fieldSet->get('url'),array('class'=>'formError')) ;
+					echo $this->formLabel($fieldSet->get('url'));
+					echo $this->formInput($fieldSet->get('url'));
+				?>
+			</div>				
+	
+			<div class="element">
+				<?php 
+				 	echo $this->formElementErrors($fieldSet->get('image'),array('class'=>'formError')) ;
+					echo $this->formLabel($fieldSet->get('image'));
+					echo $this->formFile($fieldSet->get('image'));
+				?>
+			</div>			
+			
+			<div class="element">
+				<?php echo $this -> formSubmit($form -> get('submit')->setValue($this -> translate('Add'))); ?>
+			</div>
+			
+			<?php echo $this->form()->closeTag()
+			?>
+		</div>		
+	</div>
+</div> 

@@ -1,0 +1,49 @@
+<?php
+if(isset($form)):
+	echo '<h2>' . $this->translate('Edit Sponsor') . '</h2>';
+		$form -> prepare();
+		$form -> setAttribute('action', 'sponsors');
+		$form -> setAttributes(array('id'=> 'updateForm', 'name' => 'updateForm'));
+
+?>
+<?php
+	echo $this -> form() -> openTag($form);
+
+	$fieldSet = $form -> get('sponsor');
+
+	echo $this -> formHidden($form -> get('security'));
+	echo $this -> formHidden($fieldSet -> get('id'));
+?>
+
+<div class="element">
+	<?php 
+	 	echo $this->formElementErrors($fieldSet->get('name'),array('class'=>'formError')) ;
+		echo $this->formLabel($fieldSet->get('name'));
+		echo $this->formInput($fieldSet->get('name'));
+	?>
+</div>	
+
+<div class="element">
+	<?php 
+	 	echo $this->formElementErrors($fieldSet->get('url'),array('class'=>'formError')) ;
+		echo $this->formLabel($fieldSet->get('url'));
+		echo $this->formInput($fieldSet->get('url'));
+	?>
+</div>
+
+<div class="element">
+	<?php 
+	 	echo $this->formElementErrors($fieldSet->get('image'),array('class'=>'formError')) ;
+		echo $this->formLabel($fieldSet->get('image'));
+		echo $this->formFile($fieldSet->get('image'));
+	?>
+</div>			
+
+<div class="element">
+	<?php echo $this -> formSubmit($form -> get('submit')->setValue($this -> translate('Update'))); ?>
+</div>
+
+<?php 
+echo $this->form()->closeTag();
+endif;
+?>

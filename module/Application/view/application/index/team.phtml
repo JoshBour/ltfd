@@ -1,0 +1,40 @@
+<div id="main">
+		<div id="team">
+			<h1><?php echo $this->translate('TEAM'); ?></h1>
+			<img class="sepLine" src="<?php echo $this->basePath() . '/images/line.png'; ?>" />
+			<p>
+				<?php echo $general['team']; ?>
+			</p>
+			<ul>
+				<?php foreach($members as $member): ?>
+					<li>
+						<div class="member">
+							<img src="<?php echo $this->basePath() . '/images/users/' . $member->getAvatar();?>" />
+							<h1><?php echo $member->getName(); ?></h1>
+							<span class="position"><?php echo ($locale == 'en_US') ? $member->getPositionEn() : $member->getPosition(); ?></span>
+							<a href="mailto:<?php echo $member->getEmail(); ?>" class="email"><?php echo $member->getEmail(); ?></a>
+						</div>
+					</li>
+					
+				<?php endforeach; ?>
+			</ul>			
+		</div>
+		<div id="about">
+			<h1><?php echo $this->translate('ABOUT US'); ?></h1>
+			<img class="sepLine" src="<?php echo $this->basePath() . '/images/line.png'; ?>" />
+			<p>
+				<?php echo $general['about_us']; ?>
+			</p>			
+		</div>
+		<div id="sponsors">
+			<h1><?php echo $this->translate('THEY TRUST US'); ?></h1>	
+			<img class="sepLine" src="<?php echo $this->basePath() . '/images/line.png'; ?>" />	
+			<ul>
+				<?php foreach($sponsors as $sponsor): ?>
+					<li>
+						<a href="<?php echo $sponsor->getUrl(); ?>" target="_blank"><img src="<?php echo $this->basePath() . '/images/sponsors/' . $sponsor->getImage(); ?>" /></a>
+					</li>
+				<?php endforeach; ?>
+			</ul>	
+		</div>	
+</div>

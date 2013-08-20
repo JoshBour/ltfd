@@ -1,0 +1,67 @@
+<?php echo $this->doctype(); ?>
+<?php
+$children = $this->viewModel()->getCurrent()->getChildren();
+$child = $children[0];
+?>		
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <?php echo $this->headTitle('Absurd - Admin'); ?>
+
+        <?php echo $this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=1.0') ?>
+
+        <!-- Le styles -->
+        <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/images/favicon.ico'))
+                      #  ->prependStylesheet($this->basePath() . '/css/bootstrap-responsive.min.css')
+                        ->prependStylesheet($this->basePath() . '/css/style.css')
+                        ->prependStylesheet($this->basePath() . '/css/glDatePicker.default.css')
+                        #->prependStylesheet($this->basePath() . '/css/bootstrap.min.css') ?>
+
+        <!-- Scripts -->
+        <?php echo $this->headScript()->prependFile($this->basePath() . '/js/lib.js')
+                                      ->prependFile($this->basePath() . '/js/html5.js', 'text/javascript', array('conditional' => 'lt IE 9',))							
+                                      ->prependFile($this->basePath() . '/js/glDatePicker.min.js')						
+                                      ->prependFile($this->basePath() . '/js/jquery.form.min.js')
+									  ->prependFile($this->basePath() . '/js/jquery-1.9.0.js'); ?>
+      	<script>
+			var baseUrl = '<?php echo $this->basePath(); ?>';
+		</script>
+    </head>
+    <body class="adminLayout">
+		<noscript>
+			<div id="nojs">
+				<?php echo $this->translate("Please enable javascript for the site to work properly.");?>
+			</div>
+		</noscript>    	
+        <header>
+        	<nav>
+        		<ul>
+        			<li><a href="<?php echo $this->url('admin_main/films'); ?>"><?php echo $this->translate("Films"); ?></a></li>
+        			<li><a href="<?php echo $this->url('admin_main/categories'); ?>"><?php echo $this->translate("Categories"); ?></a></li>
+        			<li><a href="<?php echo $this->url('admin_main/accounts'); ?>"><?php echo $this->translate("Accounts"); ?></a></li>
+        			<li><a href="<?php echo $this->url('admin_main/team'); ?>"><?php echo $this->translate("Team"); ?></a></li>
+        			<li><a href="<?php echo $this->url('admin_main/sponsors'); ?>"><?php echo $this->translate("Sponsors"); ?></a></li>
+        			<li><a href="<?php echo $this->url('admin_main/general'); ?>"><?php echo $this->translate("General"); ?></a></li>
+        			<li><a href="<?php echo $this->url('account-logout'); ?>"><?php echo $this->translate("Logout"); ?></a></li>
+        		</ul>
+        	</nav>
+        </header>
+        	<div id="content">
+        		<?php
+        			if(isset($child->flashMessages) && count($child->flashMessages)) :
+        		?>
+        			<div id="flash">
+						<ul class="flashMessages">
+						    <?php foreach ($child->flashMessages as $fMessage) : ?>
+						    <li><?php echo $fMessage; ?></li>
+						    <?php endforeach; ?>
+						</ul>
+					</div>
+				<?php endif; ?>
+            	<?php echo $this->content; ?>
+            </div>
+        <footer></footer>        
+      <?php echo $this->inlineScript()->prependFile($this->basePath() . '/js/main-1.0.0.js', 'text/javascript'); ?>
+        
+    </body>
+</html>

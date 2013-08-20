@@ -1,0 +1,65 @@
+<?php
+if(isset($form)):
+	echo '<h2>' . $this->translate('Edit Member') . '</h2>';
+		$form -> prepare();
+		$form -> setAttribute('action', 'team');
+		$form -> setAttributes(array('id'=> 'updateForm', 'name' => 'updateForm'));
+
+?>
+<?php
+	echo $this -> form() -> openTag($form);
+
+	$fieldSet = $form -> get('member');
+
+	echo $this -> formHidden($form -> get('security'));
+	echo $this -> formHidden($fieldSet -> get('id'));
+?>
+
+<div class="element">
+	<?php
+	echo $this -> formElementErrors($fieldSet -> get('name'), array('class' => 'formError'));
+	echo $this -> formLabel($fieldSet -> get('name'));
+	echo $this -> formInput($fieldSet -> get('name'));
+	?>
+</div>
+
+<div class="element">
+	<?php
+	echo $this -> formElementErrors($fieldSet -> get('position'), array('class' => 'formError'));
+	echo $this -> formLabel($fieldSet -> get('position'));
+	echo $this -> formInput($fieldSet -> get('position'));
+	?>
+</div>
+
+<div class="element">
+	<?php
+	echo $this -> formElementErrors($fieldSet -> get('positionEn'), array('class' => 'formError'));
+	echo $this -> formLabel($fieldSet -> get('positionEn'));
+	echo $this -> formInput($fieldSet -> get('positionEn'));
+	?>
+</div>
+
+<div class="element">
+	<?php
+	echo $this -> formElementErrors($fieldSet -> get('avatar'), array('class' => 'formError'));
+	echo $this -> formLabel($fieldSet -> get('avatar'));
+	echo $this -> formFile($fieldSet -> get('avatar'));
+	?>
+</div>
+
+<div class="element">
+	<?php
+	echo $this -> formElementErrors($fieldSet -> get('email'), array('class' => 'formError'));
+	echo $this -> formLabel($fieldSet -> get('email'));
+	echo $this -> formInput($fieldSet -> get('email'));
+	?>
+</div>
+
+<div class="element">
+	<?php echo $this -> formSubmit($form -> get('submit') -> setValue($this -> translate('Update'))); ?>
+</div>
+
+<?php 
+echo $this->form()->closeTag();
+endif;
+?>

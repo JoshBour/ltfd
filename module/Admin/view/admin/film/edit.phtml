@@ -1,0 +1,100 @@
+<?php
+if(isset($form)):
+	echo '<h2>' . $this->translate('Edit Film') . '</h2>';
+		$form -> prepare();
+		$form -> setAttribute('action', 'films');
+		$form -> setAttributes(array('id'=> 'updateForm', 'name' => 'updateForm'));
+
+?>
+<?php
+	echo $this -> form() -> openTag($form);
+
+	$fieldSet = $form -> get('film');
+
+	echo $this -> formHidden($form -> get('security'));
+	echo $this -> formHidden($fieldSet -> get('id'));
+?>
+
+<div class="element">
+	<?php 
+	 	echo $this->formElementErrors($fieldSet->get('name'),array('class'=>'formError')) ;
+		echo $this->formLabel($fieldSet->get('name'));
+		echo $this->formInput($fieldSet->get('name'));
+	?>
+</div>	
+
+<div class="element">
+	<?php 
+	 	echo $this->formElementErrors($fieldSet->get('nameEn'),array('class'=>'formError')) ;
+		echo $this->formLabel($fieldSet->get('nameEn'));
+		echo $this->formInput($fieldSet->get('nameEn'));
+	?>
+</div>	
+
+<div class="element">
+	<?php 
+	 	echo $this->formElementErrors($fieldSet->get('description'),array('class'=>'formError')) ;
+		echo $this->formLabel($fieldSet->get('description'));
+		echo $this->formInput($fieldSet->get('description'));
+	?>
+</div>	
+
+<div class="element">
+	<?php 
+	 	echo $this->formElementErrors($fieldSet->get('descriptionEn'),array('class'=>'formError')) ;
+		echo $this->formLabel($fieldSet->get('descriptionEn'));
+		echo $this->formInput($fieldSet->get('descriptionEn'));
+	?>
+</div>					
+
+<div class="element">
+	<?php 
+	 	echo $this->formElementErrors($fieldSet->get('postTime'),array('class'=>'formError')) ;
+		echo $this->formLabel($fieldSet->get('postTime'));
+		echo $this->formInput($fieldSet->get('postTime'));
+	?>
+	<div class="datepicker" gldp-el="mydate"
+         style="width:400px; height:300px; position:absolute; display:none;">
+    </div>			
+</div>
+
+<div class="element">
+	<?php 
+	 	echo $this->formElementErrors($fieldSet->get('categories'),array('class'=>'formError')) ;
+		echo $this->formLabel($fieldSet->get('categories'));
+		echo $this->formSelect($fieldSet->get('categories'));
+	?>
+</div>	
+
+<div class="element">
+	<?php 
+	 	echo $this->formElementErrors($fieldSet->get('video'),array('class'=>'formError')) ;
+		echo $this->formLabel($fieldSet->get('video'));
+		echo $this->formInput($fieldSet->get('video'));
+	?>
+</div>	
+
+<div class="element">
+	<?php 
+	 	echo $this->formElementErrors($fieldSet->get('snapshot'),array('class'=>'formError')) ;
+		echo $this->formLabel($fieldSet->get('snapshot'));
+		echo $this->formFile($fieldSet->get('snapshot'));
+	?>
+</div>
+
+<div class="element">
+	<?php 
+	 	echo $this->formElementErrors($fieldSet->get('inSlide'),array('class'=>'formError')) ;
+		echo $this->formLabel($fieldSet->get('inSlide'));
+		echo $this->formCheckbox($fieldSet->get('inSlide'));
+	?>
+</div>
+
+<div class="element">
+	<?php echo $this -> formSubmit($form -> get('submit')->setValue($this -> translate('Update'))); ?>
+</div>
+
+<?php 
+echo $this->form()->closeTag();
+endif;
+?>

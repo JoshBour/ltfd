@@ -1,0 +1,73 @@
+<?php if ($this->pageCount):?>
+    <div class="paginationControl">
+        <ul>
+            <!-- Previous page link -->
+            <?php if (isset($this->previous)): ?>
+                <li>
+                    <a href="<?php 
+                    	$params = array('page' => $this->previous);
+						if($this->itemCountPerPage != 10){ 
+							$params['count'] = $this->itemCountPerPage;
+						}
+                    	echo $this->url($this->route, $params,null, true); ?>">
+                        <<
+                    </a>
+                </li>
+            <?php else: ?>
+                <li class="disabled">
+                    <a href="#">
+                        <<
+                    </a>
+                </li>
+            <?php endif; ?>
+            <!-- Numbered page links -->
+            <?php foreach ($this->pagesInRange as $page): ?>
+                <?php if ($page != $this->current): ?>
+                    <li>
+	                    <a href="<?php 
+	                    	$params = array('page' => $page);
+							if($this->itemCountPerPage != 10){ 
+								$params['count'] = $this->itemCountPerPage;
+							}
+	                    	echo $this->url($this->route, $params,null, true); ?>">
+	                    	<?php echo $page;?>
+	                    </a>
+                    </li>
+                <?php else: ?>
+                    <li class="active">
+                        <a href="#"><?php echo $page;?></a>
+                    </li>
+                <?php endif; ?>
+            <?php endforeach; ?>
+
+            <!-- Next page link -->
+            <?php if (isset($this->next)):?>
+            	
+                <li>
+                    <a href="<?php 
+                    	$params = array('page' => $this->next);
+						if($this->itemCountPerPage != 10){ 
+							$params['count'] = $this->itemCountPerPage;
+						}
+                    	echo $this->url($this->route, $params,null, true); ?>">
+                        >>
+                    </a>
+                </li>
+            <?php else: ?>
+                <li class="disabled">
+                    <a href="#">
+                        >>
+                    </a>
+                </li>
+            <?php endif; ?>
+        </ul>
+        <ul class="countOptions">
+        	<?php 
+        		$countOptions = array(5,10,20);
+				foreach($countOptions as $option):
+			?>
+        	<li> <a href="<?php echo $this->url($this->route,array('page' => $this->current, 'count' => $option)); ?>"><?php echo $option; ?></a></li>
+        	<?php endforeach ?>
+        </ul>
+    </div>
+<?php endif; ?>

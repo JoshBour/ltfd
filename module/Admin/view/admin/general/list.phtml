@@ -1,0 +1,65 @@
+<div id="main">
+	<div id="controls">
+		<ul class="tab-list">
+			<li class="tableList tab-active"><?php echo $this -> translate("General List"); ?></li>
+			<li class="addForm"><?php echo $this -> translate("General Info"); ?></li>
+		</ul>
+	</div>	
+	<div id="tableList" class="tab">
+		<table>
+			<caption><?php echo $this -> translate("General List"); ?></caption>
+			<thead>
+				<tr>
+					<?php 
+						$headerParams = array(
+											$this->translate('name') => 'name',
+											$this->translate('content') => 'content',
+											$this->translate('translated content') => 'contentEn',
+											);
+											
+						foreach($headerParams as $header => $sortName):
+							$isActiveSort = false;
+							$sortType = 'asc';
+							if(isset($sort) && ($sort == $header || $sort == $sortName)){
+								$isActiveSort = true;
+								if($type == 'asc') $sortType = 'desc';
+							}
+					?>
+					<th<?php echo $isActiveSort ? ' class="sortActive"' : ''; ?>>
+						<a href="<?php echo $this->url('admin_main/general',array('action' => 'list','sort' => $sortName, 'type' => $sortType),null,true); ?>"><?php echo mb_convert_case($header, MB_CASE_TITLE, "UTF-8"); ?></a>
+					</th>
+					
+					<?php endforeach; ?>
+					<th><?php echo $this -> translate("Edit"); ?></th>		
+				</tr>	
+			</thead>
+				<?php 
+				if($paginator->getTotalItemCount() > 0){
+					echo '<tbody>';
+					foreach($paginator as $entity): ?>				
+					<tr class="dataItem general" id="data-<?php echo $entity->getId(); ?>">
+						<td class="name"><?php echo $this->escapeHtml($entity->getName()); ?></td>
+						<td class="content"><?php echo $this->escapeHtml($entity->getContent()); ?></td>
+						<td class="contentEn"><?php echo $this->escapeHtml($entity->getContentEn()); ?></td>
+						<td class="edit"><img src="<?php echo $this->basePath() . '/images/edit-icon.png';?>" /></td>
+					</tr>
+					<?php 
+					endforeach; 
+					echo '</tbody></table>';
+				}else{ ?>
+					</table>
+					<div class="notFound"><?php echo $this -> translate("There are no info available."); ?></div>
+				<?php } ?>
+		<?php echo $this->paginationControl($paginator,
+		                                    'Sliding',
+		                                    array('partial/paginator.phtml','General'), array('route' => 'admin_main/general')); ?>	
+	</div>
+	<div id="addForm" class="tab inactive">
+		<h1><?php echo $this -> translate("General Info"); ?></h1>
+		<ol>
+			<li><?php echo $this -> translate("The name column refers to the area the content belongs to."); ?></li>
+			<li><?php echo $this -> translate("You can't change the name or delete the entry because that would mean it will be removed from the site as well."); ?></li>
+			<li><?php echo $this -> translate("You can use the following tags when editing the content:"); ?> &lt;a&gt;,&lt;strong&gt;,&lt;br&gt;,&lt;i&gt;,&lt;h1&gt;,&lt;h2&gt;,&lt;h3&gt;,&lt;p&gt;</li>
+		</ol>		
+	</div>
+</div> 

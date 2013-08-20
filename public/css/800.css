@@ -1,0 +1,773 @@
+
+
+header nav{
+	height:95px;
+	position:static;
+}
+
+header nav ul li{
+	text-align:center;
+	font:normal 40px 'Yanone Kaffeesatz', sans-serif;
+}
+
+/* ===================================================== */
+/*                  Application Layout                   */
+/* ===================================================== */
+
+.mainPage #content{
+	padding-top:100px;
+}
+
+.mainPage header #logo{
+	margin:0 0 0 35px;
+}
+
+.mainPage header #logo a{
+	display:block;
+	background:transparent url(../images/logo.png) no-repeat;
+	width:200px;
+	height:96px;
+	margin:0;
+	vertical-align:middle;
+}
+
+.mainPage header li#languageChange{
+	margin:10px 0 0 5px;
+}
+
+.mainPage header li#languageChange a{
+	display:block;
+	height:24px;
+	width:24px;
+	padding:2px 0;
+	margin:0;
+}
+
+.mainPage #content h1{
+	border:none;
+	font-weight:bold;
+	font-size:28px;
+}
+
+.mainPage #main{
+	font-size: 20px;
+	word-spacing: 3px;	
+	text-align:center;
+}
+
+.sepLine{
+	margin:10px 0 22px 0;	
+}
+
+	/* ===================================================== */
+	/*                       Team Page                       */
+	
+	#team ul{
+		margin-top:40px;
+	}
+	
+	#team li{
+		display:inline-block;
+		padding:40px 15px 0 0;
+	}
+	
+	#team .member h1, #team li{
+		text-align:left;	
+		font-weight:normal;	
+	}
+	
+	#team .member img{
+		width:300px;
+		height:182px;
+	}
+	
+	#team li .position{
+		font-size:18px;
+	}
+	
+	#team li .email{
+		margin-top:20px;
+		display:block;
+		color:#a611a6;
+	}
+	
+	#about, #sponsors{
+		margin-top:110px;
+	}
+	
+	/* ===================================================== */
+	/*                       Portfolio                       */	
+	#films ul.categories{
+		border-bottom:1px solid;
+	}
+	
+	/* changed */
+	#films ul.categories li{
+		font-size:40px;
+		margin:0 45px;
+	}
+	
+	#films ul{
+		overflow: hidden;
+		width: 935px;
+		margin: 20px auto 0 auto;
+	}
+	
+	#films ul.films li{
+		float:none;
+		width:520px;
+		font-size:35px;
+		margin:27px auto;
+	}
+	
+	#films ul.films li:first-child{
+		margin-top:0;
+	}
+	
+	#films ul.films li .description{
+		display:block;
+		width:460px;
+		height:45px;
+		word-wrap:break-word;
+	}
+	
+	#films ul.films li img{
+		display:block;
+		width:570px;
+		height:306px;
+	}
+	
+	#films ul.films li h2{
+		font-size:33px;
+	}
+	
+	/* ===================================================== */
+	/*                        Homepage                       */		
+	
+	.homepage #content{
+		padding-top:35px;
+	}
+	
+	.homepage nav{
+		background-color:rgba(0,0,0,0.6);
+	}
+	
+	.homepage #displayedSlide{
+		position:relative;
+	}
+	
+	.homepage #displayedSlide img{
+		display:block;
+		height:767px;
+		width:100%;
+	}
+	
+	.homepage #displayedSlide img.slidePlay{
+		height: 48px;
+		width: 100px;
+		position: absolute;
+		left: 50%;
+		margin-left:-50px;
+		top: 50%;		
+	}
+	
+	.homepage #displayedSlide img.slidePlay:hover{
+		cursor:pointer;
+	}
+	
+	.homepage #hiddenSlides{
+		display:none;
+	}	
+	
+	.homepage #slideNavigation{
+		position: absolute;
+		width: 100%;
+		height: 46px;
+		margin-top: -45px;
+		background: rgba(0,0,0,0.6);		
+		text-align:center;
+		font-size:15px;
+		color:#fff;
+	}
+	
+	.homepage #slideNavigation img{
+		vertical-align:middle;
+		padding:0 20px;
+		cursor:pointer;
+	}
+	
+	.homepage #slideNavigation span{
+		display:inline-block;
+		margin-top:16px;
+	}
+	
+	.homepage #welcome span{
+		display:block;
+		padding:40px 0;
+	}
+	
+	.homepage #welcome h3{
+		display:inline;
+		font:normal 25px 'Yanone Kaffeesatz', sans-serif;
+		color:black;
+	}
+	
+	.homepage #latestFilms{
+		overflow:auto;
+	}
+	
+	.homepage #latestFilms ul{
+		overflow: hidden;
+		width: 948px;
+		margin: 0 auto;		
+	}
+	
+	.homepage #latestFilms ul li{
+		display:inline-block;
+		vertical-align: top;
+		position:relative;
+		padding:0 1px 1px;
+		margin-top: -4px;
+		float:left;
+	}
+	
+	.homepage #latestFilms ul li:first-child{
+	}
+	
+	.homepage #latestFilms ul li:first-child img{
+		width:470px;
+		height:441px;
+	}
+	
+	.homepage #latestFilms .filmTitle{
+		position: absolute;
+		bottom: 15px;
+		width: 100%;
+		left: 13px;
+		text-align: left;		
+		color:white;
+		font-size:25px;
+	}
+	
+	.homepage #latestFilms .filmTitle span{
+		display:block;
+	}	
+	
+	.homepage #latestFilms .filmTitle span.filmDate{
+		font-size:17px;
+	}	
+	
+	.homepage #latestFilms ul li:first-child .videoMask{
+		width:470px;
+		height:441px;
+	}
+	
+	.homepage #latestFilms ul li .videoMask{
+		width:234px;
+		height:225px;
+	}
+
+	.homepage #latestFilms ul li img{
+		width:234px;
+		display:inline;
+		height:220px;
+	}	
+	
+	/* ===================================================== */
+	/*                       Sponsors                       */	
+	#sponsors ul{
+		margin-top:50px;
+	}
+	
+	#sponsors ul li{
+		min-width:300px;
+		display:inline-block;
+	}
+	
+	#sponsors ul li img{
+		max-width:300px;
+		max-height:80px;
+	}
+	
+	
+	/* ===================================================== */
+	/*                          Footer                       */	
+	
+		footer{
+			position:relative;
+			margin-top:100px;
+			overflow:hidden;
+			background:#333 url(../images/footer-icon.jpg) no-repeat;
+			height: 890px;
+			width: 100%;			
+		}
+		
+		footer video{
+			width: 100%;
+			height: auto;		
+		}
+		
+		footer a[name="contact"]{
+			padding:0px;
+			display:block;
+		}
+		
+		#contact{
+			position:absolute;
+			top:0;
+			padding-top:185px;
+			left:50%;
+			margin-left:-250px;
+			width: 500px;
+		}
+		
+		#contact .info{
+			margin-top:25px;
+			text-align:center;
+		}
+		
+		#contact h1{
+			font:normal 40px 'Yanone Kaffeesatz', sans-serif;
+			color:white;
+			padding-bottom:30px;
+			border-bottom: 1px solid black;
+		}
+		
+		
+		#contact .info h2{
+			display:inline;
+			padding-right:10px;
+			color:white;
+		}
+		
+		#contact .info, #contact .info a{
+			color:#ccc;
+		}
+		
+		#contact .info, #contact .info h2{
+			font-size:25px;			
+		}
+		
+		#contact .social{
+			text-align:center;	
+			margin-top:30px;		
+		}
+		
+		#contact .social li{
+			display:inline-block;
+			padding:5px;
+		}
+		
+		.underline{
+		
+			border-bottom:1px solid #f8919b;			
+		}
+
+/* ===================================================== */
+/*                     Admin Layout                      */
+/* ===================================================== */
+
+	/* ===================================================== */
+	/*                    General Content                    */
+	/* ===================================================== */
+	
+	body.adminLayout{
+		background:#fff url(../images/white-noise-bg.jpg) repeat;
+		position:relative;
+		font: normal 12px sans-serif;
+	}
+	
+	.adminLayout footer{
+		background:none;
+		width:auto;
+		height:auto;
+	}
+	
+	.adminLayout nav{
+		position:static;
+	}
+	
+	.adminLayout #controls ul li{
+		display: inline-block;
+		padding: 10px;
+		cursor: pointer;
+		color: black;
+		background: #fff;
+		border: 1px solid black;
+		border-bottom: none;	
+		border-radius: 7px 7px 0 0;
+	}
+	
+	.adminLayout #controls ul li:hover{
+		text-decoration:underline;
+	}
+	
+	.adminLayout #controls ul li.tab-active{
+		color: #fff;
+		background: black;	
+	}
+	
+	.adminLayout #content{
+		width: 1100px;
+		/*border: 1px solid #fff;*/
+		/*padding: 10px 10px 20px 10px;*/
+		margin: 41px auto 0 auto;
+		overflow: hidden;
+		box-shadow: 0 4px 2px -2px gray;
+		/*background:#fff;*/
+	}
+	
+	.adminLayout #main{
+		float:left;
+		width:100%;
+	}
+	
+	.adminLayout #main .tab{
+		background:#fff;
+		padding:15px;
+		overflow:auto;
+		border: 1px solid gray;		
+	}
+	
+	.adminLayout #main.centered{
+ 		float: none;		
+	}
+	
+	.adminLayout aside{
+		float:right;
+		width:300px;
+		margin-left:40px;
+		background: #fafafa;
+		border: 1px solid #ccc;
+	}
+	
+	.adminLayout aside h1, .adminLayout #editBox h2{
+		font:bold 15px 'Source Sans Pro', sans-serif;
+		padding:10px 5px;
+		margin:0px;
+		cursor:pointer;
+		border-bottom:1px solid #ccc;
+		background-image: -moz-linear-gradient(top, #F6F6F6, #EEEEEE);
+		background-image: -webkit-gradient(linear, left top, left bottom, from(#F6F6F6), to(#EEEEEE));
+		background-image: -webkit-linear-gradient(#F6F6F6, #EEEEEE);
+		background-image: -o-linear-gradient(#F6F6F6, #EEEEEE);
+		background-image: linear-gradient(top, #F6F6F6, #EEEEEE);			
+	}
+	
+		/* ===================================================== */
+		/*                         Films                        */		
+		.adminLayout aside.filmSide{
+			width:auto;
+		}
+		
+		.adminLayout aside.filmSide input,.adminLayout aside.filmSide select{
+			margin-left:4px;
+		}
+	
+	/* ===================================================== */
+	/*                      Table Content                    */
+	/* ===================================================== */	
+	
+	.adminLayout #main th,.adminLayout #main td{
+		width:5%;
+		text-align:center;
+		border-top:1px solid #bbb;
+		border-left:1px solid #bbb;
+	}
+	
+	.adminLayout #main th:last-child,.adminLayout #main td:last-child{
+		border-right:1px solid #bbb;
+	}
+	
+	.adminLayout tbody tr:last-child td{
+		border-bottom:1px solid #bbb;
+	}
+	
+	.adminLayout #main table caption{
+		padding:12px;
+		color:white;
+		font-size:15px;
+		text-align:left;
+		background-color:#2c2c2c;		
+	}
+	
+	.adminLayout #main th{
+		font-size: 14px;
+		font-family: arial;
+		color: #000;
+		background: #555;
+		padding: 12px 20px;
+		background-image: linear-gradient(bottom, rgb(201,201,201) 27%, rgb(255,255,255) 90%);
+		background-image: -o-linear-gradient(bottom, rgb(201,201,201) 27%, rgb(255,255,255) 90%);
+		background-image: -moz-linear-gradient(bottom, rgb(201,201,201) 27%, rgb(255,255,255) 90%);
+		background-image: -webkit-linear-gradient(bottom, rgb(201,201,201) 27%, rgb(255,255,255) 90%);
+		background-image: -ms-linear-gradient(bottom, rgb(201,201,201) 27%, rgb(255,255,255) 90%);
+		
+		background-image: -webkit-gradient(
+			linear,
+			left bottom,
+			left top,
+			color-stop(0.27, rgb(201,201,201)),
+			color-stop(0.9, rgb(255,255,255))
+		);	
+	}
+	
+	.adminLayout #main td{
+		padding:5px;
+	}
+	
+	.adminLayout #main table td.avatar img, .adminLayout #main table td.snapshot img{
+		vertical-align: middle;
+		width: 100px;
+		height: auto;		
+	}
+	
+	.adminLayout #addForm{
+		text-align:center;
+	}
+	
+	.adminLayout #addForm form{
+		width:500px;
+	}
+	
+	.adminLayout #addForm h1{
+		padding: 0 5px 5px 5px;		
+	}
+	
+	.adminLayout #addForm form input,.adminLayout #addForm form select{
+		width:69%;
+	}
+	
+	.adminLayout #addForm form input[type="submit"]{
+		width:20%;
+	}
+	
+	.adminLayout #addForm form ol{
+		list-style: disc;
+		padding: 10px;
+		margin-left: 15px;		
+	}
+	
+	.adminLayout #addForm form ol li{
+		padding:5px;
+	}
+	
+		/* ===================================================== */
+		/*                        EditBox                        */	
+	
+		.adminLayout #editBox{
+			position: absolute;
+			left: 50%;
+			top: 20%;
+			width: 400px;
+			margin-left: -220px;
+			border: 1px solid #ccc;
+			background: #fff;
+			box-shadow: 2px 2px 25px;
+		}
+		
+		.adminLayout #editBox form{
+			padding:0 15px 15px 15px;
+			width:356px;
+		}
+		
+		.adminLayout #editBox .info{
+			text-align: center;
+			padding-top: 10px;
+			font: bold 13px arial;		
+		}
+		
+		.adminLayout #editBox form input, .adminLayout #editBox form textarea, .adminLayout #editBox form select{
+			width:203px;
+		}
+		
+		.adminLayout #editBox textarea{
+			height:200px;
+			color:#fff;
+		}
+		
+
+	/* ===================================================== */
+	/*                       Login Page                      */
+	/* ===================================================== */
+	#login{
+		width: 500px;
+		margin: 150px auto;
+		border: 1px solid #252525;
+		padding: 10px 25px;
+		box-shadow: 5px 5px 14px;
+	}
+	
+	#login form input{
+		width:325px;
+	}
+	
+	#login form input[type="submit"], .adminLayout #editBox form input[type="submit"]{
+		width:140px;
+	}
+	
+	#login h1{
+		text-align:left;
+		font:bold 13px Verdana, Geneva, Arial, Helvetica, sans-serif;
+	}
+	
+	
+
+
+/*body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+}
+
+.zf-green {
+    color: #68b604;
+}
+
+.btn-success {
+  background-color: #57a900;
+  background-image: -moz-linear-gradient(top, #70d900, #57a900);
+  background-image: -ms-linear-gradient(top, #70d900, #57a900);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#70d900), to(#57a900));
+  background-image: -webkit-linear-gradient(top, #70d900, #57a900);
+  background-image: -o-linear-gradient(top, #70d900, #57a900);
+  background-image: linear-gradient(top, #70d900, #57a900);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#70d900', endColorstr='#57a900', GradientType=0);
+}
+
+.btn-success:hover,
+.btn-success:active,
+.btn-success.active,
+.btn-success.disabled,
+.btn-success[disabled] {
+  background-color: #57a900;
+}
+
+.btn-success:active, .btn-success.active {
+  background-color: #57a900;
+}
+
+div.container a.brand {
+    background: url("../img/zf2-logo.png") no-repeat scroll 0 10px transparent;
+    margin-left: 0;
+    padding: 8px 20px 12px 40px;
+}*/
+
+/* ===================================================== */
+/*                    Common Classes                     */
+/* ===================================================== */
+
+.active{text-decoration:underline;}
+.inactive {display: none;}
+.current {font-weight: bold;}
+.focused {z-index: 9999;}
+.disabled {cursor:default;}
+.edit, .delete, .save, .cancel, .ban, .unban {cursor: pointer;}
+.centered{margin: 0 auto;}
+
+.notFound{
+	padding: 10px;
+	font: bold 13px arial;
+}
+
+.loadingImg {
+	background: transparent url('../images/ajax-loader.gif');
+	width: 126px;
+	height: 22px;
+	margin: 10px auto;
+}
+
+#shadow {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	opacity: 0.9;
+	filter: alpha(opacity=90);
+	z-index: 99;
+}
+
+#above{
+	position: relative;
+	background:transparent;
+	z-index: 100;
+	cursor: pointer;	
+	opacity: 1;
+}
+
+	/* ===================================================== */
+	/*                       Pagination                      */	
+	
+		.paginationControl{
+			margin: 10px auto; 
+			overflow:auto;
+			text-align:center;
+		}
+		
+		.paginationControl ul li{
+			display: inline-block;
+			background: #fafafa;
+			border-radius: 2px;
+			border: 1px solid #bbb;
+		}
+		
+		.paginationControl ul li a{
+			padding: 5px;			
+			display:block;
+			color: #4CA1CF;
+		}
+		
+		.paginationControl ul li:hover{
+			background: #fefefe;
+		}
+		
+		.paginationControl ul li a:hover{
+			text-decoration:none;
+			color:#195D82;
+		}
+
+		.paginationControl ul:first-of-type{
+			margin-left:65px;
+			display:inline;
+		}
+		
+		.countOptions{
+			float:right;
+		}
+
+	/* ===================================================== */
+	/*                     Standard Form                     */			
+
+		.standardForm{
+			margin: 15px auto;
+			padding:7px;
+			overflow: hidden;
+			text-align: left;
+		}
+		
+		.standardForm .element{
+			margin-bottom: 20px;
+		}
+		
+		.standardForm .formError{
+			padding:5px;
+			color:red;
+		}
+		
+		.standardForm input, select, textarea {
+			vertical-align: middle;
+			margin-left: 35px;
+			border-radius: 2px;
+		}
+		
+		.standardForm label {
+			width: 100px;
+			display: inline-block;
+			vertical-align: middle;
+		}
+		
+		.standardForm input[type="submit"] {
+			float: right;
+			width: 120px;
+		}
