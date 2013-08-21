@@ -28,11 +28,6 @@ class AccountController extends AbstractActionController
 	 */
 	 private $authStorage = null;
 	
-    public function profileAction()
-    {
-        return new ViewModel();
-    }
-	
     public function loginAction()
     {
     	if(!$user = $this->identity()){
@@ -86,6 +81,21 @@ class AccountController extends AbstractActionController
 			'registerForm' => $this->getRegisterForm()
 		));
     }  
+    
+    public function deleteAction()
+    {
+    	return new ViewModel();
+    }
+
+    public function reportAction()
+    {
+    	return new ViewModel();
+    }  
+
+    public function verifyAction()
+    {
+    	return new ViewModel();
+    }    
 	
 	public function getLoginForm(){
 		if(!$this->loginForm){

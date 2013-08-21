@@ -18,7 +18,7 @@ class GameController extends AbstractActionController
 	 */
 	private $translator;		
 	
-	public function viewAction(){
+	public function profileAction(){
 		return new ViewModel();
 	}
 	
@@ -26,13 +26,21 @@ class GameController extends AbstractActionController
 		return new ViewModel();
 	}
 	
-	public function followAction(){
+	public function connectAction(){
 		return new JsonModel();
 	}
-	
-	public function unfollowAction(){
-		return new JsonModel();
-	}
+
+    public function rateAction(){
+        return new JsonModel();
+    }
+
+    public function listAction(){
+        return new ViewModel();
+    }
+
+    public function suggestAction(){
+        return new ViewModel();
+    }
 	
 	public function getEntityManager() {
 		if (!$this -> entityManager) {
