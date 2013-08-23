@@ -9,7 +9,7 @@ $form -> setAttribute('action', 'accounts');
 	echo $this->form()->openTag($form);
 
  #echo $this->formElementErrors($form->get('identity')) 
-	$fieldSet = $form->get('user');
+	$fieldSet = $form->get('feed');
 
 	echo $this->formHidden($form->get('security')); 
 	echo $this->formHidden($fieldSet->get('id')); ?>

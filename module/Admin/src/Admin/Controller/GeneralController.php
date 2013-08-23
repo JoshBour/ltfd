@@ -109,13 +109,13 @@ class GeneralController extends AbstractActionController {
 			$message = '';
 			$id = $this->params()->fromPost('id',null);
 			if(null === $id){
-				$message = $this->getTranslator()->translate('The user is invalid or doesn\'t exist.');
+				$message = $this->getTranslator()->translate('The feed is invalid or doesn\'t exist.');
 			}else{
 				$em = $this->getEntityManager();
-				$user = $em->find('User\Entity\User',$id);
+				$user = $em->find('Feed\Entity\Feed',$id);
 				$em->remove($user);
 				$em->flush();
-				$message = $this->getTranslator()->translate('The user has been deleted successfully');
+				$message = $this->getTranslator()->translate('The feed has been deleted successfully');
 				$success = 1;
 			}
 			return new JsonModel(array('success'=>$success,'message'=>$message));

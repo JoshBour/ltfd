@@ -76,7 +76,7 @@ $(function() {
 				resultBoxList.find('li').detach();
 				resultBoxList.append(data);
 			}).fail(function(){
-				alert('Something with wrong with the user search, please try again.');
+				alert('Something with wrong with the feed search, please try again.');
 			});
 		}else{
 			resultBox.hide();

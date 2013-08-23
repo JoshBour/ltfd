@@ -12,11 +12,11 @@ class RegisterFieldset extends Fieldset implements InputFilterProviderInterface{
 	
 	public function __construct($em){
 		
-		parent::__construct('user');
+		parent::__construct('feed');
 		
 		
 		$this->entityManager= $em;
-		$this->setHydrator(new DoctrineEntity($em,'User\Entity\User'))
+		$this->setHydrator(new DoctrineEntity($em,'Feed\Entity\Feed'))
 			->setObject(new User());
 		
 		#$this->setAttribute('method','post');
@@ -81,7 +81,7 @@ class RegisterFieldset extends Fieldset implements InputFilterProviderInterface{
 					array(
 						'name' => 'DoctrineModule\Validator\NoObjectExists',
 						'options' => array(
-							'object_repository' => $this->entityManager->getRepository('User\Entity\User'),
+							'object_repository' => $this->entityManager->getRepository('Feed\Entity\Feed'),
 							'fields' => 'username',
 							'messages' => array(
 								'objectFound' => 'The username already exists, please select a different one.'
@@ -91,7 +91,7 @@ class RegisterFieldset extends Fieldset implements InputFilterProviderInterface{
 					array(
 						'name' => 'DoctrineModule\Validator\NoObjectExists',
 						'options' => array(
-							'object_repository' => $this->entityManager->getRepository('User\Entity\User'),
+							'object_repository' => $this->entityManager->getRepository('Feed\Entity\Feed'),
 							'fields' => 'email',
 							'messages' => array(
 								'objectFound' => 'The email already exists, please select a different one.'

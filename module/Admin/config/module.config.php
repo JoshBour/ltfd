@@ -29,7 +29,7 @@ return array(
                 'options' => array(
                     'route'    => '/admin[/]',
                     'defaults' => array(
-                        'controller' => 'User\Controller\User',
+                        'controller' => 'Feed\Controller\Feed',
                         'action'     => 'login',
                     ),
                 ),

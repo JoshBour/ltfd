@@ -38,10 +38,10 @@ class AccountController extends AbstractActionController {
 		$count = $this->params('count',10);
 		$sort = $this->params('sort');
 		$type = $this->params('type');
-		$repository = $em -> getRepository('User\Entity\User');
-		$queryBuilder = $repository->createQueryBuilder('user');
+		$repository = $em -> getRepository('Feed\Entity\Feed');
+		$queryBuilder = $repository->createQueryBuilder('feed');
 		if(!empty($sort) && !empty($type)){
-			$queryBuilder->addOrderBy('user.' . $sort, $type);
+			$queryBuilder->addOrderBy('feed.' . $sort, $type);
 		}
 		// edw
 		$adapter = new DoctrineAdapter(new ORMPaginator($queryBuilder));
@@ -96,7 +96,7 @@ class AccountController extends AbstractActionController {
 			$message = '';
 			if(!is_null($id)){
 				$em = $this->getEntityManager();
-				$user = $em->find('User\Entity\User',$id);
+				$user = $em->find('Feed\Entity\Feed',$id);
 				if($user){
 					$form = $this->getForm();
 					$form->bind($user);
@@ -104,14 +104,14 @@ class AccountController extends AbstractActionController {
 						$data = $request->getPost();
 						$validationGroup = $user->getUpdateValidationGroup($data);
 						if(!empty($validationGroup)){
-							$form->setValidationGroup(array('security','user'=>$validationGroup));
+							$form->setValidationGroup(array('security','feed'=>$validationGroup));
 							$form->setData($data);
 							if($form->isValid()){
 								$em->persist($user);
 								$em->flush();
 								
 								$success = 1;
-								$message = $this->getTranslator()->translate('The user has been updated successfully');
+								$message = $this->getTranslator()->translate('The feed has been updated successfully');
 							}else{
 								$viewModel->setVariable('form', $form);
 								$viewModel->setTerminal(true);
@@ -140,13 +140,13 @@ class AccountController extends AbstractActionController {
 			$message = '';
 			$id = $this->params()->fromPost('id',null);
 			if(null === $id){
-				$message = $this->getTranslator()->translate('The user is invalid or doesn\'t exist.');
+				$message = $this->getTranslator()->translate('The feed is invalid or doesn\'t exist.');
 			}else{
 				$em = $this->getEntityManager();
-				$user = $em->find('User\Entity\User',$id);
+				$user = $em->find('Feed\Entity\Feed',$id);
 				$em->remove($user);
 				$em->flush();
-				$message = $this->getTranslator()->translate('The user has been deleted successfully');
+				$message = $this->getTranslator()->translate('The feed has been deleted successfully');
 				$success = 1;
 			}
 			return new JsonModel(array('success'=>$success,'message'=>$message));

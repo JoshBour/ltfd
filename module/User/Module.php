@@ -16,7 +16,7 @@ class Module
 	public function getControllerConfig(){
 		return array(
 				'invokables' => array(
-						'User\Controller\User' => 'User\Controller\UserController'
+						'Feed\Controller\Feed' => 'Feed\Controller\UserController'
 				)
 		);
 	}	

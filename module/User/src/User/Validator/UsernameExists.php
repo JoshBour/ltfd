@@ -26,7 +26,7 @@ class UsernameExists extends AbstractValidator implements ServiceLocatorAwareInt
 	
 	public function isValid($value){
 		$this->setValue($value);
-		$repository = $this->em->getRepository('User\Entity\User');
+		$repository = $this->em->getRepository('Feed\Entity\Feed');
 		$validator = new \DoctrineModule\Validator\ObjectExists(array(
 			'object_repository' => $repository,
 			'fields' => array('username')

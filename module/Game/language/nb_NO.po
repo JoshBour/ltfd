@@ -21,7 +21,7 @@ msgid "The account has been added successfully."
 msgstr ""
 
 #: ../../Admin/src/Admin/Controller/AccountController.php:114
-msgid "The user has been updated successfully"
+msgid "The feed has been updated successfully"
 msgstr ""
 
 #: ../../Admin/src/Admin/Controller/AccountController.php:121
@@ -35,12 +35,12 @@ msgstr ""
 
 #: ../../Admin/src/Admin/Controller/AccountController.php:143
 #: ../../Admin/src/Admin/Controller/GeneralController.php:112
-msgid "The user is invalid or doesn't exist."
+msgid "The feed is invalid or doesn't exist."
 msgstr ""
 
 #: ../../Admin/src/Admin/Controller/AccountController.php:149
 #: ../../Admin/src/Admin/Controller/GeneralController.php:118
-msgid "The user has been deleted successfully"
+msgid "The feed has been deleted successfully"
 msgstr ""
 
 #: ../../Admin/src/Admin/Controller/CategoryController.php:58

@@ -9,7 +9,7 @@ class Login extends Form{
 	public function __construct($em){
 		parent::__construct();
 		
-		#$this->setHydrator(new DoctrineEntity($em,'User\Entity\User'))->bind(new User());
+		#$this->setHydrator(new DoctrineEntity($em,'Feed\Entity\Feed'))->bind(new Feed());
 		
 		$this->setAttribute('method','post');
 		$this->setAttribute('class','standardForm');

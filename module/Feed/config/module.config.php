@@ -8,101 +8,136 @@
  */
 
 return array(
-	'doctrine' => array(
-	    'driver' => array(
-	        'entity' => array(
-	            'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
-	            'paths' => array(__DIR__ . '/../src/User/Entity'),
-	        ),
-	        'orm_default' => array(
-	            'drivers' => array(
-	                'User\Entity' => 'entity',
-	            ),
-	        ),
-	    ),
-		'authentication' => array(
-            'orm_default' => array(
-                'object_manager' => 'Doctrine\ORM\EntityManager',
-                'identity_class' => 'User\Entity\User',
-                'identity_property' => 'username',
-                'credential_property' => 'password',
-                'credential_callable' => 'User\Entity\User::hashPassword'
+    'doctrine' => array(
+        'driver' => array(
+            'entity' => array(
+                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+                'paths' => array(__DIR__ . '/../src/Feed/Entity'),
             ),
-        ),	    
-	),
+            'orm_default' => array(
+                'drivers' => array(
+                    'Feed\Entity' => 'entity',
+                ),
+            ),
+        ),
+    ),
     'router' => array(
         'routes' => array(
-            // 'profile' => array(
-                // 'type' => 'Segment',
-                // 'options' => array(
-                    // 'route'    => '/admin[/]',
-                    // 'defaults' => array(
-                        // 'controller' => 'User\Controller\User',
-                        // 'action'     => 'login',
-                    // ),
-                // ),
-            // ),
-            'account-login' => array(
-            	'type' => 'Segment',
-            	'options' => array(
-            		'route' => '/admin/login[/]',
-            		'defaults' => array(
-            			'controller' => 'User\Controller\User',
-            			'action'     => 'login',
-            		)
-            	)
-            ),
-            'account-register' => array(
-            	'type' => 'Segment',
-            	'options' => array(
-            		'route' => '/accounts[/]',
-            		'defaults' => array(
-            			'controller' => 'User\Controller\User',
-            			'action'     => 'list',
-            		)
-            	)
-            ),
-            'account-logout' => array(
-            	'type' => 'Segment',
-            	'options' => array(
-            		'route' => '/[admin/]logout[/]',
-            		'defaults' => array(
-            			'controller' => 'User\Controller\User',
-            			'action'     => 'logout',
-            		)
-            	)
-            ),                         
-        ),
-    ),
-    'service_manager' => array(
-        'abstract_factories' => array(
-            'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
-            'Zend\Log\LoggerAbstractServiceFactory',
-        ),
-        'aliases' => array(
-            'translator' => 'MvcTranslator',
-        ),
-    ),
-    'translator' => array(
-        'locale' => 'en_US',
-        'translation_file_patterns' => array(
-            array(
-                'type'     => 'gettext',
-                'base_dir' => __DIR__ . '/../language',
-                'pattern'  => '%s.mo',
+            'feed' => array(
+                'type' => 'literal',
+                'options' => array(
+                    'route' => '/feed/',
+                    'defaults' => array(
+                        'controller' => 'Feed\Controller\Feed',
+                    )
+                ),
+                'may_terminate' => false,
+                'child_routes' => array(
+                    'new' => array(
+                        'type' => 'literal',
+                        'options' => array(
+                            'route' => 'new',
+                            'defaults' => array(
+                                'action' => 'new',
+                            ),
+                        ),
+                    ),
+                    'delete' => array(
+                        'type' => 'literal',
+                        'options' => array(
+                            'route' => 'delete',
+                            'defaults' => array(
+                                'action' => 'delete',
+                            ),
+                        ),
+                    ),
+                    'report' => array(
+                        'type' => 'literal',
+                        'options' => array(
+                            'route' => 'report',
+                            'defaults' => array(
+                                'action' => 'report',
+                            ),
+                        ),
+                    ),
+                    'rate' => array(
+                        'type' => 'segment',
+                        'options' => array(
+                            'route' => 'rate/:rating',
+                            'defaults' => array(
+                                'action' => 'rate',
+                            ),
+                            'constraints' => array(
+                                'rating' => 'up|down'
+                            )
+                        ),
+                    ),
+                    'comment' => array(
+                        'type' => 'literal',
+                        'options' => array(
+                            'route' => 'comment/',
+                            'defaults' => array(
+                                'controller' => 'Feed/Controller/Comment'
+                            )
+                        ),
+                        'child_routes' => array(
+                            'add' => array(
+                                'type' => 'literal',
+                                'options' => array(
+                                    'route' => 'add',
+                                    'defaults' => array(
+                                        'action' => 'add',
+                                    )
+                                )
+                            ),
+                            'delete' => array(
+                                'type' => 'literal',
+                                'options' => array(
+                                    'route' => 'delete',
+                                    'defaults' => array(
+                                        'action' => 'delete',
+                                    )
+                                )
+                            ),
+                            'report' => array(
+                                'type' => 'literal',
+                                'options' => array(
+                                    'route' => 'report',
+                                    'defaults' => array(
+                                        'action' => 'report',
+                                    )
+                                )
+                            ),
+                            'list' => array(
+                                'type' => 'literal',
+                                'options' => array(
+                                    'route' => 'list',
+                                    'defaults' => array(
+                                        'action' => 'list',
+                                    )
+                                )
+                            ),
+                        )
+                    ),
+                    'view' => array(
+                        'type' => 'segment',
+                        'options' => array(
+                            'route' => ':id',
+                            'defaults' => array(
+                                'action' => 'view',
+                            ),
+                            'constraints' => array(
+                                'id' => '[0-9]+'
+                            )
+                        ),
+                    ),
+                )
             ),
         ),
     ),
     'view_manager' => array(
-    	'template_map' => array(
-			'layout/login' => __DIR__ . '/../view/layout/login.phtml'
-		),     
         'template_path_stack' => array(
             __DIR__ . '/../view',
         ),
     ),
-	'zfcuser' => array(
-	    'user_entity_class'       => 'User\Entity\User',
-	    'enable_default_entities' => false,
-	),    
 );

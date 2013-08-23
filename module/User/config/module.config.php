@@ -12,11 +12,11 @@ return array(
 	    'driver' => array(
 	        'entity' => array(
 	            'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
-	            'paths' => array(__DIR__ . '/../src/User/Entity'),
+	            'paths' => array(__DIR__ . '/../src/Feed/Entity'),
 	        ),
 	        'orm_default' => array(
 	            'drivers' => array(
-	                'User\Entity' => 'entity',
+	                'Feed\Entity' => 'entity',
 	            ),
 	        ),
 	    ),	    
@@ -26,19 +26,19 @@ return array(
         	'profile' => array(
         		'type' => 'segment',
         		'options' => array(
-        			'route' => '/:user[/]',
+        			'route' => '/:feed[/]',
         			'defaults' => array(
-        				'controller' => 'User\Controller\User',
+        				'controller' => 'Feed\Controller\Feed',
         				'action' => 'profile'		
         			)
         		)
         	),  
-        	'user' => array(
+        	'feed' => array(
         		'type' => 'segment',
         		'options' => array(
-        			'route' => '/user/',
+        			'route' => '/feed/',
         			'defaults' => array(
-        				'contoller' => 'User\Controller\User',
+        				'contoller' => 'Feed\Controller\Feed',
         			)
         		),
         		'may_terminate' => false,

@@ -36,7 +36,7 @@ class RegisterForm extends Form{
 		
 		$this->setValidationGroup(array(
 			'security',
-			'user' => array(
+			'feed' => array(
 				'username',
 				'password',
 				'email'
