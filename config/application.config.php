@@ -8,7 +8,9 @@ return array(
         'Application',
     	'Feed',
 		'Game',
-    	'Admin',
+        'Account',
+        'User',
+    	#'Admin',
     ),
 
     // These are various options for the listeners attached to the ModuleManager

@@ -108,6 +108,15 @@ return array(
                                     )
                                 )
                             ),
+                            'edit' => array(
+                                'type' => 'literal',
+                                'options' => array(
+                                    'route' => 'edit',
+                                    'defaults' => array(
+                                        'action' => 'edit',
+                                    )
+                                )
+                            ),
                             'list' => array(
                                 'type' => 'literal',
                                 'options' => array(
