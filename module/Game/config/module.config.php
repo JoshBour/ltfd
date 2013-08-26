@@ -1,4 +1,5 @@
 <?php
+namespace Game;
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -7,6 +8,19 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 return array(
+    'doctrine' => array(
+        'driver' => array(
+            'entity' => array(
+                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+                'paths' => array(__DIR__ . '/../src/' . __NAMESPACE__ . '/Entity'),
+            ),
+            'orm_default' => array(
+                'drivers' => array(
+                    __NAMESPACE__ . '\Entity' => 'entity',
+                ),
+            ),
+        ),
+    ),
     'router' => array(
         'routes' => array(
             'game' => array(
@@ -19,13 +33,14 @@ return array(
                 ),
 //                'may_terminate' => true,
                 'child_routes' => array(
-                    'profile' => array(
-                        'type' => 'literal',
+                    'category' => array(
+                        'type' => 'segment',
                         'options' => array(
-                            'route' => '/profile',
+                            'route' => '[/:category]',
                             'defaults' => array(
                                 'controller' => 'Game\Controller\Game',
-                                'action' => 'profile'
+                                'action' => 'feeds',
+                                'category' => 'all'
                             )
                         )
                     ),
@@ -65,14 +80,13 @@ return array(
                             )
                         ),
                     ),
-                    'category' => array(
-                        'type' => 'segment',
+                    'profile' => array(
+                        'type' => 'literal',
                         'options' => array(
-                            'route' => '[/:category]',
+                            'route' => '/profile',
                             'defaults' => array(
                                 'controller' => 'Game\Controller\Game',
-                                'action' => 'feeds',
-                                'category' => 'random'
+                                'action' => 'profile'
                             )
                         )
                     ),
@@ -95,6 +109,16 @@ return array(
                     'defaults' => array(
                         'controller' => 'Game\Controller\Game',
                         'action' => 'suggest'
+                    )
+                )
+            ),
+            'search' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route' => '/game/search/name/:name',
+                    'defaults' => array(
+                        'controller' => 'Game\Controller\Game',
+                        'action' => 'search'
                     )
                 )
             )

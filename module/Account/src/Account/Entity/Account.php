@@ -68,7 +68,7 @@ class Account
     private $followers;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Account\Entity\User", inversedBy="followers")
+     * @ORM\ManyToMany(targetEntity="Account\Entity\Account", inversedBy="followers")
      * @ORM\JoinTable(name="followers",
      *      joinColumns={@ORM\JoinColumn(name="account_id", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="follower_id", referencedColumnName="id")}

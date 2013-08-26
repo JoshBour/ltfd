@@ -1,4 +1,5 @@
 <?php
+namespace Account;
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -9,17 +10,17 @@
 
 return array(
 	'doctrine' => array(
-	    'driver' => array(
-	        'entity' => array(
-	            'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
-	            'paths' => array(__DIR__ . '/../src/Account/Entity'),
-	        ),
-	        'orm_default' => array(
-	            'drivers' => array(
-	                'Account\Entity' => 'entity',
-	            ),
-	        ),
-	    ),
+        'driver' => array(
+            'entity' => array(
+                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+                'paths' => array(__DIR__ . '/../src/' . __NAMESPACE__ . '/Entity'),
+            ),
+            'orm_default' => array(
+                'drivers' => array(
+                    __NAMESPACE__ . '\Entity' => 'entity',
+                ),
+            ),
+        ),
 		'authentication' => array(
             'orm_default' => array(
                 'object_manager' => 'Doctrine\ORM\EntityManager',

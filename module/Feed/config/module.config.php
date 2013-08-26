@@ -1,4 +1,5 @@
 <?php
+namespace Feed;
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -12,11 +13,11 @@ return array(
         'driver' => array(
             'entity' => array(
                 'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
-                'paths' => array(__DIR__ . '/../src/Feed/Entity'),
+                'paths' => array(__DIR__ . '/../src/' . __NAMESPACE__ . '/Entity'),
             ),
             'orm_default' => array(
                 'drivers' => array(
-                    'Feed\Entity' => 'entity',
+                    __NAMESPACE__ . '\Entity' => 'entity',
                 ),
             ),
         ),

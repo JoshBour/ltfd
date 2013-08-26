@@ -8,7 +8,7 @@ $child = $children[0];
     <head>
         <meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>          
-        <?php echo $this->headTitle('Absurd'); ?>
+        <?php echo $this->headTitle('Leetfeed'); ?>
 
         <?php echo $this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=1.0') ?>
 
@@ -25,69 +25,30 @@ $child = $children[0];
 									  ->prependFile($this->basePath() . '/js/jquery-1.9.0.js'); ?>
       	<script>
 			var baseUrl = '<?php echo $this->basePath(); ?>';
-		</script>	
-		<link rel="stylesheet" media="only screen and (max-device-width: 640px)" href="<?php echo $this->basePath() . '/css/800.css'; ?>" />
+		</script>
     </head>
-    <body class="mainPage<?php echo (isset($child->bodyClass)) ? ' ' . $child->bodyClass : '';?>">
+    <body<?php echo (isset($child->bodyClass)) ? ' class="' . $child->bodyClass . '"' : '';?>>
 		<noscript>
 			<div id="nojs">
 				<?php echo $this->translate("Please enable javascript for the site to work properly.");?>
 			</div>
 		</noscript>    	
         <header>
-        	<nav>
-        		<ul>
-        			<li><a href="<?php echo $this->url('home'); ?>"><?php echo mb_strtoupper($this->translate('home'),'UTF-8'); ?></a></li>
-        			<li><a href="<?php echo $this->url('portfolio'); ?>"><?php echo mb_strtoupper($this->translate('portfolio'),'UTF-8'); ?></a></li>
-        			<li id="logo"><a href="<?php echo $this->url('home'); ?>"></a></li>
-        			<li id="languageChange">
-        				<a href="<?php echo $this->url('language',array('lang' => 'en')); ?>"><img src="<?php echo $this->basePath() . '/images/english-icon.png' ;?>" /></a>
-        				<a href="<?php echo $this->url('language',array('lang' => 'no')); ?>"><img src="<?php echo $this->basePath() . '/images/norway-icon.png' ;?>" /></a>
-        				
-        			</li>
-        			<li><a href="<?php echo $this->url('team'); ?>"><?php echo mb_strtoupper($this->translate('team'),'UTF-8'); ?></a></li>
-        			<li><a href="#contact"><?php echo mb_strtoupper($this->translate('contact'),'UTF-8'); ?></a></li>
-        		</ul>
-        	</nav>
-        </header>
-        	<div id="content">
-            	<?php echo $this->content; ?>
+            <div id="topWrapper">
+                <div id="logo">
+                    <a href="<?php echo $this->url('home'); ?>" title="<?php echo $this->translate("Return to home"); ?>">Logo</a>
+                </div>
+                <nav>
+                    <ul>
+
+                    </ul>
+                </nav>
             </div>
+        </header>
+        <div id="content">
+            <?php echo $this->content; ?>
+        </div>
         <footer>
-        	<a name="contact"></a>
-			<video autoplay="autoplay" loop="loop" muted="muted">
-			  <source src="<?php echo $this->basePath() . '/videos/footer-video.mp4';?>" type="video/mp4">
-			  <source src="<?php echo $this->basePath() . '/videos/footer-video.webm';?>" type="video/webm">
-			Your browser does not support the video tag.
-			</video>    
-			<div id="contact">		
-				<h1><?php echo $this->translate('Contact'); ?></h1>
-				<span class="underline"></span>
-				<ul class="info">
-					<li>
-						<h2><?php echo $this->translate('email:');?></h2>
-						<a href="mailto:<?php echo $child->general['email'];?>"><?php echo $child->general['email'];?></a>
-					</li>
-					<li>
-						<h2><?php echo $this->translate('phone:');?></h2>
-						<?php echo $child->general['phone'];?>
-					</li>					
-				</ul>
-				<ul class="social">
-					<li>
-						<a href="<?php echo $child->general['vimeo'];?>"><img src="<?php echo $this->basePath() . '/images/vimeo-icon.png';?>" target="_blank" /></a>
-					</li>
-					<li>
-						<a href="<?php echo $child->general['youtube'];?>"><img src="<?php echo $this->basePath() . '/images/youtube-icon.png';?>" target="_blank" /></a>
-					</li>					
-					<li>
-						<a href="<?php echo $child->general['twitter'];?>"><img src="<?php echo $this->basePath() . '/images/twitter-icon.png';?>" target="_blank" /></a>
-					</li>
-					<li>
-						<a href="<?php echo $child->general['facebook'];?>"><img src="<?php echo $this->basePath() . '/images/facebook-icon.png';?>" target="_blank" /></a>
-					</li>
-				</ul>
-			</div> 
         </footer>        
       <?php echo $this->inlineScript()->prependFile($this->basePath() . '/js/main-1.0.0.js', 'text/javascript'); ?>
         

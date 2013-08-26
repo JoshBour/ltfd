@@ -3,7 +3,7 @@ namespace Admin\Form;
 
 use Zend\Form\Fieldset;
 use Zend\InputFilter\InputFilterProviderInterface;
-use DoctrineORMModule\Stdlib\Hydrator\DoctrineEntity;
+use DoctrineORMModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use Admin\Entity\Film;
 
 class FilmFieldset extends Fieldset implements InputFilterProviderInterface{
@@ -19,7 +19,7 @@ class FilmFieldset extends Fieldset implements InputFilterProviderInterface{
 		
 		$this->entityManager = $sm->get('Doctrine\ORM\EntityManager');
 		$this->translator = $sm->get('translator');
-		$this->setHydrator(new DoctrineEntity($this->entityManager,'Admin\Entity\Film'))
+		$this->setHydrator(new DoctrineHydrator($this->entityManager,'Admin\Entity\Film'))
 			->setObject(new Film());
 		
 		#$this->setAttribute('method','post');

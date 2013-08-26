@@ -4,8 +4,9 @@
 
 	// shows the errors
 	function showErrors(errors,section){
-		if($('#errors').is(':visible')){
-			$('#errors').detach();
+        var errorsDiv = $('#errors');
+		if(errorsDiv.is(':visible')){
+            errorsDiv.detach();
 		}
 		var errorList = '<ul id="errors">';
 		if(errors instanceof Array){
@@ -28,7 +29,7 @@
 			flash = $('<div />',{
 				id : "flash",
 				text : message
-			}).prependTo('#content');
+			}).prependTo('body');
 		}
 		flash.setRemoveTimeout(5000);
 	}	

@@ -5,7 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="\Game\Repository\GameRepository")
  * @ORM\Table(name="games")
  */
 class Game
@@ -64,6 +64,9 @@ class Game
         $this->categories = new ArrayCollection();
     }
 
+    public function getAvatar(){
+        return strtolower(implode('',preg_split("/[\s,\:\-\!]+/", $this->name)));
+    }
 
     /**
      * @param mixed $categories

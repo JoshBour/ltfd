@@ -13,6 +13,16 @@ class Module
 		$moduleRouteListener->attach($eventManager);
 	}
 
+    public function getServiceConfig(){
+        return array(
+            'factories' => array(
+                'game_search_form' => function($sm){
+                    return new Form\SearchForm($sm);
+                }
+            )
+        );
+    }
+
 	public function getControllerConfig(){
 		return array(
 				'invokables' => array(

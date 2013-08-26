@@ -19,8 +19,8 @@ class LanguageController extends AbstractActionController
 		}else{
 			$session->locale = null;
 		}
-		$url = $this->getRequest()->getHeader('Referer')->getUri();
-		$this->redirect()->toUrl($url);
+		#$url = $this->getRequest()->getHeader('Referer')->getUri();
+		#$this->redirect()->toUrl($url);
 		return $response;
 	}
 	

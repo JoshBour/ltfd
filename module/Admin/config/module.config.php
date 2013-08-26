@@ -1,4 +1,5 @@
 <?php
+namespace Admin;
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -8,20 +9,19 @@
  */
 
 return array(
-	'doctrine' => array(
-	    'driver' => array(
-	        'zfcuser_entity' => array(
-	            // customize path
-	            'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
-	            'paths' => array(__DIR__ . '/../src/Admin/Entity'),
-	        ),
-	        'orm_default' => array(
-	            'drivers' => array(
-	                'Admin\Entity' => 'zfcuser_entity',
-	            ),
-	        ),
-	    ),
-	),
+    'doctrine' => array(
+        'driver' => array(
+            'entity' => array(
+                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+                'paths' => array(__DIR__ . '/../src/' . __NAMESPACE__ . '/Entity'),
+            ),
+            'orm_default' => array(
+                'drivers' => array(
+                    __NAMESPACE__ . '\Entity' => 'entity',
+                ),
+            ),
+        ),
+    ),
     'router' => array(
         'routes' => array(
             'admin_main' => array(

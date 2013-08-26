@@ -1,4 +1,5 @@
 <?php
+namespace Application;
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -8,6 +9,19 @@
  */
 
 return array(
+    'doctrine' => array(
+        'driver' => array(
+            'entity' => array(
+                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+                'paths' => array(__DIR__ . '/../src/' . __NAMESPACE__ . '/Entity'),
+            ),
+            'orm_default' => array(
+                'drivers' => array(
+                    __NAMESPACE__ . '\Entity' => 'entity',
+                ),
+            ),
+        ),
+    ),
     'router' => array(
         'routes' => array(
  			'language' => array(
@@ -31,36 +45,56 @@ return array(
                     ),
                 ),
             ),
-            'portfolio' => array(
+            'about' => array(
 				'type' => 'segment',
 				'options' => array(
-					'route' => '/portfolio[/[:category]]',
+					'route' => '/about[/]',
 					'defaults' => array(
 						'controller' => 'Application\Controller\Index',
-						'action' => 'portfolio',
+						'action' => 'about',
+					),
+				),
+			),
+            'faq' => array(
+				'type' => 'segment',
+				'options' => array(
+					'route' => '/faq[/]',
+					'defaults' => array(
+						'controller' => 'Application\Controller\Index',
+						'action' => 'faq',
+					),
+				),
+			),	
+            'tos' => array(
+				'type' => 'segment',
+				'options' => array(
+					'route' => '/tos[/]',
+					'defaults' => array(
+						'controller' => 'Application\Controller\Index',
+						'action' => 'tos',
 					),
 				),
 			),
             'team' => array(
-				'type' => 'Literal',
-				'options' => array(
-					'route' => '/team',
-					'defaults' => array(
-						'controller' => 'Application\Controller\Index',
-						'action' => 'team',
-					),
-				),
-			),	
+                'type' => 'segment',
+                'options' => array(
+                    'route' => '/team[/]',
+                    'defaults' => array(
+                        'controller' => 'Application\Controller\Index',
+                        'action' => 'team',
+                    ),
+                ),
+            ),
             'contact' => array(
-				'type' => 'Literal',
-				'options' => array(
-					'route' => '/contact',
-					'defaults' => array(
-						'controller' => 'Application\Controller\Index',
-						'action' => 'contact',
-					),
-				),
-			),				
+                'type' => 'segment',
+                'options' => array(
+                    'route' => '/contact[/]',
+                    'defaults' => array(
+                        'controller' => 'Application\Controller\Index',
+                        'action' => 'contact',
+                    ),
+                ),
+            ),
         ),
     ),
     'service_manager' => array(

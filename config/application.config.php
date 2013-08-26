@@ -2,14 +2,14 @@
 return array(
     // This should be an array of module namespaces used in the application.
     'modules' => array(
-		#'ZendDeveloperTools',
+		'ZendDeveloperTools',
 		'DoctrineModule',
 		'DoctrineORMModule',
         'Application',
+        'User',
     	'Feed',
 		'Game',
         'Account',
-        'User',
     	#'Admin',
     ),
 
