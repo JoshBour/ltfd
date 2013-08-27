@@ -95,15 +95,50 @@ $(function() {
     $('input[name="gameSearch"]').on('keyup',function(event){
         var key = event.keyCode || event.charCode;
         var value = $(this).val().trim();
-        var findAll = 'false';
-        if( key == 8 || key == 46 ){
-            if(value.length == 0) value = 'allgames';
+//        if(value.length > 1){
+//            var resultList = $('#gamesList');
+//            var jqxhr = $.get(baseUrl + '/game/search/name/' + value, function(data){
+//                resultList.html('').append(data).slideDown();
+//            }).fail(function(){
+//                  addMessage('Something with wrong with the game search, please try again.');
+//            });
+//        }else if(value.length == 0){
+//
+//            if( key == 8 || key == 46 ){
+//                if(value.length == 0) value = 'allgames';
+//            }
+//        }
+        if(value.length == 0) value = 'allgames';
+        if(value.length > 1){
+            var resultList = $('#gamesList');
+            var jqxhr = $.get(baseUrl + '/game/search/name/' + value, function(data){
+                resultList.html('').append(data);
+            }).fail(function(){
+                    addMessage('Something with wrong with the game search, please try again.');
+            });
         }
-        var resultList = $('#gamesList');
-        var jqxhr = $.get(baseUrl + '/game/search/name/' + value, function(data){
-            resultList.html('').append(data);
-        }).fail(function(){
-              addMessage('Something with wrong with the game search, please try again.');
-        });
+    });
+
+    $(document).on('mouseenter','#gamesList li',function(e){
+        var item = $(this);
+        if(!item.is(':animated'))
+            item.animate({
+                "margin-top" : "7px",
+                "margin-bottom" : "13px"
+            },200);
+    });
+
+    $(document).on('mouseleave','#gamesList li',function(e){
+        var item = $(this);
+        item.animate({
+            "margin-top" : "10px",
+            "margin-bottom" : "10px"
+        },200);
+    });
+
+    $('.gameFollow').on('click',function(e){
+        e.preventDefault();
+        var btn = $(this);
+        var url = btn.attr('url');
     });
 });

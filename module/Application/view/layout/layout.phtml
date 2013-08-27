@@ -43,6 +43,14 @@ $child = $children[0];
 
                     </ul>
                 </nav>
+                <?php if(!$this->identity()){ ?>
+                    <div id="connect">
+                        <a href="<?php echo $this->url('login'); ?>" title="<?php echo $this->translate('Login'); ?>"><?php echo $this->translate('Login'); ?></a>
+                        <a href="<?php echo $this->url('register'); ?>" title="<?php echo $this->translate('Register'); ?>"><?php echo $this->translate('Register'); ?></a>
+                    </div>
+                <?php }else{ ?>
+
+                <?php } ?>
             </div>
         </header>
         <div id="content">

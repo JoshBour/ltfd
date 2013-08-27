@@ -42,36 +42,6 @@ return array(
          			),
          			'may_terminate' => false,
          			'child_routes' => array(
-	         			'login' => array(
-	         					'type' => 'Segment',
-	         					'options' => array(
-	         							'route' => 'login[/]',
-	         							'defaults' => array(
-	         									'controller' => 'Account\Controller\Account',
-	         									'action'     => 'login',
-	         							)
-	         					)
-	         			),
-         				'logout' => array(
-         						'type' => 'Segment',
-         						'options' => array(
-         								'route' => 'logout[/]',
-         								'defaults' => array(
-         										'controller' => 'Account\Controller\Account',
-         										'action'     => 'logout',
-         								)
-         						)
-         				), 
-         				'register' => array(
-         						'type' => 'Segment',
-         						'options' => array(
-         								'route' => 'register[/]',
-         								'defaults' => array(
-         										'controller' => 'Account\Controller\Account',
-         										'action'     => 'register',
-         								)
-         						)
-         				),         				
          				'delete' => array(
          						'type' => 'Segment',
          						'options' => array(
@@ -104,7 +74,37 @@ return array(
          				),
          			)
          		)
-         	),                         
+         	),
+            'login' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/login[/]',
+                    'defaults' => array(
+                        'controller' => 'Account\Controller\Account',
+                        'action'     => 'login',
+                    )
+                )
+            ),
+            'logout' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/logout[/]',
+                    'defaults' => array(
+                        'controller' => 'Account\Controller\Account',
+                        'action'     => 'logout',
+                    )
+                )
+            ),
+            'register' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/register[/]',
+                    'defaults' => array(
+                        'controller' => 'Account\Controller\Account',
+                        'action'     => 'register',
+                    )
+                )
+            ),
         ), // routes array end
     ), 
     'view_manager' => array(

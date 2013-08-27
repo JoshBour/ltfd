@@ -5,6 +5,7 @@ use Zend\Form\Form;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Authentication\AuthenticationService;
+use Account\Entity\Account;
 
 class AccountController extends AbstractActionController
 {
@@ -31,38 +32,41 @@ class AccountController extends AbstractActionController
     public function loginAction()
     {
     	if(!$user = $this->identity()){
-    		$errors = array();
+            $entity = new Account();
     		$loginForm = $this->getLoginForm();
+            $loginForm->bind($entity);
 			if($this->getRequest()->isPost()){
-				$loginForm->setData($this->getRequest()->getPost());
+                $data = $this->getRequest()->getPost();
+                $loginForm->setData($data);
 				if($loginForm->isValid()){
 					$authService = $this->getAuthenticationService();
-					$data = $loginForm->getData();
-					
-					$adapter = $authService->getAdapter();
-					$adapter->setIdentityValue($data['username']);
-					$adapter->setCredentialValue($data['password']);
-					$authResult = $authService->authenticate();
-					if($authResult->isValid()){
-						if($data['rememberme'] && ((int)$data['rememberme'] == 1)){
-							$this->getAuthStorage()->setRememberMe(1);
-							$authService->setStorage($this->getAuthStorage());
-						}
-						$authService->getStorage()->write($authResult->getIdentity());
-						return $this->redirect()->toRoute('admin_main/films');
-					}else{
-						foreach($authResult->getMessages() as $message){
-							echo '-' . $message . '<br />';
-						}
-					}
-				}
+                    $adapter = $authService->getAdapter();
+                    $adapter->setIdentityValue($entity->getUsername());
+                    $adapter->setCredentialValue($entity->getPassword());
+                    $authResult = $authService->authenticate();
+                    if($authResult->isValid()){
+                        if($data['remember'] && ((int)$data['remember'] == 1)){
+                            $this->getAuthStorage()->setRememberMe(1);
+                            $authService->setStorage($this->getAuthStorage());
+                        }
+                        $authService->getStorage()->write($authResult->getIdentity());
+                        return $this->redirect()->toRoute('home');
+                    }else{
+                        foreach($authResult->getMessages() as $message){
+                            echo '-' . $message . '<br />';
+                        }
+                    }
+				}else{
+                    echo "there was something wrong with the data";
+                }
 				
 			}	
 	        return new ViewModel(array(
-				'loginForm' => $this->getLoginForm()
+				'form' => $this->getLoginForm(),
+                'bodyClass' => 'loginPage'
 			));
     	}else{
-    		return $this->redirect()->toRoute('admin_main/films');
+    		return $this->redirect()->toRoute('home');
     	}
     }
     
@@ -72,7 +76,7 @@ class AccountController extends AbstractActionController
     		$this->getAuthStorage()->forgetMe();
     		$this->getAuthenticationService()->clearIdentity();
     	}
-    	return $this->redirect()->toRoute('account-login');
+    	return $this->redirect()->toRoute('login');
     }    
     
     public function registerAction()

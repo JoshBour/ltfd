@@ -95,7 +95,6 @@ input, select, textarea {
 	color: #fff;
 }
 
-label{font: normal 13px verdana;}
 textarea {resize:vertical; }
 select, textarea { background: #333; color:#fff;}
 input[type="checkbox"] {background: none; border: none;}
@@ -196,6 +195,56 @@ aside h1{
     float:right;
 }
 
+#connect{
+    float:right;
+}
+
+#connect a{
+    display:inline-block;
+    padding:14px 10px;
+    font-weight:bold;
+    color:#ccc;
+}
+
+#connect a:first-of-type{
+    border-right:1px solid #444;
+}
+
+    /* ===================================================== */
+    /*                     Account Module                    */
+    /* ===================================================== */
+
+        /* ===================================================== */
+        /*                     Login Action                      */
+
+            #login{
+                width: 530px;
+                margin: 80px auto 0 auto;
+                padding: 10px;
+                background: #111;
+                border: 1px solid #252525;
+                box-shadow: 5px 5px 20px #050505;
+            }
+
+            body.loginPage{
+                background:#222 url('../images/login-bg.jpg') center center;
+            }
+
+            #login input{
+                width: 375px;
+            }
+
+            #login h1{
+                padding: 0 5px 5px 5px;
+            }
+
+            #login input[name="submit"]{
+                width:150px;
+            }
+
+
+
+
     /* ===================================================== */
     /*                     Game Module                       */
     /* ===================================================== */
@@ -212,22 +261,30 @@ aside h1{
 
             .gameList #main{
                 border-left:1px solid #252525;
-                height:500px;
                 width:667px;
                 padding-left:20px;
             }
 
+            #gamesList{
+                padding-top:10px;
+            }
+
             #gamesList li{
                 display: inline-block;
+                float:left;
                 text-align:center;
-                margin: 5px;
+                margin: 10px 5px;
                 border: 1px solid #222;
                 box-shadow: 2px 2px 5px #000;
             }
 
+            #gamesList li a:hover{
+                text-decoration:none;
+            }
+
             #gamesList li:hover{
                 border: 1px solid #333;
-                box-shadow: 1px 1px 3px #333;
+                box-shadow: 2px 1px 2px #222;
             }
 
             #gamesList li img{
@@ -239,6 +296,11 @@ aside h1{
             #gamesList .gameMeta a, #gamesList .gameMeta p{
                 padding:7px;
                 color:#488ca5;
+            }
+
+            #gamesList .gameMeta a:hover{
+                text-decoration:underline;
+                color:#60b8d8;
             }
 
             #gamesList .gameMeta p{
@@ -373,7 +435,7 @@ aside h1{
 
 		.standardForm input, select, textarea {
 			vertical-align: middle;
-			margin-left: 35px;
+			margin-left: 25px;
 			border-radius: 2px;
 		}
 

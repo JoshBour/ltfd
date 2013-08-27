@@ -10,14 +10,14 @@
             foreach($games as $game):
                 $name = $game->getName();
         ?>
-            <li>
+            <li class="game-<?php echo $game->getId(); ?>">
                 <a href="<?php echo $this->url('game/category',array('name' => $name)); ?>" title="<?php echo $name ?>">
                     <span><?php echo substr($name,0,20); if(strlen($name) > 20) echo ' ..'?></span>
                     <img src="<?php echo $this->basePath() . '/images/games/' . $game->getAvatar() . '-list-icon.jpg'; ?>">
                 </a>
                 <div class="gameMeta">
-                    <a href="<?php echo $this->url('game/profile',array('name' => $name)); ?>">Profile</a> •
-                    <a href="<?php echo $this->url('game/connect',array('type' => 'follow','name' => $name)); ?>">Follow</a> •
+                    <a href="<?php echo $this->url('game/profile',array('name' => $name)); ?>" title="<?php echo $this->translate("The game's profile"); ?>">Profile</a> •
+                    <a href="<?php echo $this->url('game/connect',array('type' => 'follow','name' => $name)); ?>" class="gameFollow" title="<?php echo $this->translate("Follow the game"); ?>">Follow</a> •
                     <p class="gameFollowers"><?php echo count($game->getFollowers()); ?></p>
                 </div>
             </li>

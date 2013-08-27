@@ -21,7 +21,7 @@ class Account
 
     /**
      * @ORM\Column(type="string")
-     * @ORM\Column(length=25)
+     * @ORM\Column(length=15)
      */
     private $username;
 
@@ -298,7 +298,7 @@ class Account
 
     public static function hashPassword($user, $password)
     {
-        return ($user->getPassword() === crypt($password, $user->getPassword()));
+        return ($user->getPassword() === crypt($password . 'leetfeedpenbour', $user->getPassword()));
     }
 
 }

@@ -33,10 +33,12 @@ class Module
 						return $authService;
 				}
 				,
-				'user_login_form' => function($sm){
+				'account_login_form' => function($sm){
 					$em = $sm->get('Doctrine\ORM\EntityManager');
-					$form = new \User\Form\Login($em);
-					$form->setInputFilter(new \User\Form\LoginFilter());
+                    $fieldset = new \Account\Form\LoginFieldset($sm);
+                    $fieldset->setUseAsBaseFieldset(true);
+                    $form = new \Account\Form\LoginForm($em);
+                    $form->add($fieldset);
 					return $form;
 				},
 				'user_register_form' => function($sm){
