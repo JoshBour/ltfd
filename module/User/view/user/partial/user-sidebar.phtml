@@ -1,0 +1,15 @@
+<h1><?php echo $this->user->getUsername(); ?></h1>
+<ul id="userSettingsTabs">
+    <?php
+    $pages = array(
+        $this->translate('preferences'),
+        $this->translate('games'),
+        $this->translate('details'),
+        $this->translate('followers'),
+        $this->translate('feeds')
+    );
+    foreach($pages as $page):
+        ?>
+        <li<?php echo ($page == $this->activePage) ? ' class="active"' : ''; ?>><a href="<?php echo $this->url('user/' . $page); ?>" title="<?php echo ucfirst($page); ?>"><?php echo ucfirst($page); ?></a></li>
+    <?php endforeach; ?>
+</ul>

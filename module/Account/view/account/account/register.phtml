@@ -1,33 +1,45 @@
-<h1>Register</h1>
+<div id="register">
+    <h1>Register</h1>
 
-<?php
-$form = $registerForm;
-$form->prepare();
-$form->setAttribute('action', $this->url('account-register'));
-?>
+    <?php
+    $form->prepare();
+    $form->setAttribute('action', $this->url('register'));
+    $fieldset = $form->get('account');
 
-<?php echo $this->form()->openTag($form) ?>
-        <?php #echo $this->formElementErrors($form->get('identity')) ?>
+    echo $this->form()->openTag($form);
+    echo $this->formHidden($form->get('security'));
+    ?>
+    <div class="element">
+        <?php
+        echo $this->formElementErrors($fieldset->get('username'), array('class' => 'formError'));
+        echo $this->formLabel($fieldset->get('username'));
+        echo $this->formInput($fieldset->get('username'));
+        ?>
+    </div>
 
-        <div class="element">
-        <?php echo $this->formRow($form->get('username')) ?>
-		</div>
+    <div class="element">
+        <?php
+        echo $this->formElementErrors($fieldset->get('password'), array('class' => 'formError'));
+        echo $this->formLabel($fieldset->get('password'));
+        echo $this->formInput($fieldset->get('password'));
+        ?>
+    </div>
 
-        <div class="element">
-        <?php echo $this->formRow($form->get('password')) ?>
-		</div>
-		
-        <div class="element">
-        <?php echo $this->formRow($form->get('email')) ?>
-		</div>
-		
-
-		<?php #echo $this->formElement($form->get('security')); ?>
-        <div class="element">
-        	<?php echo $this->formSubmit($form->get('submit')); ?>
-        </div>
-
-<?php echo $this->form()->closeTag() ?>
+    <div class="element">
+        <?php
+        echo $this->formElementErrors($fieldset->get('email'), array('class' => 'formError'));
+        echo $this->formLabel($fieldset->get('email'));
+        echo $this->formInput($fieldset->get('email'));
+        ?>
+    </div>
 
 
-Already registered? <a href="<?php echo $this->url('account-login') ?>">Login!</a>
+    <div class="element">
+        <?php echo $this->formSubmit($form->get('submit')->setValue($this->translate('Register'))); ?>
+    </div>
+
+    <?php echo $this->form()->closeTag() ?>
+
+
+    Already registered? <a href="<?php echo $this->url('login') ?>">Login!</a>
+</div>

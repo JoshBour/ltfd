@@ -32,24 +32,42 @@ $child = $children[0];
 			<div id="nojs">
 				<?php echo $this->translate("Please enable javascript for the site to work properly.");?>
 			</div>
-		</noscript>    	
+		</noscript>
+        <?php
+        if(isset($flashMessages) && count($flashMessages)) :
+            ?>
+            <div id="flash">
+                <ul class="flashMessages">
+                    <?php foreach ($child->flashMessages as $fMessage) : ?>
+                        <li><?php echo $fMessage; ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
         <header>
             <div id="topWrapper">
                 <div id="logo">
                     <a href="<?php echo $this->url('home'); ?>" title="<?php echo $this->translate("Return to home"); ?>">Logo</a>
                 </div>
-                <nav>
-                    <ul>
-
-                    </ul>
-                </nav>
                 <?php if(!$this->identity()){ ?>
                     <div id="connect">
                         <a href="<?php echo $this->url('login'); ?>" title="<?php echo $this->translate('Login'); ?>"><?php echo $this->translate('Login'); ?></a>
                         <a href="<?php echo $this->url('register'); ?>" title="<?php echo $this->translate('Register'); ?>"><?php echo $this->translate('Register'); ?></a>
                     </div>
                 <?php }else{ ?>
+                    <nav>
+                        <ul>
+                            <li>
+                                <a href="<?php echo $this->url('profile',array('user' => $user->getUsername())); ?>" title="<?php echo $this->translate("My Profile"); ?>">
 
+                                    <?php echo ucfirst($user->getUsername()); ?>
+                                </a>
+                            </li>
+                            <li><a href="<?php echo $this->url('games'); ?>" title="<?php echo $this->translate("Games List"); ?>"><?php echo $this->translate('Games'); ?></a></li>
+                            <li><a href="<?php echo $this->url('user/preferences'); ?>" title="<?php echo $this->translate('Settings'); ?>"><img src="<?php echo $this->basePath() . '/images/settings-icon.png';  ?>" alt="settings" class="hoverable" /></a></li>
+                            <li><a href="<?php echo $this->url('logout'); ?>" title="<?php echo $this->translate('Logout'); ?>"><img src="<?php echo $this->basePath() . '/images/logout-icon.png';  ?>" alt="logout" class="hoverable" /></a></li>
+                        </ul>
+                    </nav>
                 <?php } ?>
             </div>
         </header>

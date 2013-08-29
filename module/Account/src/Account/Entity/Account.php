@@ -85,10 +85,42 @@ class Account
      */
     private $groups;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Account\Entity\AccountSocial", mappedBy="account")
+     */
+    private $socials;
+
     public function __construct(){
         $this->followers = new ArrayCollection();
         $this->following = new ArrayCollection();
+        $this->socials = new ArrayCollection();
         $this->groups = new ArrayCollection();
+    }
+
+    /**
+     * @param mixed $socials
+     */
+    public function setSocials($socials)
+    {
+        $this->socials[] = $socials;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSocials()
+    {
+        return $this->socials;
+    }
+
+    public function addSocials($socials){
+        foreach($socials as $social)
+            $this->socials->add($social);
+    }
+
+    public function removeSocials($socials){
+        foreach($socials as $social)
+            $this->socials->removeElement($social);
     }
 
     /**

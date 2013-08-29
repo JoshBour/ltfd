@@ -36,9 +36,9 @@ return array(
         	'user' => array(
         		'type' => 'segment',
         		'options' => array(
-        			'route' => '/user ',
+        			'route' => '/user',
         			'defaults' => array(
-        				'contoller' => 'User\Controller\User',
+        				'controller' => 'User\Controller\User',
         			)
         		),
         		'may_terminate' => false,

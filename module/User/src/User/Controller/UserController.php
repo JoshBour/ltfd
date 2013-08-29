@@ -26,15 +26,21 @@ class UserController extends AbstractActionController
 
 	public function preferencesAction()
 	{
-		return new ViewModel();
+		return new ViewModel(array(
+            'bodyClass' => 'userPage'
+        ));
 	}
 
 	public function detailsAction(){
-		return new ViewModel();
+        return new ViewModel(array(
+            'bodyClass' => 'userPage'
+        ));
 	}
 
 	public function gamesAction(){
-		return new ViewModel();
+        return new ViewModel(array(
+            'bodyClass' => 'userPage'
+        ));
 	}
 
 	public function followAction(){
@@ -46,11 +52,15 @@ class UserController extends AbstractActionController
 	}
 
 	public function followersAction(){
-		return new ViewModel();
+        return new ViewModel(array(
+            'bodyClass' => 'userPage'
+        ));
 	}
 
 	public function feedsAction(){
-		return new ViewModel();
+        return new ViewModel(array(
+            'bodyClass' => 'userPage'
+        ));
 	}
 	 
 

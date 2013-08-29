@@ -81,7 +81,7 @@ h1, h2, h3{margin: 5px 0; text-align:center; font-size:16px;}
 
 strong {font-weight: bold;}
 
-a {color: #488ca5; text-decoration: none;}
+a {color: #fff; text-decoration: none;}
 /*a:visited {color: #000;} */
 a:hover {text-decoration: underline;}
 
@@ -119,23 +119,11 @@ header #topWrapper{
     margin:0 auto;
 }
 
-header nav a{
-	color:#fff;
-}
-
-header nav ul li{
-	display:inline-block;
-	margin: 22px 50px;
-	color:#fff;
-	font:normal 25px 'Yanone Kaffeesatz', sans-serif;
-	vertical-align: top;
-}
-
 #logo a{
     display: block;
     height: 20px;
     width: 99px;
-    margin-top: 10px;
+    margin-top: 9px;
     background: transparent url('../images/logo.png') no-repeat 0 0;
     text-indent: -9999px;
     -webkit-transition: background 0.2s linear;
@@ -148,7 +136,7 @@ header nav ul li{
     background-position: 0 -21px;
 }
 
-header nav, header #logo{
+header #logo{
     float:left;
 }
 
@@ -195,7 +183,47 @@ aside h1{
     float:right;
 }
 
-#connect{
+nav ul{
+    margin-top:9px;
+}
+
+nav ul a{
+    display:inline-block;
+    color:#aaa;
+    font-weight:bold;
+    vertical-align: middle;
+}
+
+nav ul li:first-child a{
+    padding-left:20px;
+    background:transparent url('../images/user-dot-icon.png') center left no-repeat;
+    transition:background 0.5s;
+   -webkit-transition:background 0.5s;
+}
+
+nav ul li:first-child a:hover{
+    background:transparent url('../images/user-dot-icon-hover.png') center left no-repeat;
+}
+
+nav ul li:first-child{
+    border-right:1px solid #555;
+}
+
+nav ul img{
+    vertical-align: middle;
+}
+
+nav ul li{
+    display:inline-block;
+    padding:0 8px;
+}
+
+nav ul a:hover{
+    color:#eee;
+    text-decoration:none;
+}
+
+#connect, nav{
     float:right;
 }
 
@@ -217,7 +245,7 @@ aside h1{
         /* ===================================================== */
         /*                     Login Action                      */
 
-            #login{
+            #login, #register{
                 width: 530px;
                 margin: 80px auto 0 auto;
                 padding: 10px;
@@ -226,23 +254,59 @@ aside h1{
                 box-shadow: 5px 5px 20px #050505;
             }
 
-            body.loginPage{
+            body.connectPage{
                 background:#222 url('../images/login-bg.jpg') center center;
             }
 
-            #login input{
+            #login input, #register input{
                 width: 375px;
             }
 
-            #login h1{
+            #login h1, #register h1{
                 padding: 0 5px 5px 5px;
             }
 
-            #login input[name="submit"]{
+            #login input[name="submit"], #register input[name="submit"]{
                 width:150px;
             }
 
 
+    /* ===================================================== */
+    /*                      User Module                      */
+    /* ===================================================== */
+        #userSettingsTabs li{
+            border-bottom: 1px solid #222;
+            border-top: 1px solid #111;
+            word-wrap: break-word;
+        }
+
+        .userPage aside h1{
+            text-align:center;
+        }
+
+        #userSettingsTabs li a{
+            color: #666;
+            padding: 10px 10px 10px 10px;
+            border: 1px solid transparent;
+            font: bold 12px Arial;
+            display: block;
+        }
+
+        #userSettingsTabs li.active a{
+            background: url('../images/tab-list-dark.png') 50% 50%;
+            border: 1px solid #333;
+        }
+
+        #userSettingsTabs li:hover a{
+            background: url('../images/tab-list-light.png') 50% 50%;
+            border: 1px solid #333;
+            color:#bbb;
+            text-decoration:none;
+        }
+
+
+        /* ===================================================== */
+        /*                 Preferences Action                    */
 
 
     /* ===================================================== */
@@ -251,22 +315,9 @@ aside h1{
 
         /* ===================================================== */
         /*                     List Action                       */
-            .gameList aside{
-                width:260px;
-            }
 
             .gameList aside input[name="gameSearch"]{
                 width:244px;
-            }
-
-            .gameList #main{
-                border-left:1px solid #252525;
-                width:667px;
-                padding-left:20px;
-            }
-
-            #gamesList{
-                padding-top:10px;
             }
 
             #gamesList li{
@@ -295,7 +346,7 @@ aside h1{
 
             #gamesList .gameMeta a, #gamesList .gameMeta p{
                 padding:7px;
-                color:#488ca5;
+                color:#bbb;
             }
 
             #gamesList .gameMeta a:hover{
@@ -316,6 +367,19 @@ aside h1{
                 background-image:url('../images/list-header-bg.png');
             }
 
+    /* ===================================================== */
+    /*                   Common Module Values                */
+    /* ===================================================== */
+        .gameList aside, .userPage aside{
+            width:260px;
+        }
+
+        .gameList #main, .userPage #main{
+            border-left:1px solid #252525;
+            width:667px;
+            min-height:500px;
+            padding-left:20px;
+        }
 
 
 	/* ===================================================== */
@@ -334,7 +398,6 @@ aside h1{
 /*                    Common Classes                     */
 /* ===================================================== */
 
-.active{text-decoration:underline;}
 .inactive {display: none;}
 .current {font-weight: bold;}
 .focused {z-index: 9999;}

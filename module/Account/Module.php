@@ -41,14 +41,11 @@ class Module
                     $form->add($fieldset);
 					return $form;
 				},
-				'user_register_form' => function($sm){
+				'account_register_form' => function($sm){
 					$em = $sm->get('Doctrine\ORM\EntityManager');
-					/**
-					 * @var \Zend\Form\Fieldset
-					 */
-					$fieldset = new \User\Form\RegisterFieldset($em);
+					$fieldset = new \Account\Form\RegisterFieldset($sm);
 					$fieldset->setUseAsBaseFieldset(true);
-					$form = new \User\Form\RegisterForm($em);
+					$form = new \Account\Form\RegisterForm($em);
 					$form->add($fieldset);
 					return $form;
 				}

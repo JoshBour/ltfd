@@ -11,7 +11,34 @@ class Module
 		$eventManager        = $e->getApplication()->getEventManager();
 		$moduleRouteListener = new ModuleRouteListener();
 		$moduleRouteListener->attach($eventManager);
+
+        $eventManager->attach('dispatch',array($this,'isLoggedIn'), 10);
 	}
+//
+//    public function init(ModuleManager $moduleManager)
+//    {
+//        // Remember to keep the init() method as lightweight as possible
+//        $events = $moduleManager->getEventManager();
+//
+//    }
+
+
+    public function isLoggedIn(MvcEvent $e){
+        $identity = $e->getApplication()->getServiceManager()->get('auth_service');
+        $controller = explode('\\',$e->getRouteMatch()->getParam('controller'));
+        if(!$identity->hasIdentity()){
+            if($controller[0] == "User"){
+                $url = $e->getRouter()->assemble(array(), array('name' => 'login'));
+                $response=$e->getResponse();
+                $response->getHeaders()->addHeaderLine('Location', $url);
+                $response->setStatusCode(302);
+                $response->sendHeaders();
+                return $response;
+            }
+        }else{
+            $e->getViewModel()->setVariable('user',$identity->getIdentity());
+        }
+    }
 
 	public function getControllerConfig(){
 		return array(

@@ -68,7 +68,7 @@ class GameController extends AbstractActionController
     }
 
     /**
-     * @return Doctrine\ORM\EntityManager
+     * @return \Doctrine\ORM\EntityManager
      */
     public function getEntityManager() {
 		if (!$this -> entityManager) {
@@ -82,7 +82,7 @@ class GameController extends AbstractActionController
 	}
 
     /**
-     * @return Zend\I18n\Translator\Translator
+     * @return \Zend\I18n\Translator\Translator
      */
     public function getTranslator() {
 		if (!$this -> translator) {
