@@ -65,7 +65,7 @@ class Game
     }
 
     public function getAvatar(){
-        return strtolower(implode('',preg_split("/[\s,\:\-\!]+/", $this->name)));
+        return '/games/' . strtolower(implode('',preg_split("/[\s,\:\-\!]+/", $this->name)));
     }
 
     /**

@@ -74,7 +74,7 @@ body {
     line-height:1;
 }
 
-h1 {color: #fff; border-bottom: 1px solid #797979;}
+h1 {color: #c4c4c4; border-bottom: 1px solid #797979;}
 h2 {color: #fff;}
 h3 {color: #405B65}
 h1, h2, h3{margin: 5px 0; text-align:center; font-size:16px;}
@@ -173,7 +173,6 @@ aside{
 
 aside h1{
     font-weight:normal;
-    border-bottom-color:#444;
     padding-bottom:3px;
     color:#c4c4c4;
     text-align:left;
@@ -274,14 +273,11 @@ nav ul a:hover{
     /* ===================================================== */
     /*                      User Module                      */
     /* ===================================================== */
+
         #userSettingsTabs li{
             border-bottom: 1px solid #222;
             border-top: 1px solid #111;
             word-wrap: break-word;
-        }
-
-        .userPage aside h1{
-            text-align:center;
         }
 
         #userSettingsTabs li a{
@@ -304,9 +300,75 @@ nav ul a:hover{
             text-decoration:none;
         }
 
+        .userPage #main h1{
+            font-weight:normal;
+            text-align:left;
+        }
+
+        .userPage h1{
+            padding:7px 0;
+        }
+
+        .userPage #main form{
+            width:490px;
+            margin:25px auto;
+        }
+
+        .userPage #main form img{
+            vertical-align: middle;
+            padding-right: 5px;
+        }
+
+        .userPage #main input{
+            width:319px;
+        }
+
+        .userPage #main form input[name="submit"]{
+            width:150px;
+        }
+
+        .userPage #profileImage{
+            display: block;
+            width: 200px;
+            height:200px;
+            border: 3px solid #333;
+            margin: 20px auto;
+        }
 
         /* ===================================================== */
         /*                 Preferences Action                    */
+
+            ul#following {
+                overflow:auto;
+            }
+
+            #following li{
+                background: #222;
+                margin: 5px auto;
+                overflow: auto;
+                width: 640px;
+                border: 2px solid #0f0f0f;
+                /*box-shadow: 1px 1px 3px #0f0f0f;*/
+            }
+
+            #following li img{
+                vertical-align:middle;
+                margin-right:10px;
+            }
+
+            #following .userInfo{
+               float:left;
+            }
+
+            #following .userInfo img{
+                border: 1px solid #333;
+            }
+
+            #following .userMeta{
+               margin-top:23px;
+                cursor:pointer;
+               float:right;
+            }
 
 
     /* ===================================================== */
@@ -404,6 +466,7 @@ nav ul a:hover{
 .disabled {cursor:default;}
 .edit, .delete, .save, .cancel, .ban, .unban {cursor: pointer;}
 .centered{margin: 0 auto;}
+
 
 .notFound{
 	padding: 10px;
@@ -508,7 +571,7 @@ nav ul a:hover{
 			vertical-align: middle;
 		}
 
-		.standardForm input[type="submit"] {
+		.standardForm input[name="submit"] {
 			float: right;
 			width: 120px;
 		}

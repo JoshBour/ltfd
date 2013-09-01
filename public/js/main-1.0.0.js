@@ -125,21 +125,26 @@ $(function() {
         }
     });
 
-    $(document).on('mouseenter','#gamesList li',function(e){
+    $(document).on('mouseenter','#gamesList li, #following li',function(e){
         var item = $(this);
-        if(!item.is(':animated'))
+        if(!item.hasClass('animated')){
             item.animate({
-                "margin-top" : "7px",
-                "margin-bottom" : "13px"
-            },200);
+                marginTop : '-=3',
+                marginBottom : '+=3'
+            },100);
+            item.addClass('animated');
+        }
     });
 
-    $(document).on('mouseleave','#gamesList li',function(e){
+    $(document).on('mouseleave','#gamesList li, #following li',function(e){
         var item = $(this);
-        item.animate({
-            "margin-top" : "10px",
-            "margin-bottom" : "10px"
-        },200);
+        if(item.hasClass('animated')){
+            item.animate({
+                marginTop : '+=3',
+                marginBottom : '-=3'
+            },100);
+            item.removeClass('animated');
+        }
     });
 
     $('.gameFollow').on('click',function(e){

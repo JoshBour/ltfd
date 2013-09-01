@@ -40,6 +40,29 @@ class Module
         }
     }
 
+    public function getServiceConfig(){
+        return array(
+            'factories' => array(
+                'user_socials_form' => function($sm){
+                    $em = $sm->get('Doctrine\ORM\EntityManager');
+                    $fieldset = new \User\Form\SocialsFieldset($sm);
+                    $fieldset->setUseAsBaseFieldset(true);
+                    $form = new \User\Form\SocialsForm($em);
+                    $form->add($fieldset);
+                    return $form;
+                },
+                'user_details_form' => function($sm){
+                    $em = $sm->get('Doctrine\ORM\EntityManager');
+                    $fieldset = new \User\Form\DetailsFieldset($sm);
+                    $fieldset->setUseAsBaseFieldset(true);
+                    $form = new \User\Form\DetailsForm($em);
+                    $form->add($fieldset);
+                    return $form;
+                },
+            )
+        );
+    }
+
 	public function getControllerConfig(){
 		return array(
 				'invokables' => array(

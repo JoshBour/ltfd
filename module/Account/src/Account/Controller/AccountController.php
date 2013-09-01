@@ -49,7 +49,7 @@ class AccountController extends AbstractActionController
                 $data = $this->getRequest()->getPost();
                 $loginForm->setData($data);
 				if($loginForm->isValid()){
-                    $this->loginUser($entity->getUsername(),$entity->getPassword(),$data['remember']);
+                    $this->loginUser($entity->getUsername(),$entity->getPassword(),$data['account']['remember']);
                     return $this->redirect()->toRoute('home');
 				}else{
                     echo "there was something wrong with the data";

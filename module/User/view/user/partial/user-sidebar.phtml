@@ -1,12 +1,12 @@
-<h1><?php echo $this->user->getUsername(); ?></h1>
+<h1><?php echo $this->identity()->getUsername(); ?></h1>
 <ul id="userSettingsTabs">
     <?php
     $pages = array(
-        $this->translate('preferences'),
         $this->translate('games'),
+        $this->translate('feeds'),
         $this->translate('details'),
-        $this->translate('followers'),
-        $this->translate('feeds')
+        $this->translate('socials'),
+        $this->translate('following'),
     );
     foreach($pages as $page):
         ?>

@@ -1,15 +1,16 @@
 <?php
-namespace Account\Form;
+namespace User\Form;
 
 use Zend\Form\Form;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use Zend\InputFilter\InputFilter;
 
-class RegisterForm extends Form
+class DetailsForm extends Form
 {
+
     public function __construct($em)
     {
-        parent::__construct('registerForm');
+        parent::__construct('detailsForm');
 
         $this->setAttributes(array(
             'method' => 'post',
@@ -26,13 +27,14 @@ class RegisterForm extends Form
 
         $this->add(array(
             'name' => 'submit',
-            'type' => 'submit'
+            'type' => 'submit',
         ));
 
         $this->setValidationGroup(array(
             'security',
+            'repassword',
+            'avatar',
             'account' => array(
-                'username',
                 'password',
                 'email'
             )

@@ -3,6 +3,7 @@ namespace Account\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Zend\Filter\Null;
 
 /**
  * @ORM\Entity
@@ -36,6 +37,12 @@ class Account
      * @ORM\Column(length=255)
      */
     private $email;
+
+    /**
+     * @ORM\Column(type="string")
+     * @ORM\Column(length=50)
+     */
+    private $avatar;
 
     /**
      * @ORM\Column(type="datetime")
@@ -86,6 +93,15 @@ class Account
     private $groups;
 
     /**
+     * @ORM\ManyToMany(targetEntity="Game\Entity\Game")
+     * @ORM\JoinTable(name="games_followers",
+     *      joinColumns={@ORM\JoinColumn(name="follower_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="game_id", referencedColumnName="id")}
+     *      )
+     */
+    private $games;
+
+    /**
      * @ORM\OneToMany(targetEntity="Account\Entity\AccountSocial", mappedBy="account")
      */
     private $socials;
@@ -95,8 +111,31 @@ class Account
         $this->following = new ArrayCollection();
         $this->socials = new ArrayCollection();
         $this->groups = new ArrayCollection();
+        $this->games = new ArrayCollection();
+
     }
 
+    public function getAvatarIcon($dimensionX = 35, $dimensionY = 35){
+        if(empty($this->avatar)){
+            return 'user-default-' . $dimensionX . 'x' . $dimensionY . '.jpg';
+        }else{
+            $extension = pathinfo($this->avatar);
+            $avatarName = '/users/'. $this->id .'/user-avatar-' . $dimensionX . 'x'.$dimensionY . '.' . $extension['extension'];
+            return $avatarName;
+        }
+    }
+
+    public function getAvatar(){
+        if(is_null($this->avatar)){
+            return 'user-default.jpg';
+        }else{
+            return '/users/' . $this->id . '/' . $this->avatar;
+        }
+    }
+
+    public function setAvatar($avatar){
+        $this->avatar = $avatar;
+    }
     /**
      * @param mixed $socials
      */
@@ -121,6 +160,22 @@ class Account
     public function removeSocials($socials){
         foreach($socials as $social)
             $this->socials->removeElement($social);
+    }
+
+    /**
+     * @param mixed $games
+     */
+    public function setGames($games)
+    {
+        $this->games = $games;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGames()
+    {
+        return $this->games;
     }
 
     /**

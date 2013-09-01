@@ -43,21 +43,21 @@ return array(
         		),
         		'may_terminate' => false,
         		'child_routes' => array(
-        			'preferences' => array(
-        				'type' => 'literal',
-        				'options' => array(
-	        				'route' => '/preferences',
-	        				'defaults' => array(
-	        					'action' => 'preferences'
-	        				)
-        				)
-        			),
         			'details' => array(
         				'type' => 'literal',
         				'options' => array(
 	        				'route' => '/details',
 	        				'defaults' => array(
 	        					'action' => 'details'
+	        				)
+        				)
+        			),
+        			'socials' => array(
+        				'type' => 'literal',
+        				'options' => array(
+	        				'route' => '/socials',
+	        				'defaults' => array(
+	        					'action' => 'socials'
 	        				)
         				)
         			),
@@ -70,12 +70,12 @@ return array(
 	        				)
         				)
         			),
-        			'followers' => array(
+        			'following' => array(
         				'type' => 'literal',
         				'options' => array(
-	        				'route' => '/followers',
+	        				'route' => '/following',
 	        				'defaults' => array(
-	        					'action' => 'followers'
+	        					'action' => 'following'
 	        				)
         				)
         			),

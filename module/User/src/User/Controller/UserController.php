@@ -10,35 +10,55 @@ use Zend\Authentication\AuthenticationService;
 
 class UserController extends AbstractActionController
 {
-	/**
-	 * @var AuthenticationService
-	 */
-	private $authService = null;
+    /**
+     * @var \Doctrine\ORM\EntityManager
+     */
+    private $entityManager;
 
-	/**
-	 * @var \User\Model\AuthStorage
-	 */
-	private $authStorage = null;
+    /**
+     * @var \Zend\Form\Form
+     */
+    private $detailsForm;
 
-	public function profileAction(){
+    /**
+     * @var \Zend\Form\Form
+     */
+    private $socialsForm;
+
+    public function profileAction(){
 		return new ViewModel();
 	}
 
-	public function preferencesAction()
+	public function detailsAction()
 	{
+        $form = $this->getDetailsForm();
+        $user = $this->identity();
+        $form->bind($user);
 		return new ViewModel(array(
+            'form' =>   $form,
             'bodyClass' => 'userPage'
         ));
 	}
 
-	public function detailsAction(){
+	public function socialsAction(){
+        $form = $this->getSocialsForm();
+        $user = $this->identity();
+        $form->bind($user);
+
+
+
         return new ViewModel(array(
+            'form' => $form,
             'bodyClass' => 'userPage'
         ));
 	}
 
 	public function gamesAction(){
+        $user = $this->getEntityManager()->getRepository('\Account\Entity\Account')->find($this->identity()->getId());
+        $games = $user->getGames();
+
         return new ViewModel(array(
+            'games' => $games,
             'bodyClass' => 'userPage'
         ));
 	}
@@ -51,8 +71,11 @@ class UserController extends AbstractActionController
 		return new JsonModel();
 	}
 
-	public function followersAction(){
+	public function followingAction(){
+        $user = $this->getEntityManager()->getRepository('\Account\Entity\Account')->find($this->identity()->getId());
+        $following = $user->getFollowing();
         return new ViewModel(array(
+            'following' => $following,
             'bodyClass' => 'userPage'
         ));
 	}
@@ -62,27 +85,40 @@ class UserController extends AbstractActionController
             'bodyClass' => 'userPage'
         ));
 	}
-	 
 
-	public function getAuthenticationService(){
-		if(!$this->authService){
-			$this->setAuthenticationService($this->getServiceLocator()->get('auth_service'));
-		}
-		return $this->authService;
-	}
+    /**
+     * @return \Doctrine\ORM\EntityManager
+     */
+    public function getEntityManager() {
+        if (!$this -> entityManager) {
+            $this -> setEntityManager($this -> getServiceLocator() -> get('Doctrine\ORM\EntityManager'));
+        }
+        return $this -> entityManager;
+    }
 
-	public function setAuthenticationService($authService){
-		$this->authService = $authService;
-	}
+    public function setEntityManager($em) {
+        $this -> entityManager = $em;
+    }
 
-	public function getAuthStorage(){
-		if(!$this->authStorage){
-			$this->setAuthStorage($this->getServiceLocator()->get('authStorage'));
-		}
-		return $this->authStorage;
-	}
+    public function getSocialsForm(){
+        if(!$this->socialsForm){
+            $this->setSocialsForm($this->getServiceLocator()->get('user_socials_form'));
+        }
+        return $this->socialsForm;
+    }
 
-	public function setAuthStorage($authStorage){
-		$this->authStorage = $authStorage;
-	}
+    public function setSocialsForm($socialsForm){
+        $this->socialsForm = $socialsForm;
+    }
+
+    public function getDetailsForm(){
+        if(!$this->detailsForm){
+            $this->setDetailsForm($this->getServiceLocator()->get('user_details_form'));
+        }
+        return $this->detailsForm;
+    }
+
+    public function setDetailsForm($detailsForm){
+        $this->detailsForm = $detailsForm;
+    }
 }
