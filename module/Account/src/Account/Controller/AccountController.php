@@ -89,9 +89,10 @@ class AccountController extends AbstractActionController
                     $entity->setRegisterDate(date("Y-m-d H:i:s", time()));
                     $entity->setIsActivated(0);
                     $entity->setIp($_SERVER['REMOTE_ADDR']);
-                    $entity->setPassword(crypt($entity->getPassword().'leetfeedpenbour'));
+                    $entity->setPassword(\Account\Entity\Account::getHashedPassword($entity->getPassword()));
                     $em->persist($entity);
                     $em->flush();
+                    mkdir(PUBLIC_PATH . '/images/users/' . $entity->getId());
                     $this->flashMessenger()->addMessage($this->getTranslator()->translate('Your account has been created. Make sure to check your emails for the validation link.'));
                     $this->loginUser($entity->getUsername(),$data['account']['password']);
                     return $this->redirect()->toRoute('home');

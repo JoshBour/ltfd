@@ -20,6 +20,14 @@ class SocialsFieldset extends Fieldset implements InputFilterProviderInterface
 
         $this->entityManager = $sm->get('Doctrine\ORM\EntityManager');
         $this->translator = $sm->get('translator');
+        $entity = $this->entityManager->getRepository('Account\Entity\Account')->find($sm->get('auth_service')->getIdentity()->getId());
+
+        $socials = array();
+        foreach($entity->getSocials() as $social){
+            if(!empty($social)){
+                $socials[$social->getSocial()->getId()] = $social->getValue();
+            }
+        }
         $this->setHydrator(new DoctrineHydrator($this->entityManager, 'Account\Entity\Account'))
             ->setObject(new Account());
 
@@ -32,7 +40,8 @@ class SocialsFieldset extends Fieldset implements InputFilterProviderInterface
             'name' => 'facebook',
             'type' => 'text',
             'attributes' => array(
-              'placeholder' => $this->translator->translate('e.g www.facebook.com/leetfeed')
+                'placeholder' => $this->translator->translate('e.g www.facebook.com/leetfeed'),
+                'value' => (!empty($socials[1]) ? $socials[1] : '')
             ),
             'options' => array(
                 'label' => $this->translator->translate('Facebook:')
@@ -43,7 +52,8 @@ class SocialsFieldset extends Fieldset implements InputFilterProviderInterface
             'name' => 'twitter',
             'type' => 'text',
             'attributes' => array(
-                'placeholder' => $this->translator->translate('e.g www.twitter.com/leetfeed')
+                'placeholder' => $this->translator->translate('e.g www.twitter.com/leetfeed'),
+                'value' => (!empty($socials[2]) ? $socials[2] : '')
             ),
             'options' => array(
                 'label' => $this->translator->translate('Twitter:')
@@ -54,7 +64,8 @@ class SocialsFieldset extends Fieldset implements InputFilterProviderInterface
             'name' => 'youtube',
             'type' => 'text',
             'attributes' => array(
-                'placeholder' => $this->translator->translate('e.g www.youtube.com/leetfeed')
+                'placeholder' => $this->translator->translate('e.g www.youtube.com/leetfeed'),
+                'value' => (!empty($socials[3]) ? $socials[3] : '')
             ),
             'options' => array(
                 'label' => $this->translator->translate('Youtube:')
@@ -65,7 +76,8 @@ class SocialsFieldset extends Fieldset implements InputFilterProviderInterface
             'name' => 'website',
             'type' => 'text',
             'attributes' => array(
-                'placeholder' => $this->translator->translate('e.g www.leetfeed.com')
+                'placeholder' => $this->translator->translate('e.g www.leetfeed.com'),
+                'value' => (!empty($socials[4]) ? $socials[4] : '')
             ),
             'options' => array(
                 'label' => $this->translator->translate('Website:')

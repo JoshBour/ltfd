@@ -34,11 +34,12 @@ $child = $children[0];
 			</div>
 		</noscript>
         <?php
-        if(isset($flashMessages) && count($flashMessages)) :
+        $messages = $this->flashMessenger()->getMessages();
+        if(!empty($messages)) :
             ?>
             <div id="flash">
                 <ul class="flashMessages">
-                    <?php foreach ($child->flashMessages as $fMessage) : ?>
+                    <?php foreach ($messages as $fMessage) : ?>
                         <li><?php echo $fMessage; ?></li>
                     <?php endforeach; ?>
                 </ul>

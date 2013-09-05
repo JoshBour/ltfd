@@ -115,22 +115,37 @@ class Account
 
     }
 
+    /**
+     * TODO refactor this algorithm to the best
+     */
+    public function getUpdateValidationGroup($data) {
+        $validationGroup = array();
+        foreach($data['account'] as $field => $value){
+            if(property_exists($this,$field) && !empty($value) && $value != $this->{$field}){
+                if($field == 'avatar'){
+                   if(!empty($value['name']) && $value['name'] != $this->avatar){
+                       $validationGroup[] = $field;
+                   }
+                }else{
+                    $validationGroup[] = $field;
+                }
+            }
+        }
+        return $validationGroup;
+    }
+
     public function getAvatarIcon($dimensionX = 35, $dimensionY = 35){
         if(empty($this->avatar)){
             return 'user-default-' . $dimensionX . 'x' . $dimensionY . '.jpg';
         }else{
             $extension = pathinfo($this->avatar);
-            $avatarName = '/users/'. $this->id .'/user-avatar-' . $dimensionX . 'x'.$dimensionY . '.' . $extension['extension'];
+            $avatarName = 'users/'. $this->id .'/user-default-' . $dimensionX . 'x'.$dimensionY . '.' . $extension['extension'];
             return $avatarName;
         }
     }
 
     public function getAvatar(){
-        if(is_null($this->avatar)){
-            return 'user-default.jpg';
-        }else{
-            return '/users/' . $this->id . '/' . $this->avatar;
-        }
+        return $this->avatar;
     }
 
     public function setAvatar($avatar){
@@ -381,7 +396,9 @@ class Account
         return $this->username;
     }
 
-
+    public static function getHashedPassword($password){
+        return crypt($password.'leetfeedpenbour');
+    }
 
     public static function hashPassword($user, $password)
     {

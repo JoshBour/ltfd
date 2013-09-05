@@ -19,14 +19,6 @@ class Module {
 		$eventManager = $app -> getEventManager();
 		$moduleRouteListener = new ModuleRouteListener();
 		$moduleRouteListener -> attach($eventManager);
-		$session = new Container('base');
-		$translator = $e -> getApplication() -> getServiceManager() -> get('translator');
-		if (empty($session -> locale)) {
-			$locale = 'nb_NO';
-		} else {
-			$locale = $session -> locale;
-		}
-		$translator -> setLocale($locale) -> setFallbackLocale('en_US');
 	}
 
 	public function getConfig()

@@ -2,7 +2,6 @@
 namespace Game\Controller;
 
 use Zend\View\Model\JsonModel;
-
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
@@ -27,7 +26,43 @@ class GameController extends AbstractActionController
 	}
 	
 	public function connectAction(){
-		return new JsonModel();
+        if($this->getRequest()->isXmlHttpRequest()){
+            $em = $this->getEntityManager();
+            $game = $em->getRepository('Game\Entity\Game')->findOneBy(array('name'=>$this->params('name')));
+            $user = $em->getRepository('Account\Entity\Account')->find($this->identity()->getId());
+            $success = 0;
+            $message = '';
+
+            $type = $this->params('type');
+            try{
+                $followers = $game->getFollowers();
+                if($type == 'follow'){
+                    if(!$followers->contains($user)){
+                        $game->addFollowers(array($user));
+                        $message = sprintf($this->getTranslator()->translate('You are now following %s.'),$game->getName());
+                    }else{
+                        return new JsonModel(array('success' => $success, 'message' => $this->getTranslator()->translate('You are already following this game.')));
+                    }
+                }else{
+                    if($followers->contains($user)){
+                        $game->removeFollowers(array($user));
+                        $message = sprintf('You are not following %s anymore.',$game->getName());
+                    }else{
+                        return new JsonModel(array('success' => $success, 'message' => $this->getTranslator()->translate('You are already not following this game.')));
+                    }
+                }
+                $em->persist($game);
+                $em->flush();
+                $success = 1;
+            }catch(Exception $e){
+                $message = $e->getMessage();
+            }
+
+            return new JsonModel(array('success' => $success, 'message' => $message, 'followers' => count($followers)));
+        }else{
+            $this->getResponse()->setStatusCode(404);
+            return;
+        }
 	}
 
     public function rateAction(){
@@ -36,8 +71,10 @@ class GameController extends AbstractActionController
 
     public function listAction(){
         $searchForm = $this->getServiceLocator()->get('game_search_form');
-        $games = $this->getEntityManager()->getRepository('Game\Entity\Game')->findAll();
+        $games = $this->getEntityManager()->getRepository('Game\Entity\Game')->findBy(array(),array('name' => 'ASC'));
+        $user = $this->getEntityManager()->getRepository('Account\Entity\Account')->find($this->identity()->getId());
         return new ViewModel(array(
+            'user' => $user,
             'searchForm' => $searchForm,
             'bodyClass' => 'gameList',
             'games' => $games
@@ -48,13 +85,11 @@ class GameController extends AbstractActionController
         if($this->getRequest()->isXmlHttpRequest()){
             $viewModel = new ViewModel();
             $name = $this->params('name', null);
+            $user = $this->getEntityManager()->getRepository('Account\Entity\Account')->find($this->identity()->getId());
 
-            if($name != 'allgames'){
-                $games = $this->getEntityManager()->getRepository('Game\Entity\Game')->searchByName($name);
-            }else{
-                $games = $this->getEntityManager()->getRepository('Game\Entity\Game')->findAll();
-            }
-            $viewModel->setVariable('games',$games);
+            $games = $this->getEntityManager()->getRepository('Game\Entity\Game')->searchByName($name);
+
+            $viewModel->setVariables(array('games' => $games,'user' => $user));
             $viewModel->setTerminal(true);
             return $viewModel;
         }else{

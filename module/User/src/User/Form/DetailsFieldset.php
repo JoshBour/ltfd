@@ -40,15 +40,7 @@ class DetailsFieldset extends Fieldset implements InputFilterProviderInterface
             'name' => 'password',
             'type' => 'password',
             'options' => array(
-                'label' => $this->translator->translate('Password:')
-            )
-        ));
-
-        $this->add(array(
-            'name' => 'repassword',
-            'type' => 'password',
-            'options' => array(
-                'label' => $this->translator->translate('Retype Password:')
+                'label' => $this->translator->translate('Change Password:')
             )
         ));
 
@@ -68,6 +60,16 @@ class DetailsFieldset extends Fieldset implements InputFilterProviderInterface
                 'required' => true,
                 'validators' => array(
                     array(
+                        'name' => '\Zend\Validator\File\IsImage',
+                        'break_chain_on_failure' => true,
+                        'options' => array(
+                            'max' => 5000000,
+                            'messages' => array(
+                                \Zend\Validator\File\IsImage::FALSE_TYPE => $this->translator->translate('The avatar must be a readable image.')
+                            )
+                        )
+                    ),
+                    array(
                         'name' => 'filesize',
                         'break_chain_on_failure' => true,
                         'options' => array(
@@ -80,25 +82,14 @@ class DetailsFieldset extends Fieldset implements InputFilterProviderInterface
                     array(
                         'name' => '\Zend\Validator\File\MimeType',
                         'options' => array(
-                            'disableMagicFile' => true,
-                            'mimeType' => array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG),
+                            'mimeType' => array('image/jpeg', 'image/png'),
+                            'enableHeaderCheck' => true,
                             'messages' => array(
-                                \Zend\Validator\File\MimeType::FALSE_TYPE => 'The image must be of types: jpeg, png, gif.'
+                                \Zend\Validator\File\MimeType::FALSE_TYPE => $this->translator->translate('The image must be of types jpeg or png.')
                             )
                         )
                     ),
                 ),
-                'filters' => array(
-                    array(
-                        'name' => 'filerenameupload',
-                        'options' => array(
-                            'target' => PUBLIC_PATH . '/images/users',
-                            'overwrite' => true,
-                            'use_upload_name' => true,
-                            'randomize' => true,
-                        )
-                    )
-                )
             ),
             'password' => array(
                 'required' => true,
@@ -129,35 +120,35 @@ class DetailsFieldset extends Fieldset implements InputFilterProviderInterface
                     array('name' => 'StripTags')
                 )
             ),
-            'repassword' => array(
-                'required' => true,
-                'validators' => array(
-                    array(
-                        'name' => 'NotEmpty',
-                        'break_chain_on_failure' => true,
-                        'options' => array(
-                            'messages' => array(
-                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate("The retyped password can't be empty.")
-                            )
-                        )
-                    ),
-                    array(
-                        'name' => 'StringLength',
-                        'break_chain_on_failure' => true,
-                        'options' => array(
-                            'min' => 4,
-                            'max' => 15,
-                            'messages' => array(
-                                \Zend\Validator\StringLength::INVALID => $this->translator->translate("The retyped password is invalid.")
-                            )
-                        )
-                    ),
-                ),
-                'filters' => array(
-                    array('name' => 'StringTrim'),
-                    array('name' => 'StripTags')
-                )
-            ),
+//            'repassword' => array(
+//                'required' => true,
+//                'validators' => array(
+//                    array(
+//                        'name' => 'NotEmpty',
+//                        'break_chain_on_failure' => true,
+//                        'options' => array(
+//                            'messages' => array(
+//                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate("The retyped password can't be empty.")
+//                            )
+//                        )
+//                    ),
+//                    array(
+//                        'name' => 'StringLength',
+//                        'break_chain_on_failure' => true,
+//                        'options' => array(
+//                            'min' => 4,
+//                            'max' => 15,
+//                            'messages' => array(
+//                                \Zend\Validator\StringLength::INVALID => $this->translator->translate("The retyped password is invalid.")
+//                            )
+//                        )
+//                    ),
+//                ),
+//                'filters' => array(
+//                    array('name' => 'StringTrim'),
+//                    array('name' => 'StripTags')
+//                )
+//            ),
             'email' => array(
                 'required' => true,
                 'validators' => array(

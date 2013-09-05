@@ -262,6 +262,7 @@ nav ul a:hover{
             }
 
             #login h1, #register h1{
+                font-weight:normal;
                 padding: 0 5px 5px 5px;
             }
 
@@ -336,7 +337,7 @@ nav ul a:hover{
         }
 
         /* ===================================================== */
-        /*                 Preferences Action                    */
+        /*                   Following Action                    */
 
             ul#following {
                 overflow:auto;
@@ -344,7 +345,8 @@ nav ul a:hover{
 
             #following li{
                 background: #222;
-                margin: 5px auto;
+                float:left;
+                margin:5px 0 5px 11.5px;
                 overflow: auto;
                 width: 640px;
                 border: 2px solid #0f0f0f;
@@ -356,19 +358,23 @@ nav ul a:hover{
                 margin-right:10px;
             }
 
-            #following .userInfo{
+            #following .userInfo, #following .gameInfo{
                float:left;
             }
 
-            #following .userInfo img{
+            #following .userInfo img, #following .gameInfo img{
                 border: 1px solid #333;
             }
 
-            #following .userMeta{
+            #following .userMeta, #following .gameMeta{
                margin-top:23px;
                 cursor:pointer;
                float:right;
             }
+
+        /* ===================================================== */
+        /*                      Games Action                    */
+
 
 
     /* ===================================================== */
@@ -451,7 +457,7 @@ nav ul a:hover{
 			position:relative;
 			margin-top:100px;
 			overflow:hidden;
-			background:#333 url(../images/footer-icon.jpg) no-repeat;
+			background:#333;
 			width: 100%;
 		}
 

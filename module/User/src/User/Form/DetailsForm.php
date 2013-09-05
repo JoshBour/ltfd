@@ -32,7 +32,7 @@ class DetailsForm extends Form
 
         $this->setValidationGroup(array(
             'security',
-            'repassword',
+//            'repassword',
             'avatar',
             'account' => array(
                 'password',
