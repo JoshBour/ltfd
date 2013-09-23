@@ -46,6 +46,7 @@ class Comment
     public function setAuthor($author)
     {
         $this->author = $author;
+        return $this;
     }
 
     /**
@@ -62,6 +63,7 @@ class Comment
     public function setContent($content)
     {
         $this->content = $content;
+        return $this;
     }
 
     /**
@@ -78,6 +80,7 @@ class Comment
     public function setFeed($feed)
     {
         $this->feed = $feed;
+        return $this;
     }
 
     /**
@@ -94,6 +97,7 @@ class Comment
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
     }
 
     /**
@@ -110,6 +114,7 @@ class Comment
     public function setPostTime($postTime)
     {
         $this->postTime = $postTime;
+        return $this;
     }
 
     /**
@@ -119,6 +124,7 @@ class Comment
     {
         return $this->postTime;
     }
+
 
 
 }

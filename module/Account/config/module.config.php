@@ -61,7 +61,7 @@ return array(
          										'action'     => 'verify',
          								)
          						)
-         				), 
+         				),
          				'report' => array(
          						'type' => 'Segment',
          						'options' => array(

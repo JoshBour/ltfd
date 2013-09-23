@@ -34,6 +34,15 @@ return array(
                 ),
                 'may_terminate' => false,
                 'child_routes' => array(
+                    'watched' => array(
+                        'type' => 'literal',
+                        'options' => array(
+                            'route' => 'user-feed-category',
+                            'defaults' => array(
+                                'action' => 'addToUserFeedCategory',
+                            ),
+                        ),
+                    ),
                     'new' => array(
                         'type' => 'literal',
                         'options' => array(
@@ -64,7 +73,7 @@ return array(
                     'rate' => array(
                         'type' => 'segment',
                         'options' => array(
-                            'route' => 'rate/:rating',
+                            'route' => 'rate/:rating/id/:id',
                             'defaults' => array(
                                 'action' => 'rate',
                             ),
@@ -149,5 +158,8 @@ return array(
         'template_path_stack' => array(
             __DIR__ . '/../view',
         ),
+        'strategies' => array(
+            'ViewJsonStrategy'
+        )
     ),
 );

@@ -18,7 +18,16 @@ class IndexController extends AbstractActionController
 
     public function homeAction()
     {
-        return new ViewModel();
+        $viewModel = new ViewModel();
+        if($user = $this->identity()){
+            $user = $this->getEntityManager()->getRepository('Account\Entity\Account')->find($user->getId());
+            $viewModel->setTemplate('application/home.phtml');
+        }else{
+            $viewModel->setTemplate('application/unregistered.phtml');
+        }
+        return new ViewModel(array(
+            'user' => $user
+        ));
     }
 
     public function aboutAction()

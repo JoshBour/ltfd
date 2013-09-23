@@ -26,51 +26,32 @@ return array(
             'game' => array(
                 'type' => 'segment',
                 'options' => array(
-                    'route' => '/game/:name',
+                    'route' => '/game/:name[/]',
                     'defaults' => array(
                         'controller' => 'Game\Controller\Game',
+                    ),
+                    'constraints' => array(
+                        'name' => '[a-zA-Z0-9_!]{1,50}'
                     )
                 ),
 //                'may_terminate' => true,
                 'child_routes' => array(
-                    'category' => array(
+                    'feeds' => array(
                         'type' => 'segment',
                         'options' => array(
-                            'route' => '[/:category]',
+                            'route' => '[:category[/:sort]]',
                             'defaults' => array(
                                 'controller' => 'Game\Controller\Game',
                                 'action' => 'feeds',
-                                'category' => 'all'
-                            )
-                        )
-                    ),
-                    'connect' => array(
-                        'type' => 'segment',
-                        'options' => array(
-                            'route' => '/connect/:type',
-                            'defaults' => array(
-                                'controller' => 'Game\Controller\Game',
-                                'action' => 'connect'
-                            ),
-                            'constraints' => array(
-                                'type' => 'follow|unfollow',
-                            ),
-                        ),
-                    ),
-                    'unfollow' => array(
-                        'type' => 'literal',
-                        'options' => array(
-                            'route' => '/unfollow',
-                            'defaults' => array(
-                                'controller' => 'Game\Controller\Game',
-                                'action' => 'unfollow'
+                                'category' => 'all',
+                                'sort' => 'popular'
                             )
                         )
                     ),
                     'rate' => array(
                         'type' => 'segment',
                         'options' => array(
-                            'route' => '/rate/:rating',
+                            'route' => 'rate/:rating',
                             'defaults' => array(
                                 'controller' => 'Game\Controller\Game',
                                 'action' => 'rate',
@@ -83,7 +64,7 @@ return array(
                     'profile' => array(
                         'type' => 'literal',
                         'options' => array(
-                            'route' => '/profile',
+                            'route' => 'profile',
                             'defaults' => array(
                                 'controller' => 'Game\Controller\Game',
                                 'action' => 'profile'
@@ -121,7 +102,20 @@ return array(
                         'action' => 'search'
                     )
                 )
-            )
+            ),
+            'game_connect' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route' => '/game/connect/:type/id/:id',
+                    'defaults' => array(
+                        'controller' => 'Game\Controller\Game',
+                        'action' => 'connect'
+                    ),
+                    'constraints' => array(
+                        'type' => 'follow|unfollow',
+                    ),
+                ),
+            ),
         )
     ),
     'view_manager' => array(

@@ -7,7 +7,8 @@ use Zend\View\Model\JsonModel;
 use Zend\Form\Form;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-use Zend\Authentication\AuthenticationService;
+use DoctrineModule\Paginator\Adapter\Collection as CollectionAdapter;
+use Zend\Paginator\Paginator;
 
 use Application\Entity\ImageHelper;
 
@@ -29,9 +30,19 @@ class UserController extends AbstractActionController
     private $socialsForm;
 
     /**
+     * @var \Zend\Form\Form
+     */
+    private $commentForm;
+
+    /**
      * @var \Zend\I18n\Translator
      */
     private $translator;
+
+    /**
+     * @var \Doctrine\ORM\EntityRepository
+     */
+    private $accountRepository;
 
     public function profileAction()
     {
@@ -42,7 +53,7 @@ class UserController extends AbstractActionController
     {
         $form = $this->getDetailsForm();
         $em = $this->getEntityManager();
-        $user = $em->find('Account\Entity\Account',$this->identity()->getId());
+        $user = $this->user();
         $form->bind($user);
         $request = $this->getRequest();
 
@@ -87,7 +98,6 @@ class UserController extends AbstractActionController
         }
 
         return new ViewModel(array(
-            'user' => $user,
             'form' => $form,
             'bodyClass' => 'userPage'
         ));
@@ -96,8 +106,7 @@ class UserController extends AbstractActionController
     public function socialsAction()
     {
         $form = $this->getSocialsForm();
-        $user = $this->identity();
-        $form->bind($user);
+        $form->bind($this->identity());
         $request = $this->getRequest();
 
         if($request->isPost()){
@@ -112,8 +121,7 @@ class UserController extends AbstractActionController
 
     public function gamesAction()
     {
-        $user = $this->getEntityManager()->getRepository('\Account\Entity\Account')->find($this->identity()->getId());
-        $games = $user->getGames();
+        $games = $this->user()->getGames();
 
         return new ViewModel(array(
             'games' => $games,
@@ -133,8 +141,7 @@ class UserController extends AbstractActionController
 
     public function followingAction()
     {
-        $user = $this->getEntityManager()->getRepository('\Account\Entity\Account')->find($this->identity()->getId());
-        $following = $user->getFollowing();
+        $following = $this->user()->getFollowing();
         return new ViewModel(array(
             'following' => $following,
             'bodyClass' => 'userPage'
@@ -143,8 +150,31 @@ class UserController extends AbstractActionController
 
     public function feedsAction()
     {
+        $categories = array('posted','favorites','history','liked');
+        $activeCategory = $this->params()->fromRoute('category','posted');
+        $em = $this->getEntityManager();
+        $feeds = array();
+        switch($activeCategory){
+            case 'liked':
+                $feeds = $em->getRepository('Feed\Entity\Feed')->findRatedFeeds($this->identity()->getId(),1);
+                break;
+            case 'posted':
+                $feeds = $this->user()->getFeeds();
+                $adapter = new CollectionAdapter($feeds);
+                $feeds = new Paginator($adapter);
+                $feeds->setItemCountPerPage(10)
+                          ->setCurrentPageNumber(1);
+                break;
+            default:
+                $feeds = $em->getRepository('Feed\Entity\Feed')->findFeedsByCategory($activeCategory,$this->identity()->getId());
+        }
+
         return new ViewModel(array(
-            'bodyClass' => 'userPage'
+            'bodyClass' => 'userPage',
+            'categories' => $categories,
+            'activeCategory' => $activeCategory,
+            'feeds' => $feeds,
+            'form' => $this->getCommentForm()
         ));
     }
 
@@ -164,6 +194,9 @@ class UserController extends AbstractActionController
         $this->entityManager = $em;
     }
 
+    /**
+     * @var \Zend\I18n\Translator
+     */
     public function getTranslator()
     {
         if (!$this->translator) {
@@ -177,6 +210,9 @@ class UserController extends AbstractActionController
         $this->translator = $translator;
     }
 
+    /**
+     * @return \Zend\Form\Form
+     */
     public function getSocialsForm()
     {
         if (!$this->socialsForm) {
@@ -190,6 +226,25 @@ class UserController extends AbstractActionController
         $this->socialsForm = $socialsForm;
     }
 
+    /**
+     * @return \Zend\Form\Form
+     */
+    public function getCommentForm()
+    {
+        if (!$this->commentForm) {
+            $this->setCommentForm($this->getServiceLocator()->get('comment_form'));
+        }
+        return $this->commentForm;
+    }
+
+    public function setCommentForm($commentForm)
+    {
+        $this->commentForm = $commentForm;
+    }
+
+    /**
+     * @return \Zend\Form\Form
+     */
     public function getDetailsForm()
     {
         if (!$this->detailsForm) {
@@ -201,5 +256,19 @@ class UserController extends AbstractActionController
     public function setDetailsForm($detailsForm)
     {
         $this->detailsForm = $detailsForm;
+    }
+
+    /**
+     * @return \Doctrine\ORM\EntityRepository
+     */
+    public function getAccountRepository(){
+        if(!$this->accountRepository){
+            $this->setAccountRepository($this->getEntityManager()->getRepository('Account\Entity\Account'));
+        }
+        return $this->accountRepository;
+    }
+
+    public function setAccountRepository($accountRepository){
+        $this->accountRepository = $accountRepository;
     }
 }

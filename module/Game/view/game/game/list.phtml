@@ -1,3 +1,4 @@
+<?php $user = $this->user(); ?>
 <aside>
     <h1><?php echo $this->translate("Search Game"); ?></h1>
     <?php
@@ -9,14 +10,15 @@
         <?php
             foreach($games as $game):
                 $name = $game->getName();
+                $urlName = $game->getUrlName();
         ?>
             <li class="game-<?php echo $game->getId(); ?>">
-                <a href="<?php echo $this->url('game/category',array('name' => $name)); ?>" class="gameName" title="<?php echo $name ?>">
+                <a href="<?php echo $this->url('game/feeds',array('name' => $urlName)); ?>" class="gameName" title="<?php echo $name ?>">
                     <span><?php echo substr($name,0,20); if(strlen($name) > 20) echo ' ..'?></span>
                     <img src="<?php echo $this->basePath() . '/images/' . $game->getAvatar() . '-list-icon.jpg'; ?>">
                 </a>
                 <div class="gameMeta">
-                    <a href="<?php echo $this->url('game/profile',array('name' => $name)); ?>" title="<?php echo $this->translate("The game's profile"); ?>">Profile</a> •
+                    <a href="<?php echo $this->url('game/profile',array('name' => $urlName)); ?>" title="<?php echo $this->translate("The game's profile"); ?>">Profile</a> •
                     <?php
                         if(!$game->getFollowers()->contains($user)){
                     ?>

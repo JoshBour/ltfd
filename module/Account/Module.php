@@ -20,6 +20,30 @@ class Module
 	        )
 		);
 	}
+
+    public function getControllerPluginConfig(){
+        return array(
+            'factories' => array(
+                'user' => function($sm){
+                    $plugin = new \Account\Plugin\ActiveAccount();
+                    $plugin->setServiceManager($sm->getServiceLocator());
+                    return $plugin;
+                }
+            )
+        );
+    }
+
+    public function getViewHelperConfig(){
+        return array(
+          'factories' => array(
+              'user' => function($sm){
+                  $helper = new \Account\View\Helper\User();
+                  $helper->setServiceManager($sm->getServiceLocator());
+                  return $helper;
+              }
+          )
+        );
+    }
 	
 	public function getServiceConfig(){
 		return array(
@@ -48,7 +72,10 @@ class Module
 					$form = new \Account\Form\RegisterForm($em);
 					$form->add($fieldset);
 					return $form;
-				}
+				},
+                'Account\Entity\Account' => function($sm){
+                    return new Entity\Account();
+                }
 			),
 			'aliases' => array(
 				'auth_service' => 'Zend\Authentication\AuthenticationService'

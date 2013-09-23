@@ -26,6 +26,13 @@ class Game
 
     /**
      * @ORM\Column(type="string")
+     * @ORM\Column(length=50)
+     * @ORM\Column(name="url_name")
+     */
+    private $urlName;
+
+    /**
+     * @ORM\Column(type="string")
      * @ORM\Column(length=75)
      */
     private $company;
@@ -59,26 +66,26 @@ class Game
      */
     private $categories;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Feed\Entity\Feed", mappedBy="game")
+     */
+    private $feeds;
+
     public function __construct(){
         $this->followers = new ArrayCollection();
         $this->categories = new ArrayCollection();
+        $this->feeds = new ArrayCollection();
     }
 
     public function getAvatar(){
-        return '/games/' . strtolower(implode('',preg_split("/[\s,\:\-\!]+/", $this->name)));
+        return 'games/' . strtolower(implode('',preg_split("/[\s,\:\-\!]+/", $this->name)));
     }
 
-    /**
-     * @param mixed $categories
-     */
     public function setCategories($categories)
     {
         $this->categories[] = $categories;
     }
 
-    /**
-     * @return mixed
-     */
     public function getCategories()
     {
         return $this->categories;
@@ -93,6 +100,32 @@ class Game
         foreach($categories as $category)
             $this->categories->removeElement($category);
     }
+
+    public function getUrlName(){
+        return $this->urlName;
+    }
+
+    public function setUrlName($urlName){
+        $this->urlName = $urlName;
+    }
+
+    /**
+     * @param mixed $feeds
+     */
+    public function setFeeds($feeds)
+    {
+        $this->feeds[] = $feeds;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFeeds()
+    {
+        return $this->feeds;
+    }
+
+
 
     /**
      * @param mixed $company

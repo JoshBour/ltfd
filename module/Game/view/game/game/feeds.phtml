@@ -1,1 +1,94 @@
-This is the feeds file.
+<?php $user = $this->user(); ?>
+<aside>
+    <a href="<?php echo $this->url('game/profile',array('name' => $game->getUrlName())); ?>" title="<?php echo $this->translate(sprintf("Visit %s's profile.",$game->getName())); ?>">
+        <img id="gameFeedLogo" src="<?php echo $this->basePath() . '/images/' . $game->getAvatar();?>-feeds.jpg" />
+    </a>
+    <ul id="gameCategories">
+        <?php
+        foreach ($game->getCategories() as $category):
+            $name = $category->getName(); ?>
+            <li<?php echo ($name == $activeCategory) ? ' class="active"' : ''; ?>>
+                <a href="<?php echo $this->url('game/feeds',array('name' => $game->getUrlName(),'category'=>$name)); ?>"><?php echo ucfirst($name); ?></a>
+            </li>
+        <?php endforeach;
+        ?>
+    </ul>
+</aside>
+<div id="main">
+    <div id="categorySort">
+        <ul>
+            <?php foreach($sortOptions as $option): ?>
+                <li>
+                    <a href="<?php echo $this->url('game/feeds',array('name' => $game->getUrlName(),'sort'=>$option)); ?>"<?php echo ($option == $activeSort) ? ' class="active"' : '';?>><?php echo ucwords($option); ?></a>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+    <ul id="feeds">
+        <?php
+            foreach($feeds as $feed):
+                 $ytEntry = $feed->getYoutubeEntry();
+                 $author = $feed->getUploader()->getUsername();
+                 $id = $feed->getId();
+                 $title = $ytEntry->getVideoTitle();
+        ?>
+        <li class="feed-<?php echo $id; ?>" data-video-id="<?php echo $feed->getVideoId(); ?>">
+            <img src="http://img.youtube.com/vi/<?php echo $feed->getVideoId(); ?>/default.jpg" class="feedThumb" alt="feed thumbnail" />
+            <div class="feedHeader">
+                <a href="<?php echo $this->url('feed/view',array('id' => $id)); ?>" title="<?php echo $title; ?>"><?php echo (strlen($title) > 50) ? substr($title,0,50) . '..' : $title; ?></a>
+                <div class="feedInfo">
+                    by <a href="<?php echo $this->url('profile',array('user' => $author)); ?>" class="feedAuthor"><?php echo $author; ?></a> , <?php echo $feed->getTimeAgo() . ' ago.'; ?></p>
+                </div>
+            </div>
+            <div class="feedBody">
+                <?php
+                    $description = $ytEntry->getVideoDescription();
+                    echo (strlen($description) > 200) ? substr($description,0,200) . '..' : $description;
+                ?>
+            </div>
+            <div class="feedMeta">
+                <?php
+                    if($user && ($rating = $user->getRated($id))){
+                        if($rating->getRating() == 1){
+                            $up = ' disabled';
+                            $down = '';
+                        }else{
+                            $up = '';
+                            $down = ' disabled';
+                        }
+                    }else{
+                        $up = '';
+                        $down = '';
+                    }
+                ?>
+                <span class="thumbUp<?php echo $up; ?>">Leet</span>
+                <span class="thumbDown<?php echo $down; ?>">Meh</span>
+                <span class="favorite<?php echo ($user->hasFavorited($id)) ? ' disabled' : '';?>">Favorite</span>
+            </div>
+        </li>
+        <?php endforeach; ?>
+    </ul>
+</div>
+<div id="stage">
+    <div id="comments">
+        <ul>
+
+        </ul>
+        <?php
+        $form->prepare();
+        $fieldset = $form->get('comment');
+
+        echo $this->form()->openTag($form);
+        echo $this->formHidden($form->get('security'));
+        ?>
+
+        <div class="element">
+            <?php
+            echo $this->formElementErrors($fieldset->get('comment'), array('class' => 'formError'));
+            echo $this->formInput($fieldset->get('comment'));
+            ?>
+        </div>
+
+        <?php echo $this->form()->closeTag() ?>
+    </div>
+</div>

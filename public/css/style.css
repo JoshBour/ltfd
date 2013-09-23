@@ -162,7 +162,6 @@ header #logo{
 	width: 965px;
 	padding: 91px 5px 20px 5px;
 	margin: 0 auto 0 auto;
-	min-height: 500px;
 	overflow: hidden;
 	font:normal 14px 'Yanone Kaffeesatz', sans-serif;
 }
@@ -214,7 +213,7 @@ nav ul img{
 
 nav ul li{
     display:inline-block;
-    padding:0 8px;
+    padding:0 6px;
 }
 
 nav ul a:hover{
@@ -435,19 +434,323 @@ nav ul a:hover{
                 background-image:url('../images/list-header-bg.png');
             }
 
+        /* ===================================================== */
+        /*                     Feeds Action                      */
+
+            .gameFeeds #gameFeedLogo{
+                display: block;
+                margin: 0 auto;
+                border: 4px solid #333;
+                box-shadow: 1px 1px 9px #000;
+            }
+
+            .gameFeeds #content #main{
+                border-left:none;
+            }
+
+            .gameFeeds #gameCategories{
+                background:#0f0f0f;
+                margin-top: 2px;
+                border:1px solid #222;
+                border-top:2px solid #111;
+                box-shadow: 2px 2px 2px #000;
+            }
+
+            .gameFeeds #gameCategories li{
+                border-top: 1px solid #252525;
+                font: normal 12px Arial;
+                text-align: center;
+            }
+
+            .gameFeeds #gameCategories li a{
+                padding: 7px 0;
+                display:block;
+                -webkit-transition: background 0.2s linear;
+                -moz-transition: background 0.2s linear;
+                -o-transition: background 0.2s linear;
+                transition: background 0.2s linear;
+            }
+
+            .gameFeeds #gameCategories li a:hover{
+                background:#333;
+                text-decoration: none;
+
+            }
+
+            .gameFeeds #gameCategories li.active{
+                background:#181818 url('../images/tab-list-dark.png') 50% 50%;
+            }
+
+            #categorySort ul{
+                background:#181818 url('../images/game-header-bg.png');
+                border:1px solid #555;
+                text-align:right;
+            }
+
+            #categorySort li{
+                display:inline-block;
+            }
+
+            #categorySort li a{
+                display:inline-block;
+                padding:8px;
+                font:normal 12px Arial;
+            }
+
+            #categorySort li a.active{
+                background-color:#ccc;
+                color:black;
+            }
+
+            .gameFeeds #gameCategories li a, #categorySort li a{
+                color:#ccc;
+}
+            #feeds li{
+                background-color:#111;
+                margin:15px 0;
+                overflow:auto;
+                border:1px solid #222;
+                box-shadow:2px 2px 10px black;
+                font:normal 11px Arial;
+            }
+
+            #feeds li:hover{
+                border:1px solid #333;
+                box-shadow:2px 2px 10px #222;
+            }
+
+            #feeds li:first-child{
+                margin-top:5px;
+            }
+
+            #feeds .feedThumb{
+                float:left;
+                margin-right:5px;
+                border-right:1px solid #222;
+            }
+
+            #feeds .feedHeader{
+                border-bottom:1px solid #333;
+                height:14px;
+            }
+
+            #feeds .feedBody{
+                color:#999;
+                height:35px;
+            }
+
+            #feeds .feedHeader, #feeds .feedBody{
+                padding:5px;
+            }
+
+            #feeds .feedMeta{
+                padding: 3px;
+                background: #222;
+                text-align:center;
+                height:14px;
+            }
+
+            #feeds .feedMeta span{
+                padding:0 7px;
+            }
+
+            #feeds .feedMeta .totalRating{
+                background:transparent url('../images/rating-total-icon.png') center left no-repeat;
+                padding-left:17px;
+            }
+
+            #feeds .feedMeta .thumbUp{
+                background:transparent url('../images/thumbup-icon.png') center left no-repeat;
+                padding-left:7px;
+            }
+
+            #feeds .feedMeta .thumbDown{
+                background:transparent url('../images/thumbdown-icon.png') center left no-repeat;
+                padding-left:7px;
+            }
+
+            #feeds .feedMeta .favorite{
+                background:transparent url('../images/favorite-icon.png') center left no-repeat;
+                padding-left:17px;
+            }
+
+            #feeds .feedMeta .thumbUp:hover, #feeds .feedMeta .thumbUp.disabled{
+                background:transparent url('../images/thumbup-icon-hover.png') center left no-repeat;
+                color:green;
+            }
+
+            #feeds .feedMeta .thumbDown:hover, #feeds .feedMeta .thumbDown.disabled{
+                background:transparent url('../images/thumbdown-icon-hover.png') center left no-repeat;
+                color:red;
+            }
+
+            #feeds .feedMeta .favorite:hover, #feeds .feedMeta .favorite.disabled{
+                background:transparent url('../images/favorite-icon-hover.png') center left no-repeat;
+                color:#6798b7;
+            }
+
+            #feeds .feedMeta .disabled,  #feeds .feedMeta span:hover.disabled{
+                cursor:default;
+            }
+
+            #feeds .feedMeta span.favorite.disabled:hover{
+                text-decoration:line-through;
+                cursor:pointer;
+            }
+
+
+
+            #feeds .feedMeta img{
+                padding-right:3px;
+            }
+
+            #feeds .feedMeta img{
+                vertical-align:middle;
+            }
+
+            #feeds .feedMeta span:hover{
+                cursor:pointer;
+            }
+
+            #feeds .feedInfo{
+                display: inline;
+                float: right;
+                color:#bbb;
+                font-style: italic;
+            }
+
+            #feeds .feedAuthor{
+                color:#448197;
+                font-style:normal;
+            }
+
+            #feeds .feedAuthor:hover{
+                color:#60b8d8;
+            }
+
+            .videoMask{
+                position: absolute;
+                width:120px;
+                height:90px;
+                background: transparent url('../images/video-mask-hover.png') center center no-repeat;
+                background-color:rgba(34,34,34,0.5);
+                -webkit-transition: background 0.2s linear;
+                -moz-transition: background 0.2s linear;
+                -o-transition: background 0.2s linear;
+                transition: background 0.2s linear;
+                cursor: pointer;
+            }
+
+            .videoMask:hover{
+                background: transparent url('../images/video-mask.png') center center no-repeat;
+                background-color:rgba(34,34,34,0.9);
+            }
+
+            #stage{
+                display:none;
+                position: absolute;
+                width:1270px;
+                height:546px;
+                background:black;
+                overflow:auto;
+                border:1px solid #333;
+                z-index: 999;
+            }
+
+            #stage iframe{
+                /*padding:20px;*/
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+            }
+
+            #stage #comments{
+                float:left;
+                width:285px;
+                height:546px;
+                border-left: 1px solid #333;
+            }
+
+            #videoContainer{
+                position:relative;
+            }
+
+            #frameWrapper{
+                /*float:left;*/
+                position: relative;
+                padding-bottom: 56.25%; /* 16:9 */
+                padding-top: 25px;
+                height: 0;
+            }
+
+            #stage iframe, #stage #comments{
+                display:inline-block;
+            }
+
+            #stage #commentList{
+                height:511px;
+            }
+
+            #stage #comments input{
+                width:100%;
+                height:20px;
+                border:none;
+                border-top:1px solid #222;
+                background:#111 url('../images/comment-input-bg.png');
+            }
+
+
     /* ===================================================== */
     /*                   Common Module Values                */
     /* ===================================================== */
-        .gameList aside, .userPage aside{
+        .gameList aside, .userPage aside, .gameFeeds aside{
             width:260px;
         }
 
-        .gameList #main, .userPage #main{
+        .gameList #main, .userPage #main, .gameFeeds #main{
             border-left:1px solid #252525;
             width:667px;
             min-height:500px;
             padding-left:20px;
         }
+
+
+    /* ===================================================== */
+    /*                      Feed Module                      */
+    /* ===================================================== */
+
+        /* ===================================================== */
+        /*                      New Action                       */
+
+            .feedPage h2{
+                font-family:Arial;
+            }
+
+            #feedForm{
+                width:500px;
+                padding: 10px;
+                background: #111;
+                border: 1px solid #222;
+                box-shadow: 2px 2px 12px black;
+            }
+
+            #feedForm input{
+                width:358px;
+            }
+
+            #feedForm select{
+                width:374px;
+            }
+
+            #feedForm .element{
+                margin:35px 0;
+            }
+
+            #feedForm input[name="submit"]{
+                width:120px;
+            }
 
 
 	/* ===================================================== */

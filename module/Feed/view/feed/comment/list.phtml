@@ -1,0 +1,10 @@
+<?php if (!empty($comments[0])) { ?>
+    <ul>
+        <?php foreach($comments as $comment): ?>
+
+        <?php endforeach; ?>
+    </ul>
+<?php
+} else {
+    echo $this->translate('<div class="notFound">There are no comments on this feed yet.</div>');
+} ?>

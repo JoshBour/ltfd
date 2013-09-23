@@ -8,19 +8,6 @@ namespace User;
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 return array(
-    'doctrine' => array(
-        'driver' => array(
-            'entity' => array(
-                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
-                'paths' => array(__DIR__ . '/../src/' . __NAMESPACE__ . '/Entity'),
-            ),
-            'orm_default' => array(
-                'drivers' => array(
-                    __NAMESPACE__ . '\Entity' => 'entity',
-                ),
-            ),
-        ),
-    ),
     'router' => array(
         'routes' => array(
         	'profile' => array(
@@ -29,10 +16,10 @@ return array(
         			'route' => '/:user[/]',
         			'defaults' => array(
         				'controller' => 'User\Controller\User',
-        				'action' => 'profile'		
+        				'action' => 'profile'
         			)
         		)
-        	),  
+        	),
         	'user' => array(
         		'type' => 'segment',
         		'options' => array(
@@ -98,12 +85,15 @@ return array(
         				)
         			),
         			'feeds' => array(
-        				'type' => 'literal',
+        				'type' => 'segment',
         				'options' => array(
-	        				'route' => '/feeds',
+	        				'route' => '/feeds[/:category]',
 	        				'defaults' => array(
 	        					'action' => 'feeds'
-	        				)
+	        				),
+                            'constraints' => array(
+                                'category' => 'posted|favorites|history|liked'
+                            )
         				)
         			),
         		)

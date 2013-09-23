@@ -22,6 +22,27 @@ class Module
         );
     }
 
+    public function getServiceConfig(){
+        return array(
+            'factories' => array(
+                'comment_form' => function($sm){
+                    $fieldset = new Form\CommentFieldset($sm);
+                    $fieldset->setUseAsBaseFieldset(true);
+                    $form = new Form\CommentForm($sm->get('Doctrine\ORM\EntityManager'));
+                    $form->add($fieldset);
+                    return $form;
+                },
+                'feed_form' => function($sm){
+                    $fieldset = new Form\FeedFieldset($sm);
+                    $fieldset->setUseAsBaseFieldset(true);
+                    $form = new Form\FeedForm($sm->get('Doctrine\ORM\EntityManager'));
+                    $form->add($fieldset);
+                    return $form;
+                }
+            )
+        );
+    }
+
     public function getConfig()
     {
         return include __DIR__ . '/config/module.config.php';

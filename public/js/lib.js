@@ -32,9 +32,15 @@
 			}).prependTo('body');
 		}
 		flash.setRemoveTimeout(5000);
-	}	
-	
+	}
 
+    var delay = (function(){
+        var timer = 0;
+        return function(callback, ms){
+            clearTimeout (timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
 	
 	function checkEmpty(incArray){
 		var emptyFields = [];

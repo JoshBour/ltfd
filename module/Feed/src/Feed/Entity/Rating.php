@@ -24,9 +24,21 @@ class Rating
     private $feed;
 
     /**
+     * @ORM\OneToOne(targetEntity="Account\Entity\Account")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id")
+     */
+    private $user;
+
+    /**
      * @ORM\Column(type="smallint")
      */
     private $rating;
+
+    public function __construct($user, $feed, $rating){
+        $this->user = $user;
+        $this->feed = $feed;
+        $this->rating = $rating;
+    }
 
     /**
      * @param mixed $id
@@ -50,6 +62,22 @@ class Rating
     public function setRating($rating)
     {
         $this->rating = $rating;
+    }
+
+    /**
+     * @param mixed $user
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 
     /**

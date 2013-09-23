@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Zend\Filter\Null;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="\Account\Repository\AccountRepository")
  * @ORM\Table(name="accounts")
  */
 class Account
@@ -106,27 +106,63 @@ class Account
      */
     private $socials;
 
-    public function __construct(){
+    /**
+     * @ORM\OneToMany(targetEntity="Feed\Entity\Feed", mappedBy="uploader")
+     */
+    private $feeds;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Feed\Entity\Rating", mappedBy="user")
+     */
+    private $ratings;
+
+    /**
+     * @ORM\OneToMany(targetEntity="AccountsFeeds", mappedBy="account")
+     */
+    private $categorizedFeeds;
+
+
+
+
+    public function __construct()
+    {
         $this->followers = new ArrayCollection();
         $this->following = new ArrayCollection();
         $this->socials = new ArrayCollection();
         $this->groups = new ArrayCollection();
         $this->games = new ArrayCollection();
+        $this->feeds = new ArrayCollection();
+        $this->ratings = new ArrayCollection();
+        $this->watched = new ArrayCollection();
+        $this->categorizedFeeds = new ArrayCollection();
+    }
 
+    public function getRated($feed)
+    {
+        foreach ($this->ratings->toArray() as $rating)
+            if ($rating->getFeed()->getId() == $feed) return $rating;
+        return null;
+    }
+
+    public function hasFavorited($feed){
+        foreach($this->categorizedFeeds->toArray() as $categorizedFeed)
+            if($categorizedFeed->getFeed()->getId() == $feed && $categorizedFeed->getCategory() == 'favorites') return true;
+        return null;
     }
 
     /**
      * TODO refactor this algorithm to the best
      */
-    public function getUpdateValidationGroup($data) {
+    public function getUpdateValidationGroup($data)
+    {
         $validationGroup = array();
-        foreach($data['account'] as $field => $value){
-            if(property_exists($this,$field) && !empty($value) && $value != $this->{$field}){
-                if($field == 'avatar'){
-                   if(!empty($value['name']) && $value['name'] != $this->avatar){
-                       $validationGroup[] = $field;
-                   }
-                }else{
+        foreach ($data['account'] as $field => $value) {
+            if (property_exists($this, $field) && !empty($value) && $value != $this->{$field}) {
+                if ($field == 'avatar') {
+                    if (!empty($value['name']) && $value['name'] != $this->avatar) {
+                        $validationGroup[] = $field;
+                    }
+                } else {
                     $validationGroup[] = $field;
                 }
             }
@@ -134,23 +170,88 @@ class Account
         return $validationGroup;
     }
 
-    public function getAvatarIcon($dimensionX = 35, $dimensionY = 35){
-        if(empty($this->avatar)){
+    public function getAvatarIcon($dimensionX = 35, $dimensionY = 35)
+    {
+        if (empty($this->avatar)) {
             return 'user-default-' . $dimensionX . 'x' . $dimensionY . '.jpg';
-        }else{
+        } else {
             $extension = pathinfo($this->avatar);
-            $avatarName = 'users/'. $this->id .'/user-default-' . $dimensionX . 'x'.$dimensionY . '.' . $extension['extension'];
+            $avatarName = 'users/' . $this->id . '/user-default-' . $dimensionX . 'x' . $dimensionY . '.' . $extension['extension'];
             return $avatarName;
         }
     }
 
-    public function getAvatar(){
+    /**
+     * @param mixed $history
+     */
+    public function setCategorizedFeeds($categorizedFeeds)
+    {
+        $this->categorizedFeeds[] = $categorizedFeeds;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCategorizedFeeds()
+    {
+        return $this->categorizedFeeds;
+    }
+
+    public function addCategorizedFeeds($categorizedFeeds){
+        foreach($categorizedFeeds as $feed)
+            $this->categorizedFeeds->add($feed);
+    }
+
+    public function removeCategorizedFeeds($categorizedFeeds){
+        foreach($categorizedFeeds as $feed)
+            $this->categorizedFeeds->removeElement($feed);
+    }
+
+
+    /**
+     * @param mixed $feeds
+     */
+    public function setFeeds($feeds)
+    {
+        $this->feeds[] = $feeds;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFeeds()
+    {
+        return $this->feeds;
+    }
+
+
+    public function getAvatar()
+    {
         return $this->avatar;
     }
 
-    public function setAvatar($avatar){
+    public function setAvatar($avatar)
+    {
         $this->avatar = $avatar;
     }
+
+    /**
+     * @param mixed $ratings
+     */
+    public function setRatings($ratings)
+    {
+        $this->ratings[] = $ratings;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRatings()
+    {
+        return $this->ratings;
+    }
+
+
     /**
      * @param mixed $socials
      */
@@ -167,13 +268,15 @@ class Account
         return $this->socials;
     }
 
-    public function addSocials($socials){
-        foreach($socials as $social)
+    public function addSocials($socials)
+    {
+        foreach ($socials as $social)
             $this->socials->add($social);
     }
 
-    public function removeSocials($socials){
-        foreach($socials as $social)
+    public function removeSocials($socials)
+    {
+        foreach ($socials as $social)
             $this->socials->removeElement($social);
     }
 
@@ -225,12 +328,14 @@ class Account
         return $this->followers;
     }
 
-    public function addFollowers($followers){
-        foreach($followers as $follower)
+    public function addFollowers($followers)
+    {
+        foreach ($followers as $follower)
             $this->followers->add($follower);
     }
 
-    public function removeFollowers($followers){
+    public function removeFollowers($followers)
+    {
         $this->followers->removeElement($followers);
     }
 
@@ -250,12 +355,14 @@ class Account
         return $this->following;
     }
 
-    public function addFollowing($followers){
-        foreach($followers as $follower)
+    public function addFollowing($followers)
+    {
+        foreach ($followers as $follower)
             $this->following->add($follower);
     }
 
-    public function removeFollowing($followers){
+    public function removeFollowing($followers)
+    {
         $this->following->removeElement($followers);
     }
 
@@ -275,12 +382,14 @@ class Account
         return $this->groups;
     }
 
-    public function addGroups($groups){
-        foreach($groups as $group)
+    public function addGroups($groups)
+    {
+        foreach ($groups as $group)
             $this->groups->add($group);
     }
 
-    public function removeGroups($groups){
+    public function removeGroups($groups)
+    {
         $this->groups->removeElement($groups);
     }
 
@@ -396,8 +505,9 @@ class Account
         return $this->username;
     }
 
-    public static function getHashedPassword($password){
-        return crypt($password.'leetfeedpenbour');
+    public static function getHashedPassword($password)
+    {
+        return crypt($password . 'leetfeedpenbour');
     }
 
     public static function hashPassword($user, $password)
