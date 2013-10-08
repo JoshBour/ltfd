@@ -108,6 +108,7 @@ class Account
 
     /**
      * @ORM\OneToMany(targetEntity="Feed\Entity\Feed", mappedBy="uploader")
+     * @ORM\OrderBy({"postTime" = "DESC"})
      */
     private $feeds;
 

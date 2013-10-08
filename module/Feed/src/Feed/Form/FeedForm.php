@@ -38,6 +38,7 @@ class FeedForm extends Form{
             'security',
             'feed' => array(
                 'title',
+                'description',
                 'video',
                 'game',
                 'category'

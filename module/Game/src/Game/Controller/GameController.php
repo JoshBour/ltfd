@@ -7,15 +7,15 @@ use Zend\View\Model\ViewModel;
 
 class GameController extends AbstractActionController
 {
-	/**
-	 * @var \Doctrine\ORM\EntityManager
-	 */
-	private $entityManager;
+    /**
+     * @var \Doctrine\ORM\EntityManager
+     */
+    private $entityManager;
 
-	/**
-	 * @var \Zend\I18n\Translator\Translator
-	 */
-	private $translator;
+    /**
+     * @var \Zend\I18n\Translator\Translator
+     */
+    private $translator;
 
     /**
      * @var \Doctrine\ORM\EntityRepository
@@ -26,39 +26,59 @@ class GameController extends AbstractActionController
      * @var \Zend\Form\Form
      */
     private $commentForm;
-	
-	public function profileAction(){
-		return new ViewModel();
-	}
-	
-	public function feedsAction(){
+
+    public function profileAction()
+    {
+        return new ViewModel();
+    }
+
+    public function feedsAction()
+    {
         $em = $this->getEntityManager();
         $game = $this->getGameRepository()->findOneBy(array('urlName' => $this->params('name')));
-        $category = $em->getRepository('Game\Entity\Category')->findOneBy(array('name'=>$this->params('category','all')));
+        $categoryName = $this->params()->fromRoute('category');
+        $activeSort = $this->params()->fromRoute('sort', 'popular');
+        $translator = $this->getTranslator();
 
+        if ($categoryName == 'all' || $categoryName == 'random') {
+            $category = $categoryName;
+        } else if (empty($categoryName)) {
+            $category = 'all';
+        } else {
+            $category = $em->getRepository('Game\Entity\Category')->findOneBy(array('name' => $categoryName));
+        }
         // if the game or the category don't exist, throw a 404
-        if(!$game || !$category){
+        if (!$game || !$category) {
             $this->getResponse()->setStatusCode(404);
             return;
-        }else{
-            $feeds = $em->getRepository('Feed\Entity\Feed')->findBy(array('game' => $game->getId(),'category' => $category->getId()), array(), 10, 0);
-            $sortOptions = array('popular','new','all time');
-            $activeSort = $this->params('sort','popular');
+        } else {
+            if ($category == 'all') {
+                $activeCategory = 'all';
+                $feeds = $em->getRepository('Feed\Entity\Feed')->findBySort($game->getId(),$activeSort);
+            } else if ($category == 'random') {
+                $activeCategory = 'random';
+                $feeds = $em->getRepository('Feed\Entity\Feed')->findBySort($game->getId(),$activeSort);
+            } else {
+                $activeCategory = $category->getName();
+                $feeds = $em->getRepository('Feed\Entity\Feed')->findBySort($game->getId(),$activeSort, $category->getId());
+            }
+            $sortOptions = array($translator->translate('popular'), $translator->translate('new'));
 
             return new ViewModel(array(
                 'game' => $game,
                 'sortOptions' => $sortOptions,
                 'activeSort' => $activeSort,
                 'feeds' => $feeds,
-                'activeCategory' => $category->getName(),
+                'activeCategory' => $activeCategory,
                 'bodyClass' => 'gameFeeds',
                 'form' => $this->getCommentForm()
             ));
         }
-	}
-	
-	public function connectAction(){
-        if($this->getRequest()->isXmlHttpRequest()){
+    }
+
+    public function connectAction()
+    {
+        if ($this->getRequest()->isXmlHttpRequest()) {
             $em = $this->getEntityManager();
             $game = $this->getGameRepository()->find($this->params('id'));
             $type = $this->params('type');
@@ -66,37 +86,37 @@ class GameController extends AbstractActionController
             $jsonModel = new JsonModel();
             $success = 0;
             $message = '';
-            if($game){
-                try{
+            if ($game) {
+                try {
                     $followers = $game->getFollowers();
-                    if($type == 'follow'){
+                    if ($type == 'follow') {
                         // check if the user already follows the game
-                        if(!$followers->contains($user)){
+                        if (!$followers->contains($user)) {
                             $game->addFollowers(array($user));
-                            $message = sprintf($this->getTranslator()->translate('You are now following %s.'),$game->getName());
-                        }else{
+                            $message = sprintf($this->getTranslator()->translate('You are now following %s.'), $game->getName());
+                        } else {
                             return new JsonModel(array('success' => $success, 'message' => $this->getTranslator()->translate('You are already following this game.')));
                         }
-                    }else if($type == 'unfollow'){
+                    } else if ($type == 'unfollow') {
                         // check if the user follows the game in order to unfollow it
-                        if($followers->contains($user)){
+                        if ($followers->contains($user)) {
                             $game->removeFollowers(array($user));
-                            $message = sprintf($this->getTranslator()->translate('You are not following %s anymore.'),$game->getName());
-                        }else{
+                            $message = sprintf($this->getTranslator()->translate('You are not following %s anymore.'), $game->getName());
+                        } else {
                             return new JsonModel(array('success' => $success, 'message' => $this->getTranslator()->translate('You are already not following this game.')));
                         }
-                    }else{
+                    } else {
                         $this->getResponse()->setStatusCode(404);
                         return;
                     }
                     $em->persist($game);
                     $em->flush();
                     $success = 1;
-                }catch(Exception $e){
+                } catch (Exception $e) {
                     $message = $e->getMessage();
                 }
-                $jsonModel->setVariable('followers',count($followers));
-            }else{
+                $jsonModel->setVariable('followers', count($followers));
+            } else {
                 $message = $this->translator->translate("Something went wrong when trying to connect with the game.");
             }
             $jsonModel->setVariables(array(
@@ -104,19 +124,21 @@ class GameController extends AbstractActionController
                 'success' => $success
             ));
             return $jsonModel;
-        }else{
+        } else {
             $this->getResponse()->setStatusCode(404);
             return;
         }
-	}
+    }
 
-    public function rateAction(){
+    public function rateAction()
+    {
         return new JsonModel();
     }
 
-    public function listAction(){
+    public function listAction()
+    {
         $searchForm = $this->getServiceLocator()->get('game_search_form');
-        $games = $this->getGameRepository()->findBy(array(),array('name' => 'ASC'));
+        $games = $this->getGameRepository()->findBy(array(), array('name' => 'ASC'));
 
         return new ViewModel(array(
             'searchForm' => $searchForm,
@@ -125,8 +147,34 @@ class GameController extends AbstractActionController
         ));
     }
 
-    public function searchAction(){
-        if($this->getRequest()->isXmlHttpRequest()){
+    public function getGameCategoriesAction()
+    {
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $gameId = $this->params()->fromQuery('gameId');
+            $success = 0;
+            $jsonModel = new JsonModel();
+            if (!empty($gameId)) {
+                $game = $this->getGameRepository()->find($gameId);
+                if ($game) {
+                    $categories = array();
+                    foreach ($game->getCategories() as $category) {
+                        $categories[$category->getId()] = ucwords($category->getName());
+                    }
+                    $jsonModel->setVariable('categories', $categories);
+                    $success = 1;
+                }
+            }
+            $jsonModel->setVariable('success', $success);
+            return $jsonModel;
+        } else {
+            $this->getResponse()->setStatusCode(404);
+            return;
+        }
+    }
+
+    public function searchAction()
+    {
+        if ($this->getRequest()->isXmlHttpRequest()) {
             $viewModel = new ViewModel();
             $name = $this->params('name', null);
             $games = $this->getGameRepository()->searchByName($name);
@@ -134,13 +182,14 @@ class GameController extends AbstractActionController
             $viewModel->setVariables(array('games' => $games));
             $viewModel->setTerminal(true);
             return $viewModel;
-        }else{
+        } else {
             $this->getResponse()->setStatusCode(404);
             return;
         }
     }
 
-    public function suggestAction(){
+    public function suggestAction()
+    {
         return new ViewModel();
     }
 
@@ -163,44 +212,50 @@ class GameController extends AbstractActionController
     /**
      * @return \Doctrine\ORM\EntityManager
      */
-    public function getEntityManager() {
-		if (!$this -> entityManager) {
-			$this -> setEntityManager($this -> getServiceLocator() -> get('Doctrine\ORM\EntityManager'));
-		}
-		return $this -> entityManager;
-	}
+    public function getEntityManager()
+    {
+        if (!$this->entityManager) {
+            $this->setEntityManager($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+        }
+        return $this->entityManager;
+    }
 
-	public function setEntityManager($em) {
-		$this -> entityManager = $em;
-	}
+    public function setEntityManager($em)
+    {
+        $this->entityManager = $em;
+    }
 
     /**
      * @return \Zend\I18n\Translator\Translator
      */
-    public function getTranslator() {
-		if (!$this -> translator) {
-			$this -> setTranslator($this -> getServiceLocator() -> get('translator'));
-		}
-		return $this -> translator;
-	}
+    public function getTranslator()
+    {
+        if (!$this->translator) {
+            $this->setTranslator($this->getServiceLocator()->get('translator'));
+        }
+        return $this->translator;
+    }
 
-	public function setTranslator($translator) {
-		$this -> translator = $translator;
-	}
+    public function setTranslator($translator)
+    {
+        $this->translator = $translator;
+    }
 
     /**
      * @return \Doctrine\ORM\EntityRepository
      */
-    public function getGameRepository(){
-        if(!$this->gameRepository){
+    public function getGameRepository()
+    {
+        if (!$this->gameRepository) {
             $this->setGameRepository($this->getEntityManager()->getRepository('Game\Entity\Game'));
         }
         return $this->gameRepository;
     }
 
-    public function setGameRepository($gameRepository){
+    public function setGameRepository($gameRepository)
+    {
         $this->gameRepository = $gameRepository;
     }
-	
-	
+
+
 }

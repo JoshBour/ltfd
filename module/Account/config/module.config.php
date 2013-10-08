@@ -85,6 +85,16 @@ return array(
                     )
                 )
             ),
+            'authenticate' => array(
+                'type' => 'Literal',
+                'options' => array(
+                    'route' => '/authenticate',
+                    'defaults' => array(
+                        'controller' => 'Account\Controller\Account',
+                        'action'     => 'authenticate',
+                    )
+                )
+            ),
             'logout' => array(
                 'type' => 'Segment',
                 'options' => array(

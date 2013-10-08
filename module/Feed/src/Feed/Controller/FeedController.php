@@ -7,6 +7,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 use Zend\Authentication\AuthenticationService;
+use \Doctrine\ORM\Tools\Pagination\Paginator;
 
 class FeedController extends AbstractActionController
 {
@@ -37,8 +38,32 @@ class FeedController extends AbstractActionController
 
     public function newAction()
     {
+        $request = $this->getRequest();
+        $entity = new Feed();
+        $form = $this->getFeedForm();
+        if($request->isPost()){
+            $data = $request->getPost();
+            $form->bind($entity);
+            $form->setData($data);
+            if($form->isValid()){
+                $entity = Feed::create($entity,$this->user(),$data['feed']['video']);
+                $em = $this->getEntityManager();
+                try{
+                    $em->persist($entity);
+                    $em->flush();
+
+                    $this->flashMessenger()->addMessage($this->getTranslator()->translate('Your feed has been saved successfully!'));
+                    $this->redirect()->toRoute('user/feeds');
+
+                }catch(Exception $e){
+                    $this->flashMessenger()->addMessage($this->getTranslator()->translate('There was an error when saving the feed: ') . $e->getMessage());
+                }
+            }else{
+                // the form was not valid
+            }
+        }
         return new ViewModel(array(
-            'form' => $this->getFeedForm(),
+            'form' => $form,
             'bodyClass' => 'feedPage'
         ));
     }
@@ -70,16 +95,20 @@ class FeedController extends AbstractActionController
                         if ($rateEntity->getRating() != $rating) {
                             $rateEntity->setRating($rating);
                         }
+                        $newRating = ($rating > 0) ? 2 : -2;
                     } else {
                         $rateEntity = new \Feed\Entity\Rating($user, $feed, $rating);
+                        $newRating = ($rating > 0) ? 1 : -1;
                     }
+                    $feed->setRating($feed->getRating() + $newRating);
                     $em->persist($rateEntity);
+                    $em->persist($feed);
                     $em->flush();
                     $success = 1;
                 } catch (Exception $e) {
                     $message = $e->getMessage();
                 }
-                return new JsonModel();
+                return new JsonModel(array('success' => $success, 'message' => $message, 'newRatingTotal' => $feed->getRating()));
             } else {
                 return $this->redirect()->toRoute('login');
             }

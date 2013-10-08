@@ -1,8 +1,11 @@
 <?php
 namespace Feed\Entity;
 
+use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use DoctrineModule\Paginator\Adapter\Collection as CollectionAdapter;
+use Zend\Paginator\Paginator;
 use ZendGData\YouTube;
 
 /**
@@ -25,6 +28,19 @@ class Feed
      * @ORM\Column(nullable=true)
      */
     private $title;
+
+    /**
+     * @ORM\Column(type="string")
+     * @ORM\Column(length=50)
+     * @ORM\Column(nullable=true)
+     */
+    private $description;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @ORM\Column(length=11)
+     */
+    private $rating;
 
     /**
      * @ORM\Column(type="integer")
@@ -69,6 +85,7 @@ class Feed
 
     /**
      * @ORM\OneToMany(targetEntity="Comment", mappedBy="feed")
+     * @ORM\OrderBy({"postTime" = "DESC"})
      */
     private $comments;
 
@@ -76,6 +93,34 @@ class Feed
     {
         $this->ratings = new ArrayCollection();
         $this->comments = new ArrayCollection();
+    }
+
+    /**
+     * @param $entity \Feed\Entity\Feed
+     * @param $user \Account\Entity\Account
+     * @param $videoUrl int
+     * @return Feed
+     * @throws \Doctrine\Common\Proxy\Exception\InvalidArgumentException
+     */
+    public static function create($entity,$user,$videoUrl){
+        if($entity instanceof Feed){
+            parse_str( parse_url( $videoUrl, PHP_URL_QUERY ), $varArray );
+            $entity->setUploader($user);
+            $entity->setPostTime(date('Y-m-d H:i:s'));
+            $entity->setVideoId($varArray['v']);
+            $entity->setRating(0);
+            $title = $entity->getTitle();
+            $description = $entity->getDescription();
+            if(empty($title)){
+                $entity->setTitle(null);
+            }
+            if(empty($description)){
+                $entity->setDescription(null);
+            }
+            return $entity;
+        }else{
+            throw new InvalidArgumentException('The provided arguments are invalid');
+        }
     }
 
     public function getYoutubeEntry(){
@@ -89,16 +134,46 @@ class Feed
         return $video->getVideoEntry($this->videoId);
     }
 
+    /**
+     * @param mixed $rating
+     */
+    public function setRating($rating)
+    {
+        $this->rating = $rating;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRating()
+    {
+        return $this->rating;
+    }
+
+
     public function getTotalRating(){
-        $sum = 0;
-        foreach($this->ratings as $rating)
-            $sum += ($rating->getRating() == '1') ? 1:-1;
+        $ratingArray = $this->getRatingArray();
+        $sum = $ratingArray['up'] - $ratingArray['down'];
+
         if(abs($sum) > 1000){
             $k = substr($sum,0,1);
             $decimal = substr($sum,1,1);
             $sum = $k . ',' . $decimal . 'k';
         }
         return $sum;
+    }
+
+    public function getRatingArray(){
+        $ratings = array('up' => 0,'down' => 0);
+        foreach($this->ratings as $rating){
+            if($rating->getRating() == '1'){
+                $ratings['up']++;
+            }else{
+                $ratings['down']++;
+            }
+        }
+        return $ratings;
     }
 
     public function getTimeAgo(){
@@ -138,6 +213,22 @@ class Feed
         return $this->title;
     }
 
+    /**
+     * @param mixed $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 
 
     /**
@@ -165,11 +256,12 @@ class Feed
     }
 
     /**
-     * @return mixed
+     * @return Paginator
      */
     public function getComments()
     {
-        return $this->comments;
+        $adapter = new CollectionAdapter($this->comments);
+        return new Paginator($adapter);
     }
 
 

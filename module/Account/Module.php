@@ -17,7 +17,10 @@ class Module
 		return array(
 	        'invokables' => array(
 	            'Account\Controller\Account' => 'Account\Controller\AccountController'
-	        )
+	        ),
+            'aliases' => array(
+                'account_controller' => 'Account\Controller\Account'
+            )
 		);
 	}
 
@@ -51,6 +54,9 @@ class Module
 				'authStorage' => function($sm){
 					return new \Account\Model\AuthStorage();
 				},
+                'account_service' => function($sm){
+                  return new \Account\Service\Account();
+                },
 				'Zend\Authentication\AuthenticationService' => function($sm){
 						$authService = $sm->get('doctrine.authenticationservice.orm_default');
 						$authService->setStorage($sm->get('AuthStorage'));

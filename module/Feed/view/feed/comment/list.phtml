@@ -1,10 +1,24 @@
-<?php if (!empty($comments[0])) { ?>
-    <ul>
-        <?php foreach($comments as $comment): ?>
-
-        <?php endforeach; ?>
-    </ul>
 <?php
-} else {
-    echo $this->translate('<div class="notFound">There are no comments on this feed yet.</div>');
-} ?>
+foreach ($comments as $comment):
+    $author = $comment->getAuthor();
+    $username = $author->getUsername();
+    ?>
+    <li class="comment" id="comment-<?php echo $comment->getId(); ?>">
+        <img src="<?php echo $this->basePath() . '/images/' . $author->getAvatarIcon(32, 32); ?>"
+             class="commentThumb" alt="<?php echo $this->translate("user avatar"); ?>"/>
+
+        <div class="commentContentWrapper">
+            <div class="commentHeader">
+                <a href="<?php echo $this->url('profile', array('user' => $username)); ?>"
+                   class="author"><?php echo $username; ?></a>
+
+                <div class="commentInfo">
+                    <?php echo $comment->getTimeAgo() . ' ago'; ?>
+                </div>
+            </div>
+            <div class="commentBody">
+                <?php echo $comment->getContent(); ?>
+            </div>
+        </div>
+    </li>
+<?php endforeach;

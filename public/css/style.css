@@ -1,5 +1,5 @@
 /* ===================================================== 
- *	Stylesheet for the website Sheringham Films.               
+ *	Stylesheet for the website Leetfeed.
  *	Author: Josh Bour									 
  *	Year: 2013   
  *                          
@@ -67,10 +67,10 @@ footer,header,hgroup,menu,nav,section {
 
 
 body {
-	background: #0f0f0f url('../images/body-bg.png');
-	font-family:  'Source Sans Pro', sans-serif;
-	color: #fff;
-	font-size: 12px;
+    background: #0f0f0f url('../images/body-bg.png');
+    font-family:  'Source Sans Pro', sans-serif;
+    color: #fff;
+    font-size: 12px;
     line-height:1;
 }
 
@@ -86,13 +86,13 @@ a {color: #fff; text-decoration: none;}
 a:hover {text-decoration: underline;}
 
 input, select, textarea {
-	padding: 7px;
-	border-radius: 1px;
-	border: 1px solid #666;
-	outline: none;
-	background: #ccc url('../images/input-bg.png') repeat;
-	font:normal 11px Arial, Helvetica, sans-serif;
-	color: #fff;
+    padding: 7px;
+    border-radius: 1px;
+    border: 1px solid #666;
+    outline: none;
+    background: #ccc url('../images/input-bg.png') repeat;
+    font:normal 11px Arial, Helvetica, sans-serif;
+    color: #fff;
 }
 
 textarea {resize:vertical; }
@@ -146,12 +146,12 @@ header #logo{
     width: 965px;
     left: 50%;
     margin-left: -482.5px;
-	padding: 10px;
-	margin-bottom: 10px;
-	border: 1px solid #333;
-	text-align: center;
-	background: url(../images/flash-bg.png) 50% 50%;
-	color: #fff;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #333;
+    text-align: center;
+    background: url(../images/flash-bg.png) 50% 50%;
+    color: #fff;
 }
 
 /* ===================================================== */
@@ -159,11 +159,11 @@ header #logo{
 /* ===================================================== */
 
 #content{
-	width: 965px;
-	padding: 91px 5px 20px 5px;
-	margin: 0 auto 0 auto;
-	overflow: hidden;
-	font:normal 14px 'Yanone Kaffeesatz', sans-serif;
+    width: 965px;
+    padding: 91px 5px 20px 5px;
+    margin: 0 auto 0 auto;
+    overflow: hidden;
+    font:normal 14px 'Yanone Kaffeesatz', sans-serif;
 }
 
 aside{
@@ -196,7 +196,7 @@ nav ul li:first-child a{
     padding-left:20px;
     background:transparent url('../images/user-dot-icon.png') center left no-repeat;
     transition:background 0.5s;
-   -webkit-transition:background 0.5s;
+    -webkit-transition:background 0.5s;
 }
 
 nav ul li:first-child a:hover{
@@ -236,533 +236,612 @@ nav ul a:hover{
     border-right:1px solid #444;
 }
 
-    /* ===================================================== */
-    /*                     Account Module                    */
-    /* ===================================================== */
+/* ===================================================== */
+/*                     Account Module                    */
+/* ===================================================== */
 
-        /* ===================================================== */
-        /*                     Login Action                      */
+/* ===================================================== */
+/*                     Login Action                      */
 
-            #login, #register{
-                width: 530px;
-                margin: 80px auto 0 auto;
-                padding: 10px;
-                background: #111;
-                border: 1px solid #252525;
-                box-shadow: 5px 5px 20px #050505;
-            }
-
-            body.connectPage{
-                background:#222 url('../images/login-bg.jpg') center center;
-            }
-
-            #login input, #register input{
-                width: 375px;
-            }
-
-            #login h1, #register h1{
-                font-weight:normal;
-                padding: 0 5px 5px 5px;
-            }
-
-            #login input[name="submit"], #register input[name="submit"]{
-                width:150px;
-            }
-
-
-    /* ===================================================== */
-    /*                      User Module                      */
-    /* ===================================================== */
-
-        #userSettingsTabs li{
-            border-bottom: 1px solid #222;
-            border-top: 1px solid #111;
-            word-wrap: break-word;
-        }
-
-        #userSettingsTabs li a{
-            color: #666;
-            padding: 10px 10px 10px 10px;
-            border: 1px solid transparent;
-            font: bold 12px Arial;
-            display: block;
-        }
-
-        #userSettingsTabs li.active a{
-            background: url('../images/tab-list-dark.png') 50% 50%;
-            border: 1px solid #333;
-        }
-
-        #userSettingsTabs li:hover a{
-            background: url('../images/tab-list-light.png') 50% 50%;
-            border: 1px solid #333;
-            color:#bbb;
-            text-decoration:none;
-        }
-
-        .userPage #main h1{
-            font-weight:normal;
-            text-align:left;
-        }
-
-        .userPage h1{
-            padding:7px 0;
-        }
-
-        .userPage #main form{
-            width:490px;
-            margin:25px auto;
-        }
-
-        .userPage #main form img{
-            vertical-align: middle;
-            padding-right: 5px;
-        }
-
-        .userPage #main input{
-            width:319px;
-        }
-
-        .userPage #main form input[name="submit"]{
-            width:150px;
-        }
-
-        .userPage #profileImage{
-            display: block;
-            width: 200px;
-            height:200px;
-            border: 3px solid #333;
-            margin: 20px auto;
-        }
-
-        /* ===================================================== */
-        /*                   Following Action                    */
-
-            ul#following {
-                overflow:auto;
-            }
-
-            #following li{
-                background: #222;
-                float:left;
-                margin:5px 0 5px 11.5px;
-                overflow: auto;
-                width: 640px;
-                border: 2px solid #0f0f0f;
-                /*box-shadow: 1px 1px 3px #0f0f0f;*/
-            }
-
-            #following li img{
-                vertical-align:middle;
-                margin-right:10px;
-            }
-
-            #following .userInfo, #following .gameInfo{
-               float:left;
-            }
-
-            #following .userInfo img, #following .gameInfo img{
-                border: 1px solid #333;
-            }
-
-            #following .userMeta, #following .gameMeta{
-               margin-top:23px;
-                cursor:pointer;
-               float:right;
-            }
-
-        /* ===================================================== */
-        /*                      Games Action                    */
-
-
-
-    /* ===================================================== */
-    /*                     Game Module                       */
-    /* ===================================================== */
-
-        /* ===================================================== */
-        /*                     List Action                       */
-
-            .gameList aside input[name="gameSearch"]{
-                width:244px;
-            }
-
-            #gamesList li{
-                display: inline-block;
-                float:left;
-                text-align:center;
-                margin: 10px 5px;
-                border: 1px solid #222;
-                box-shadow: 2px 2px 5px #000;
-            }
-
-            #gamesList li a:hover{
-                text-decoration:none;
-            }
-
-            #gamesList li:hover{
-                border: 1px solid #333;
-                box-shadow: 2px 1px 2px #222;
-            }
-
-            #gamesList li img{
-                display: block;
-                border-top: 1px solid #333;
-                border-bottom: 1px solid #333;
-            }
-
-            #gamesList .gameMeta a, #gamesList .gameMeta p{
-                padding:7px;
-                color:#bbb;
-            }
-
-            #gamesList .gameMeta a:hover{
-                text-decoration:underline;
-                color:#60b8d8;
-            }
-
-            #gamesList .gameMeta p{
-                display:inline-block;
-            }
-
-            #gamesList span{
-                display:block;
-                font:normal 13px Arial;
-                color:#ddd;
-                margin:0;
-                padding:7px;
-                background-image:url('../images/list-header-bg.png');
-            }
-
-        /* ===================================================== */
-        /*                     Feeds Action                      */
-
-            .gameFeeds #gameFeedLogo{
-                display: block;
-                margin: 0 auto;
-                border: 4px solid #333;
-                box-shadow: 1px 1px 9px #000;
-            }
-
-            .gameFeeds #content #main{
-                border-left:none;
-            }
-
-            .gameFeeds #gameCategories{
-                background:#0f0f0f;
-                margin-top: 2px;
-                border:1px solid #222;
-                border-top:2px solid #111;
-                box-shadow: 2px 2px 2px #000;
-            }
-
-            .gameFeeds #gameCategories li{
-                border-top: 1px solid #252525;
-                font: normal 12px Arial;
-                text-align: center;
-            }
-
-            .gameFeeds #gameCategories li a{
-                padding: 7px 0;
-                display:block;
-                -webkit-transition: background 0.2s linear;
-                -moz-transition: background 0.2s linear;
-                -o-transition: background 0.2s linear;
-                transition: background 0.2s linear;
-            }
-
-            .gameFeeds #gameCategories li a:hover{
-                background:#333;
-                text-decoration: none;
-
-            }
-
-            .gameFeeds #gameCategories li.active{
-                background:#181818 url('../images/tab-list-dark.png') 50% 50%;
-            }
-
-            #categorySort ul{
-                background:#181818 url('../images/game-header-bg.png');
-                border:1px solid #555;
-                text-align:right;
-            }
-
-            #categorySort li{
-                display:inline-block;
-            }
-
-            #categorySort li a{
-                display:inline-block;
-                padding:8px;
-                font:normal 12px Arial;
-            }
-
-            #categorySort li a.active{
-                background-color:#ccc;
-                color:black;
-            }
-
-            .gameFeeds #gameCategories li a, #categorySort li a{
-                color:#ccc;
+#login, #register{
+    width: 530px;
+    margin: 80px auto 0 auto;
+    padding: 10px;
+    background: #111;
+    border: 1px solid #252525;
+    box-shadow: 5px 5px 20px #050505;
 }
-            #feeds li{
-                background-color:#111;
-                margin:15px 0;
-                overflow:auto;
-                border:1px solid #222;
-                box-shadow:2px 2px 10px black;
-                font:normal 11px Arial;
-            }
 
-            #feeds li:hover{
-                border:1px solid #333;
-                box-shadow:2px 2px 10px #222;
-            }
+body.connectPage{
+    background:#222 url('../images/login-bg.jpg') center center;
+}
 
-            #feeds li:first-child{
-                margin-top:5px;
-            }
+#login a, #register a{
+    color:bisque;
+}
 
-            #feeds .feedThumb{
-                float:left;
-                margin-right:5px;
-                border-right:1px solid #222;
-            }
+#login input, #register input{
+    width: 375px;
+}
 
-            #feeds .feedHeader{
-                border-bottom:1px solid #333;
-                height:14px;
-            }
+#login h1, #register h1{
+    font-weight:normal;
+    padding: 0 5px 5px 5px;
+}
 
-            #feeds .feedBody{
-                color:#999;
-                height:35px;
-            }
-
-            #feeds .feedHeader, #feeds .feedBody{
-                padding:5px;
-            }
-
-            #feeds .feedMeta{
-                padding: 3px;
-                background: #222;
-                text-align:center;
-                height:14px;
-            }
-
-            #feeds .feedMeta span{
-                padding:0 7px;
-            }
-
-            #feeds .feedMeta .totalRating{
-                background:transparent url('../images/rating-total-icon.png') center left no-repeat;
-                padding-left:17px;
-            }
-
-            #feeds .feedMeta .thumbUp{
-                background:transparent url('../images/thumbup-icon.png') center left no-repeat;
-                padding-left:7px;
-            }
-
-            #feeds .feedMeta .thumbDown{
-                background:transparent url('../images/thumbdown-icon.png') center left no-repeat;
-                padding-left:7px;
-            }
-
-            #feeds .feedMeta .favorite{
-                background:transparent url('../images/favorite-icon.png') center left no-repeat;
-                padding-left:17px;
-            }
-
-            #feeds .feedMeta .thumbUp:hover, #feeds .feedMeta .thumbUp.disabled{
-                background:transparent url('../images/thumbup-icon-hover.png') center left no-repeat;
-                color:green;
-            }
-
-            #feeds .feedMeta .thumbDown:hover, #feeds .feedMeta .thumbDown.disabled{
-                background:transparent url('../images/thumbdown-icon-hover.png') center left no-repeat;
-                color:red;
-            }
-
-            #feeds .feedMeta .favorite:hover, #feeds .feedMeta .favorite.disabled{
-                background:transparent url('../images/favorite-icon-hover.png') center left no-repeat;
-                color:#6798b7;
-            }
-
-            #feeds .feedMeta .disabled,  #feeds .feedMeta span:hover.disabled{
-                cursor:default;
-            }
-
-            #feeds .feedMeta span.favorite.disabled:hover{
-                text-decoration:line-through;
-                cursor:pointer;
-            }
+#login input[name="submit"], #register input[name="submit"]{
+    width:150px;
+}
 
 
+/* ===================================================== */
+/*                      User Module                      */
+/* ===================================================== */
 
-            #feeds .feedMeta img{
-                padding-right:3px;
-            }
+#userSettingsTabs li{
+    border-bottom: 1px solid #222;
+    border-top: 1px solid #111;
+    word-wrap: break-word;
+}
 
-            #feeds .feedMeta img{
-                vertical-align:middle;
-            }
+#userSettingsTabs li a{
+    color: #666;
+    padding: 10px 10px 10px 10px;
+    border: 1px solid transparent;
+    font: bold 12px Arial;
+    display: block;
+}
 
-            #feeds .feedMeta span:hover{
-                cursor:pointer;
-            }
+#userSettingsTabs li.active a{
+    background: url('../images/tab-list-dark.png') 50% 50%;
+    border: 1px solid #333;
+}
 
-            #feeds .feedInfo{
-                display: inline;
-                float: right;
-                color:#bbb;
-                font-style: italic;
-            }
+#userSettingsTabs li:hover a{
+    background: url('../images/tab-list-light.png') 50% 50%;
+    border: 1px solid #333;
+    color:#bbb;
+    text-decoration:none;
+}
 
-            #feeds .feedAuthor{
-                color:#448197;
-                font-style:normal;
-            }
+.userPage #main h1{
+    font-weight:normal;
+    text-align:left;
+}
 
-            #feeds .feedAuthor:hover{
-                color:#60b8d8;
-            }
+.userPage h1{
+    padding:7px 0;
+}
 
-            .videoMask{
-                position: absolute;
-                width:120px;
-                height:90px;
-                background: transparent url('../images/video-mask-hover.png') center center no-repeat;
-                background-color:rgba(34,34,34,0.5);
-                -webkit-transition: background 0.2s linear;
-                -moz-transition: background 0.2s linear;
-                -o-transition: background 0.2s linear;
-                transition: background 0.2s linear;
-                cursor: pointer;
-            }
+.userPage #main form{
+    width:490px;
+    margin:25px auto;
+}
 
-            .videoMask:hover{
-                background: transparent url('../images/video-mask.png') center center no-repeat;
-                background-color:rgba(34,34,34,0.9);
-            }
+.userPage #main form img{
+    vertical-align: middle;
+    padding-right: 5px;
+}
 
-            #stage{
-                display:none;
-                position: absolute;
-                width:1270px;
-                height:546px;
-                background:black;
-                overflow:auto;
-                border:1px solid #333;
-                z-index: 999;
-            }
+.userPage #main input{
+    width:319px;
+}
 
-            #stage iframe{
-                /*padding:20px;*/
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-            }
+.userPage #main form input[name="submit"]{
+    width:150px;
+}
 
-            #stage #comments{
-                float:left;
-                width:285px;
-                height:546px;
-                border-left: 1px solid #333;
-            }
+.userPage #profileImage{
+    display: block;
+    width: 200px;
+    height:200px;
+    border: 3px solid #333;
+    margin: 20px auto;
+}
 
-            #videoContainer{
-                position:relative;
-            }
+/* ===================================================== */
+/*                   Following Action                    */
 
-            #frameWrapper{
-                /*float:left;*/
-                position: relative;
-                padding-bottom: 56.25%; /* 16:9 */
-                padding-top: 25px;
-                height: 0;
-            }
+ul#following {
+    overflow:auto;
+}
 
-            #stage iframe, #stage #comments{
-                display:inline-block;
-            }
+#following li{
+    background: #222;
+    float:left;
+    margin:5px 0 5px 11.5px;
+    width: 640px;
+    border: 2px solid #0f0f0f;
+    /*box-shadow: 1px 1px 3px #0f0f0f;*/
+}
 
-            #stage #commentList{
-                height:511px;
-            }
+#following li img{
+    vertical-align:middle;
+    margin-right:10px;
+}
 
-            #stage #comments input{
-                width:100%;
-                height:20px;
-                border:none;
-                border-top:1px solid #222;
-                background:#111 url('../images/comment-input-bg.png');
-            }
+#following .userInfo, #following .gameInfo{
+    float:left;
+}
 
+#following .userInfo img, #following .gameInfo img{
+    border: 1px solid #333;
+}
 
-    /* ===================================================== */
-    /*                   Common Module Values                */
-    /* ===================================================== */
-        .gameList aside, .userPage aside, .gameFeeds aside{
-            width:260px;
-        }
+#following .userMeta, #following .gameMeta{
+    margin-top:23px;
+    cursor:pointer;
+    float:right;
+}
 
-        .gameList #main, .userPage #main, .gameFeeds #main{
-            border-left:1px solid #252525;
-            width:667px;
-            min-height:500px;
-            padding-left:20px;
-        }
+/* ===================================================== */
+/*                      Games Action                    */
 
 
-    /* ===================================================== */
-    /*                      Feed Module                      */
-    /* ===================================================== */
 
-        /* ===================================================== */
-        /*                      New Action                       */
+/* ===================================================== */
+/*                     Game Module                       */
+/* ===================================================== */
 
-            .feedPage h2{
-                font-family:Arial;
-            }
+/* ===================================================== */
+/*                     List Action                       */
 
-            #feedForm{
-                width:500px;
-                padding: 10px;
-                background: #111;
-                border: 1px solid #222;
-                box-shadow: 2px 2px 12px black;
-            }
+.gameList aside input[name="gameSearch"]{
+    width:244px;
+}
 
-            #feedForm input{
-                width:358px;
-            }
+#gamesList li{
+    display: inline-block;
+    float:left;
+    text-align:center;
+    margin: 10px 5px;
+    border: 1px solid #222;
+    box-shadow: 2px 2px 5px #000;
+}
 
-            #feedForm select{
-                width:374px;
-            }
+#gamesList li a:hover{
+    text-decoration:none;
+}
 
-            #feedForm .element{
-                margin:35px 0;
-            }
+#gamesList li:hover{
+    border: 1px solid #333;
+    box-shadow: 2px 1px 2px #222;
+}
 
-            #feedForm input[name="submit"]{
-                width:120px;
-            }
+#gamesList li img{
+    display: block;
+    border-top: 1px solid #333;
+    border-bottom: 1px solid #333;
+}
+
+#gamesList .gameMeta a, #gamesList .gameMeta p{
+    padding:7px;
+    color:#bbb;
+}
+
+#gamesList .gameMeta a:hover{
+    text-decoration:underline;
+    color:#60b8d8;
+}
+
+#gamesList .gameMeta p{
+    display:inline-block;
+}
+
+#gamesList span{
+    display:block;
+    font:normal 13px Arial;
+    color:#ddd;
+    margin:0;
+    padding:7px;
+    background-image:url('../images/list-header-bg.png');
+}
+
+/* ===================================================== */
+/*                     Feeds Action                      */
+
+.gameFeeds #gameFeedLogo{
+    display: block;
+    margin: 0 auto;
+    border: 4px solid #333;
+    box-shadow: 1px 1px 9px #000;
+}
+
+.gameFeeds #content #main{
+    border-left:none;
+}
+
+.gameFeeds #gameCategories{
+    background:#0f0f0f;
+    margin-top: 2px;
+    border:1px solid #222;
+    border-top:2px solid #111;
+    box-shadow: 2px 2px 2px #000;
+}
+
+.gameFeeds #gameCategories li{
+    border-top: 1px solid #252525;
+    font: normal 12px Arial;
+    text-align: center;
+}
+
+.gameFeeds #gameCategories li a{
+    padding: 7px 0;
+    display:block;
+    -webkit-transition: background 0.2s linear;
+    -moz-transition: background 0.2s linear;
+    -o-transition: background 0.2s linear;
+    transition: background 0.2s linear;
+}
+
+.gameFeeds #gameCategories li a:hover{
+    background:#333;
+    text-decoration: none;
+
+}
+
+.gameFeeds #gameCategories li.active{
+    background:#181818 url('../images/tab-list-dark.png') 50% 50%;
+}
+
+#categorySort ul{
+    background:#181818 url('../images/game-header-bg.png');
+    border:1px solid #555;
+    text-align:right;
+}
+
+#categorySort li{
+    display:inline-block;
+}
+
+#categorySort li a{
+    display:inline-block;
+    padding:8px;
+    font:normal 12px Arial;
+}
+
+#categorySort li a.active{
+    background-color:#ccc;
+    color:black;
+}
+
+.gameFeeds #gameCategories li a, #categorySort li a{
+    color:#ccc;
+}
+#feeds li{
+    background-color:#111;
+    margin:15px 0;
+    overflow:auto;
+    border:1px solid #222;
+    box-shadow:2px 2px 10px black;
+    font:normal 11px Arial;
+}
+
+#feeds li:hover{
+    border:1px solid #111;
+    box-shadow:2px 2px 10px #222;
+}
+
+#feeds li:first-child{
+    margin-top:5px;
+}
+
+#feeds .feedThumb{
+    float:left;
+    margin-right:5px;
+    border-right:1px solid #222;
+}
+
+#feeds .feedHeader{
+    border-bottom:1px solid #333;
+    height:14px;
+}
+
+#feeds .feedBody{
+    color:#999;
+    height:35px;
+}
+
+#feeds .feedHeader, #feeds .feedBody{
+    padding:5px;
+}
+
+#feeds .feedMeta{
+    padding: 3px;
+    background: #222;
+    text-align:center;
+    height:14px;
+}
+
+#feeds .feedMeta span{
+    padding:0 7px;
+}
+
+#feeds .feedMeta .totalRating{
+    background:transparent url('../images/rating-total-icon.png') center left no-repeat;
+    padding-left:17px;
+}
+
+#feeds .feedMeta .thumbUp{
+    background:transparent url('../images/thumbup-icon.png') center left no-repeat;
+    padding-left:7px;
+}
+
+#feeds .feedMeta .thumbDown{
+    background:transparent url('../images/thumbdown-icon.png') center left no-repeat;
+    padding-left:7px;
+}
+
+#feeds .feedMeta .favorite{
+    background:transparent url('../images/favorite-icon.png') center left no-repeat;
+    padding-left:17px;
+}
+
+#feeds .feedMeta .thumbUp:hover, #feeds .feedMeta .thumbUp.disabled{
+    background:transparent url('../images/thumbup-icon-hover.png') center left no-repeat;
+    color:green;
+}
+
+#feeds .feedMeta .thumbDown:hover, #feeds .feedMeta .thumbDown.disabled{
+    background:transparent url('../images/thumbdown-icon-hover.png') center left no-repeat;
+    color:red;
+}
+
+#feeds .feedMeta .favorite:hover, #feeds .feedMeta .favorite.disabled{
+    background:transparent url('../images/favorite-icon-hover.png') center left no-repeat;
+    color:#6798b7;
+}
+
+#feeds .feedMeta .disabled,  #feeds .feedMeta span:hover.disabled{
+    cursor:default;
+}
+
+#feeds .feedMeta span.favorite.disabled:hover{
+    text-decoration:line-through;
+    cursor:pointer;
+}
 
 
-	/* ===================================================== */
-	/*                          Footer                       */
 
-		footer{
-			position:relative;
-			margin-top:100px;
-			overflow:hidden;
-			background:#333;
-			width: 100%;
-		}
+#feeds .feedMeta img{
+    padding-right:3px;
+}
+
+#feeds .feedMeta img{
+    vertical-align:middle;
+}
+
+#feeds .feedMeta span:hover{
+    cursor:pointer;
+}
+
+#feeds .feedInfo{
+    display: inline;
+    float: right;
+    color:#bbb;
+    font-style: italic;
+}
+
+#feeds .feedAuthor{
+    color:#448197;
+    font-style:normal;
+}
+
+#feeds .feedAuthor:hover{
+    color:#60b8d8;
+}
+
+.videoMask{
+    position: absolute;
+    width:120px;
+    height:90px;
+    background: transparent url('../images/video-mask-hover.png') center center no-repeat;
+    background-color:rgba(34,34,34,0.5);
+    -webkit-transition: background 0.2s linear;
+    -moz-transition: background 0.2s linear;
+    -o-transition: background 0.2s linear;
+    transition: background 0.2s linear;
+    cursor: pointer;
+}
+
+.videoMask:hover{
+    background: transparent url('../images/video-mask.png') center center no-repeat;
+    background-color:rgba(34,34,34,0.9);
+}
+
+#stageWrapper{
+    position: absolute;
+    width: 85%;
+    top: 50%;
+    left: 50%;
+    margin-top: -24%;
+    margin-left: -42.5%;
+    z-index: 999;
+}
+
+#stage{
+    position:relative;
+    background: black url("../images/content_bg.png");
+    overflow: hidden;
+    border: 1px solid #333;
+}
+
+#stage #videoWrapper{
+    position: relative;
+    width: 80%;
+    float: left;
+    border-right: 1px solid #333;
+    padding-bottom: 56.25%;
+}
+
+#stage iframe{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#stage #commentWrapper{
+    float: left;
+    width: 19%;
+    /*padding-bottom: 56.25%;*/
+    border-left: 1px solid #333;
+}
+
+#stage #comments{
+    position: absolute;
+    height: 96%;
+    width: 20%;
+    top: 0;
+    right: 0;
+    margin-top: 35px;
+    overflow:hidden;
+    box-sizing: border-box;
+}
+
+#commentForm{
+    display: none;
+    position: absolute;
+    top: 0;
+    width: inherit;
+}
+
+#stage #commentWrapper input{
+    width:100%;
+    height:20px;
+    border:none;
+    border-bottom:1px solid #444;
+    background:#111 url('../images/comment-input-bg.png');
+}
+
+#stage #comments ul{
+    border-bottom:1px solid black;
+}
+
+.comment{
+    padding:5px;
+    border-bottom:1px solid #222;
+    border-top:1px solid black;
+    overflow:auto;
+    position:relative;
+}
+
+.comment .commentThumb{
+    float:left;
+    width:10%;
+    margin-right:3px;
+    vertical-align:middle;
+}
+
+/*
+    typing too much stuff into the input box will get it streched
+*/
+
+.comment .commentContentWrapper{
+    padding: 3px;
+    float:right;
+    width:85%;
+}
+
+.commentHeader a, .commentHeader .commentInfo{
+    display:inline-block;
+}
+
+.comment .commentInfo{
+    float:right;
+}
+
+.commentHeader .commentInfo{
+    font-style:italic;
+    font-size:11px;
+}
+
+.comment .commentBody{
+    padding-top:6px;
+}
+
+
+/* ===================================================== */
+/*                   Common Module Values                */
+/* ===================================================== */
+.gameList aside, .userPage aside, .gameFeeds aside{
+    width:260px;
+}
+
+.gameList #main, .userPage #main, .gameFeeds #main{
+    border-left:1px solid #252525;
+    width:667px;
+    min-height:500px;
+    padding-left:20px;
+}
+
+
+/* ===================================================== */
+/*                      Feed Module                      */
+/* ===================================================== */
+
+/* ===================================================== */
+/*                      New Action                       */
+
+h2.newPost{
+    font:bold 15px 'Source Sans Pro', sans-serif;
+    width: 496px;
+    margin: 0 auto;
+    background: #222 url('../images/upload-icon-hover.png') center left no-repeat;
+    padding: 10px;
+    border: 3px dashed #333;
+}
+
+
+
+#feedForm{
+    width:500px;
+    margin-top:5px;
+    padding: 10px;
+    background: #111;
+    border: 1px solid #222;
+    box-shadow: 2px 2px 12px black;
+}
+
+#feedForm .element p{
+    padding: 5px;
+    text-align:right;
+    font-style: italic;
+    font: italic 11px 'Source Sans Pro';
+}
+
+#feedForm input, #feedForm textarea{
+    width:358px;
+}
+
+#feedForm select{
+    width:374px;
+}
+
+#feedForm .element{
+    margin:50px 0;
+}
+
+#feedForm .element:first-of-type{
+    margin-top:10px;
+}
+
+#feedForm input[name="submit"]{
+    width:120px;
+}
+
+
+/* ===================================================== */
+/*                          Footer                       */
+
+footer{
+    position:relative;
+    margin-top:100px;
+    overflow:hidden;
+    background:#333;
+    width: 100%;
+}
 
 
 /* ===================================================== */
@@ -775,112 +854,191 @@ nav ul a:hover{
 .disabled {cursor:default;}
 .edit, .delete, .save, .cancel, .ban, .unban {cursor: pointer;}
 .centered{margin: 0 auto;}
-
+.author{color:#448197}
 
 .notFound{
-	padding: 10px;
-	font: bold 13px arial;
+    padding: 10px;
 }
 
 .loadingImg {
-	background: transparent url('../images/ajax-loader.gif');
-	width: 126px;
-	height: 22px;
-	margin: 10px auto;
+    background: transparent url('../images/ajax-loader.gif');
+    width: 126px;
+    height: 22px;
+    margin: 10px auto;
 }
 
 #shadow {
-	position: fixed;
-	top: 0px;
-	left: 0px;
-	width: 100%;
-	height: 100%;
-	background-color: black;
-	opacity: 0.9;
-	filter: alpha(opacity=90);
-	z-index: 99;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0.9;
+    filter: alpha(opacity=90);
+    z-index: 99;
 }
 
 #above{
-	position: relative;
-	background:transparent;
-	z-index: 100;
-	cursor: pointer;
-	opacity: 1;
+    position: relative;
+    background:transparent;
+    z-index: 100;
+    cursor: pointer;
+    opacity: 1;
 }
 
-	/* ===================================================== */
-	/*                       Pagination                      */
+/* ===================================================== */
+/*                       Pagination                      */
 
-		.paginationControl{
-			margin: 10px auto;
-			overflow:auto;
-			text-align:center;
-		}
+.paginationControl{
+    margin: 10px auto;
+    overflow:auto;
+    text-align:center;
+}
 
-		.paginationControl ul li{
-			display: inline-block;
-			background: #fafafa;
-			border-radius: 2px;
-			border: 1px solid #bbb;
-		}
+.paginationControl ul li{
+    display: inline-block;
+    background: #fafafa;
+    border-radius: 2px;
+    border: 1px solid #bbb;
+}
 
-		.paginationControl ul li a{
-			padding: 5px;
-			display:block;
-			color: #4CA1CF;
-		}
+.paginationControl ul li a{
+    padding: 5px;
+    display:block;
+    color: #4CA1CF;
+}
 
-		.paginationControl ul li:hover{
-			background: #fefefe;
-		}
+.paginationControl ul li:hover{
+    background: #fefefe;
+}
 
-		.paginationControl ul li a:hover{
-			text-decoration:none;
-			color:#195D82;
-		}
+.paginationControl ul li a:hover{
+    text-decoration:none;
+    color:#195D82;
+}
 
-		.paginationControl ul:first-of-type{
-			margin-left:65px;
-			display:inline;
-		}
+.paginationControl ul:first-of-type{
+    margin-left:65px;
+    display:inline;
+}
 
-		.countOptions{
-			float:right;
-		}
+.countOptions{
+    float:right;
+}
 
-	/* ===================================================== */
-	/*                     Standard Form                     */
+/* ===================================================== */
+/*                     Standard Form                     */
 
-		.standardForm{
-			margin: 15px auto;
-			padding:7px;
-			overflow: hidden;
-			text-align: left;
-		}
+.standardForm{
+    margin: 15px auto;
+    padding:7px;
+    overflow: hidden;
+    text-align: left;
+}
 
-		.standardForm .element{
-			margin-bottom: 20px;
-		}
+.standardForm .element{
+    margin-bottom: 20px;
+}
 
-		.standardForm .formError{
-			padding:5px;
-			color:red;
-		}
+.standardForm .formError{
+    padding:5px;
+    color:red;
+}
 
-		.standardForm input, select, textarea {
-			vertical-align: middle;
-			margin-left: 25px;
-			border-radius: 2px;
-		}
+.standardForm input, select, textarea {
+    vertical-align: middle;
+    margin-left: 25px;
+    border-radius: 2px;
+}
 
-		.standardForm label {
-			width: 100px;
-			display: inline-block;
-			vertical-align: middle;
-		}
+.standardForm label {
+    width: 100px;
+    display: inline-block;
+    vertical-align: middle;
+}
 
-		.standardForm input[name="submit"] {
-			float: right;
-			width: 120px;
-		}
+.standardForm input[name="submit"] {
+    float: right;
+    width: 120px;
+}
+
+/* ===================================================== */
+/*                    Scroller Styles                    */
+
+.ps-container .ps-scrollbar-x {
+    position: absolute; /* please don't change 'position' */
+    bottom: 3px; /* there must be 'bottom' for ps-scrollbar-x */
+    height: 8px;
+    background-color: #aaa;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    opacity: 0;
+    filter: alpha(opacity = 0);
+    -o-transition: opacity .2s linear;
+    -webkit-transition: opacity.2s linear;
+    -moz-transition: opacity .2s linear;
+    transition: opacity .2s linear;
+}
+
+.ps-container.ie6 .ps-scrollbar-x {
+    font-size: 0; /* fixed scrollbar height in xp sp3 ie6 */
+}
+
+.ps-container:hover .ps-scrollbar-x,
+.ps-container.hover .ps-scrollbar-x {
+    opacity: 0.6;
+    filter: alpha(opacity = 60);
+}
+
+.ps-container .ps-scrollbar-x:hover,
+.ps-container .ps-scrollbar-x.hover {
+    opacity: 0.9;
+    filter: alpha(opacity = 90);
+    cursor:default;
+}
+
+.ps-container .ps-scrollbar-x.in-scrolling {
+    opacity: 0.9;
+    filter: alpha(opacity = 90);
+}
+
+.ps-container .ps-scrollbar-y {
+    position: absolute; /* please don't change 'position' */
+    right: 3px; /* there must be 'right' for ps-scrollbar-y */
+    width: 8px;
+    z-index:9999;
+    background-color: #aaa;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    opacity: 0;
+    filter: alpha(opacity = 0);
+    -o-transition: opacity .2s linear;
+    -webkit-transition: opacity.2s linear;
+    -moz-transition: opacity .2s linear;
+    transition: opacity .2s linear;
+}
+
+.ps-container.ie .ps-scrollbar-y {
+    font-size: 0; /* fixed scrollbar height in xp sp3 ie6 */
+}
+
+.ps-container:hover .ps-scrollbar-y,
+.ps-container.hover .ps-scrollbar-y {
+    opacity: 0.6;
+    filter: alpha(opacity = 60);
+}
+
+.ps-container .ps-scrollbar-y:hover,
+.ps-container .ps-scrollbar-y.hover {
+    opacity: 0.9;
+    filter: alpha(opacity = 90);
+    cursor: default;
+}
+
+.ps-container .ps-scrollbar-y.in-scrolling {
+    opacity: 0.9;
+    filter: alpha(opacity = 90);
+}

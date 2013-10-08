@@ -28,40 +28,43 @@ class CommentController extends AbstractActionController
     public function addAction()
     {
         $request = $this->getRequest();
-        if($request->isXmlHttpRequest()){
+        if ($request->isXmlHttpRequest()) {
             $feedId = $this->params()->fromQuery('feedId');
             $em = $this->getEntityManager();
             $feed = $em->getRepository('Feed\Entity\Feed')->find($feedId);
             $success = 0;
             $message = '';
-            if($feed){
+            if ($feed) {
                 $form = $this->getCommentForm();
                 $entity = new \Feed\Entity\Comment();
                 $form->bind($entity);
                 $data = $request->getPost();
                 $form->setData($data);
-                if($form->isValid()){
+                if ($form->isValid()) {
                     $entity->setAuthor($this->user())
-                           ->setFeed($feed)
-                           ->setPostTime(date('Y-m-d H:i:s'));
-                    try{
+                        ->setFeed($feed)
+                        ->setPostTime(date('Y-m-d H:i:s'));
+                    try {
                         $em->persist($entity);
                         $em->flush();
-                        $success = 1;
-                    }catch(Exception $e){
+
+                        $viewModel = new ViewModel(array('comment' => $entity));
+                        $viewModel->setTerminal(true);
+                        return $viewModel;
+                    } catch (Exception $e) {
                         $message = $e->getMessage();
                     }
-                }else{
+                } else {
                     $message = $form->getMessages();
                 }
-            }else{
+            } else {
                 $message = $this->translator->translate('There was something wrong with the feed, please try again.');
             }
             return new JsonModel(array(
                 'message' => $message,
                 'success' => $success
             ));
-        }else{
+        } else {
             $this->getResponse()->setStatusCode(404);
             return;
         }
@@ -86,13 +89,27 @@ class CommentController extends AbstractActionController
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
             $feedId = $this->params()->fromQuery('feedId');
+            $pageNumber = $this->params()->fromQuery('page', 1);
+            $commentsPerPage = $this->params()->fromQuery('itemCount', 20);
+
             $success = 0;
             $message = '';
+
             $viewModel = new ViewModel();
             $feed = $this->getEntityManager()->getRepository('\Feed\Entity\Feed')->find($feedId);
-            if($feed){
+            if ($feed) {
                 $comments = $feed->getComments();
-            }else{
+                $commentNumber = $comments->count();
+                if ($commentNumber-1 > 0) {
+                    if ($pageNumber >= $comments->count() - 1) {
+                        return new JsonModel(array('success' => 0, 'message' => $this->getTranslator()->translate('There are no more comments.')));
+                    }
+                    $comments->setCurrentPageNumber($pageNumber)
+                        ->setItemCountPerPage($commentsPerPage);
+                } else {
+                    return new JsonModel(array('success' => 0, 'message' => $this->getTranslator()->translate('There are no comments on this feed.')));
+                }
+            } else {
                 echo $this->getTranslator()->translate('The comments could not be retrieved, please try again.');
             }
 

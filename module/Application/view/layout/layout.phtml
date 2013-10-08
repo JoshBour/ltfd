@@ -20,7 +20,9 @@ $child = $children[0];
                         #->prependStylesheet($this->basePath() . '/css/bootstrap.min.css') ?>
 
         <!-- Scripts -->
-        <?php echo $this->headScript()->prependFile($this->basePath() . '/js/lib.js')
+        <?php echo $this->headScript()->prependFile($this->basePath() . '/js/perfect-scrollbar.js')
+                                      ->prependFile($this->basePath() . '/js/jquery.mousewheel.js')
+                                      ->prependFile($this->basePath() . '/js/lib.js')
                                       ->prependFile($this->basePath() . '/js/html5.js', 'text/javascript', array('conditional' => 'lt IE 9',))		
 									  ->prependFile($this->basePath() . '/js/jquery-1.9.0.js'); ?>
       	<script>

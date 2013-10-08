@@ -16,12 +16,12 @@ use Feed\Entity\Feed;
 class FeedFieldset extends Fieldset implements InputFilterProviderInterface{
 
     /**
-     * @var Doctrine\ORM\EntityManager
+     * @var \Doctrine\ORM\EntityManager
      */
     private $entityManager;
 
     /**
-     * @var Zend\I18n\Translator
+     * @var \Zend\I18n\Translator
      */
     private $translator;
 
@@ -42,6 +42,17 @@ class FeedFieldset extends Fieldset implements InputFilterProviderInterface{
             ),
             'attributes' => array(
                 'placeholder' => $this->translator->translate('Enter a custom feed title.')
+            )
+        ));
+
+        $this->add(array(
+            'name' => 'description',
+            'type' => 'textarea',
+            'options' => array(
+                'label' => $this->translator->translate('Description:')
+            ),
+            'attributes' => array(
+                'placeholder' => $this->translator->translate('Enter a custom feed description.')
             )
         ));
 
@@ -77,7 +88,7 @@ class FeedFieldset extends Fieldset implements InputFilterProviderInterface{
                 'name' => 'category',
                 'options' => array(
                     'label' => $this->translator->translate('Category:'),
-                    'empty_option' => $this->translator->translate('First select a game.')
+                    'empty_option' => $this->translator->translate('Then select a category.')
                 )
             )
         );
@@ -86,6 +97,7 @@ class FeedFieldset extends Fieldset implements InputFilterProviderInterface{
     public function getInputFilterSpecification(){
         return array(
             'title' => array(
+                'required' => false,
                 'validators' => array(
                     array(
                         'name' => 'StringLength',
@@ -101,6 +113,38 @@ class FeedFieldset extends Fieldset implements InputFilterProviderInterface{
                 'filters' => array(
                     array('name' => 'StringTrim'),
                     array('name' => 'StripTags')
+                )
+            ),
+            'description' => array(
+                'required' => false,
+                'validators' => array(
+                    array(
+                        'name' => 'StringLength',
+                        'options' => array(
+                            'min' => 4,
+                            'max' => 200,
+                            'messages' => array(
+                                \Zend\Validator\StringLength::INVALID => $this->translator->translate("The title must be between 4-50 characters long.")
+                            )
+                        )
+                    ),
+                ),
+                'filters' => array(
+                    array('name' => 'StringTrim'),
+                    array('name' => 'StripTags')
+                )
+            ),
+            'game' => array(
+                'validators' => array(
+                    array(
+                        'name' => 'NotEmpty',
+                        'break_chain_on_failure' => true,
+                        'options' => array(
+                            'messages' => array(
+                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate("You must select a game for the video.")
+                            )
+                        )
+                    ),
                 )
             ),
             'video' => array(
@@ -131,6 +175,17 @@ class FeedFieldset extends Fieldset implements InputFilterProviderInterface{
                 )
             ),
             'category' => array(
+                'validators' => array(
+                    array(
+                        'name' => 'NotEmpty',
+                        'break_chain_on_failure' => true,
+                        'options' => array(
+                            'messages' => array(
+                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate("After you select a game, you must select a category.")
+                            )
+                        )
+                    ),
+                ),
                 'filters' => array(
                     array('name' => 'StringTrim'),
                     array('name' => 'StripTags')

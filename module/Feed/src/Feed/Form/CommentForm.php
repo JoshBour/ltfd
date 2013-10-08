@@ -24,10 +24,6 @@ class CommentForm extends Form
         $this->setHydrator(new DoctrineHydrator($em, '\Feed\Entity\Comment'))
             ->setInputFilter(new InputFilter());
 
-        $this->add(array(
-            'name' => 'security',
-            'type' => 'Zend\Form\Element\Csrf'
-        ));
 
         $this->add(array(
             'name' => 'submit',
@@ -35,7 +31,6 @@ class CommentForm extends Form
         ));
 
         $this->setValidationGroup(array(
-            'security',
             'comment' => array(
                 'id',
                 'content'

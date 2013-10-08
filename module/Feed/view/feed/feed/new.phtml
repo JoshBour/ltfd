@@ -1,5 +1,5 @@
 <?php
-echo '<h2>' . $this->translate('Post A New Feed') . '</h2>';
+echo '<h2 class="newPost">' . $this->translate('Post A New Feed') . '</h2>';
 $form->prepare();
 $form->setAttributes(array(
     'action' => $this->url('feed/new'),
@@ -11,11 +11,23 @@ echo $this->formHidden($form->get('security'));
 ?>
 
     <div class="element">
+        <p class="formNote"><?php echo $this->translate('If you leave this blank the title from the youtube video will be used.'); ?></p>
         <?php
         echo $this->formElementErrors($fieldSet->get('title'), array('class' => 'formError'));
         echo $this->formLabel($fieldSet->get('title'));
         echo $this->formInput($fieldSet->get('title'));
         ?>
+        <p>Remaining characters: <span class="remainingChars">50</span>/50</p>
+    </div>
+
+    <div class="element">
+        <p class="formNote"><?php echo $this->translate('If you leave it blank the description from the youtube video will be used.'); ?></p>
+        <?php
+        echo $this->formElementErrors($fieldSet->get('description'), array('class' => 'formError'));
+        echo $this->formLabel($fieldSet->get('description'));
+        echo $this->formTextarea($fieldSet->get('description'));
+        ?>
+        <p>Remaining characters: <span class="remainingChars">200</span>/200</p>
     </div>
 
     <div class="element">

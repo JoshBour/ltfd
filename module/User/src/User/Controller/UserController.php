@@ -81,6 +81,7 @@ class UserController extends AbstractActionController
                         $simpleImage->load(PUBLIC_PATH . '/images/users/' . $user->getId() . '/user-default.' . $extension);
                         $simpleImage->createThumbnail(200, PUBLIC_PATH . '/images/users/' . $user->getId() . '/user-default-200x200.' . $extension, 200);
                         $simpleImage->createThumbnail(65, PUBLIC_PATH . '/images/users/' . $user->getId() . '/user-default-65x65.' . $extension, 65);
+                        $simpleImage->createThumbnail(32, PUBLIC_PATH . '/images/users/' . $user->getId() . '/user-default-16x16.' . $extension, 32);
                         $user->setAvatar('user-default.' . $extension);
                     }
                     if(in_array('password',$validationGroup)){
