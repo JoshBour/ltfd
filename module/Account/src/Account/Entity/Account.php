@@ -123,8 +123,6 @@ class Account
     private $categorizedFeeds;
 
 
-
-
     public function __construct()
     {
         $this->followers = new ArrayCollection();
@@ -134,10 +132,15 @@ class Account
         $this->games = new ArrayCollection();
         $this->feeds = new ArrayCollection();
         $this->ratings = new ArrayCollection();
-        $this->watched = new ArrayCollection();
         $this->categorizedFeeds = new ArrayCollection();
     }
 
+    /**
+     * Check if the user has rated a feed.
+     *
+     * @param \Feed\Entity\Feed $feed
+     * @return null|\Feed\Entity\Rating
+     */
     public function getRated($feed)
     {
         foreach ($this->ratings->toArray() as $rating)
@@ -145,14 +148,25 @@ class Account
         return null;
     }
 
-    public function hasFavorited($feed){
-        foreach($this->categorizedFeeds->toArray() as $categorizedFeed)
-            if($categorizedFeed->getFeed()->getId() == $feed && $categorizedFeed->getCategory() == 'favorites') return true;
+    /**
+     * Check if the account has favorited a feed.
+     *
+     * @param \Feed\Entity\Feed $feed
+     * @return bool|null
+     */
+    public function hasFavorited($feed)
+    {
+        foreach ($this->categorizedFeeds->toArray() as $categorizedFeed)
+            if ($categorizedFeed->getFeed()->getId() == $feed && $categorizedFeed->getCategory() == 'favorites') return true;
         return null;
     }
 
+
     /**
-     * TODO refactor this algorithm to the best
+     * Get the fields that need to be validated
+     *
+     * @param array $data
+     * @return array
      */
     public function getUpdateValidationGroup($data)
     {
@@ -171,6 +185,14 @@ class Account
         return $validationGroup;
     }
 
+    /**
+     * Get the full path to the avatar
+     * according to the dimensions given
+     *
+     * @param int $dimensionX
+     * @param int $dimensionY
+     * @return string
+     */
     public function getAvatarIcon($dimensionX = 35, $dimensionY = 35)
     {
         if (empty($this->avatar)) {
@@ -183,130 +205,118 @@ class Account
     }
 
     /**
-     * @param mixed $history
+     * Hash the password.
+     *
+     * @param string $password
+     * @return string
+     */
+    public static function getHashedPassword($password)
+    {
+        return crypt($password . 'leetfeedpenbour');
+    }
+
+    /**
+     * Check if the user's password is the same as the provided one.
+     *
+     * @param Account $user
+     * @param string $password
+     * @return bool
+     */
+    public static function hashPassword($user, $password)
+    {
+        return ($user->getPassword() === crypt($password . 'leetfeedpenbour', $user->getPassword()));
+    }
+
+    /**
+     * Set the account's avatar.
+     *
+     * @param string $avatar
+     * @return Account
+     */
+    public function setAvatar($avatar)
+    {
+        $this->avatar = $avatar;
+        return $this;
+    }
+
+    /**
+     * Get the account's avatar.
+     *
+     * @return string
+     */
+    public function getAvatar()
+    {
+        return $this->avatar;
+    }
+
+    /**
+     * Set the account's categorized feeds.
+     *
+     * @param AccountsFeeds $categorizedFeeds
+     * @return Account
      */
     public function setCategorizedFeeds($categorizedFeeds)
     {
         $this->categorizedFeeds[] = $categorizedFeeds;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the account's categorized feeds.
+     *
+     * @return ArrayCollection
      */
     public function getCategorizedFeeds()
     {
         return $this->categorizedFeeds;
     }
 
-    public function addCategorizedFeeds($categorizedFeeds){
-        foreach($categorizedFeeds as $feed)
-            $this->categorizedFeeds->add($feed);
-    }
-
-    public function removeCategorizedFeeds($categorizedFeeds){
-        foreach($categorizedFeeds as $feed)
-            $this->categorizedFeeds->removeElement($feed);
-    }
-
-
     /**
-     * @param mixed $feeds
+     * Add categorized feeds to the existing ones.
+     *
+     * @param array|AccountsFeeds $categorizedFeeds
      */
-    public function setFeeds($feeds)
+    public function addCategorizedFeeds($categorizedFeeds)
     {
-        $this->feeds[] = $feeds;
+        if (is_array($categorizedFeeds)) {
+            foreach ($categorizedFeeds as $feed)
+                $this->categorizedFeeds->add($feed);
+        } else {
+            $this->categorizedFeeds->add($categorizedFeeds);
+        }
     }
 
     /**
-     * @return mixed
+     * Remove categorized feed(s) from the existing ones.
+     *
+     * @param array|AccountsFeeds $categorizedFeeds
      */
-    public function getFeeds()
+    public function removeCategorizedFeeds($categorizedFeeds)
     {
-        return $this->feeds;
-    }
-
-
-    public function getAvatar()
-    {
-        return $this->avatar;
-    }
-
-    public function setAvatar($avatar)
-    {
-        $this->avatar = $avatar;
+        if (is_array($categorizedFeeds)) {
+            foreach ($categorizedFeeds as $feed)
+                $this->categorizedFeeds->removeElement($feed);
+        } else {
+            $this->categorizedFeeds->removeElement($categorizedFeeds);
+        }
     }
 
     /**
-     * @param mixed $ratings
-     */
-    public function setRatings($ratings)
-    {
-        $this->ratings[] = $ratings;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRatings()
-    {
-        return $this->ratings;
-    }
-
-
-    /**
-     * @param mixed $socials
-     */
-    public function setSocials($socials)
-    {
-        $this->socials[] = $socials;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSocials()
-    {
-        return $this->socials;
-    }
-
-    public function addSocials($socials)
-    {
-        foreach ($socials as $social)
-            $this->socials->add($social);
-    }
-
-    public function removeSocials($socials)
-    {
-        foreach ($socials as $social)
-            $this->socials->removeElement($social);
-    }
-
-    /**
-     * @param mixed $games
-     */
-    public function setGames($games)
-    {
-        $this->games = $games;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getGames()
-    {
-        return $this->games;
-    }
-
-    /**
-     * @param mixed $email
+     * Set the account's email.
+     *
+     * @param string $email
+     * @return Account
      */
     public function setEmail($email)
     {
         $this->email = $email;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the account's email.
+     *
+     * @return string
      */
     public function getEmail()
     {
@@ -314,112 +324,304 @@ class Account
     }
 
     /**
-     * @param mixed $followers
+     * Set the account's feeds.
+     *
+     * @param \Feed\Entity\Feed $feeds
+     * @return Account
+     */
+    public function setFeeds($feeds)
+    {
+        $this->feeds[] = $feeds;
+        return $this;
+    }
+
+    /**
+     * Get the account's feeds.
+     *
+     * @return ArrayCollection
+     */
+    public function getFeeds()
+    {
+        return $this->feeds;
+    }
+
+    /**
+     * Add feed(s) to the existing ones.
+     *
+     * @param array|\Feed\Entity\Feed $feeds
+     */
+    public function addFeeds($feeds)
+    {
+        if (is_array($feeds)) {
+            foreach ($feeds as $feed)
+                $this->feeds->add($feed);
+        } else {
+            $this->feeds->add($feeds);
+        }
+    }
+
+    /**
+     * Remove feed(s) from the existing ones.
+     *
+     * @param array|\Feed\Entity\Feed $feeds
+     */
+    public function removeFeeds($feeds)
+    {
+        if (is_array($feeds)) {
+            foreach ($feeds as $feed)
+                $this->feeds->removeElement($feed);
+        } else {
+            $this->feeds->removeElement($feeds);
+        }
+    }
+
+    /**
+     * Set the account's followers
+     *
+     * @param Account $followers
+     * @return Account
      */
     public function setFollowers($followers)
     {
         $this->followers[] = $followers;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the account's followers
+     *
+     * @return ArrayCollection
      */
     public function getFollowers()
     {
         return $this->followers;
     }
 
+    /**
+     * Add follower(s) to the existing ones.
+     *
+     * @param array|Account $followers
+     */
     public function addFollowers($followers)
     {
-        foreach ($followers as $follower)
-            $this->followers->add($follower);
-    }
-
-    public function removeFollowers($followers)
-    {
-        $this->followers->removeElement($followers);
+        if (is_array($followers)) {
+            foreach ($followers as $follower)
+                $this->followers->add($follower);
+        } else {
+            $this->followers->add($followers);
+        }
     }
 
     /**
-     * @param mixed $following
+     * Remove follower(s) from the existing ones.
+     *
+     * @param array|Account $followers
+     */
+    public function removeFollowers($followers)
+    {
+        if (is_array($followers)) {
+            foreach ($followers as $follower)
+                $this->followers->removeElement($follower);
+        } else {
+            $this->followers->removeElement($followers);
+        }
+    }
+
+    /**
+     * Set the account's following.
+     *
+     * @param Account $following
+     * @return Account
      */
     public function setFollowing($following)
     {
-        $this->following[] = $following;
+        $this->following = $following;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the account's following.
+     *
+     * @return ArrayCollection
      */
     public function getFollowing()
     {
         return $this->following;
     }
 
-    public function addFollowing($followers)
+    /**
+     * Add following account(s) to the existing ones.
+     *
+     * @param array|Account $following
+     */
+    public function addFollowing($following)
     {
-        foreach ($followers as $follower)
-            $this->following->add($follower);
-    }
-
-    public function removeFollowing($followers)
-    {
-        $this->following->removeElement($followers);
+        if (is_array($following)) {
+            foreach ($following as $account)
+                $this->following->add($account);
+        } else {
+            $this->following->add($following);
+        }
     }
 
     /**
-     * @param mixed $groups
+     * Remove following account(s) from the existing ones.
+     *
+     * @param array|Account $following
+     */
+    public function removeFollowing($following)
+    {
+        if (is_array($following)) {
+            foreach ($following as $account)
+                $this->following->removeElement($account);
+        } else {
+            $this->following->removeElement($following);
+        }
+    }
+
+    /**
+     * Set the account's games
+     *
+     * @param \Game\Entity\Game $games
+     * @return Account
+     */
+    public function setGames($games)
+    {
+        $this->games[] = $games;
+        return $this;
+    }
+
+    /**
+     * Get the account's games
+     *
+     * @return ArrayCollection
+     */
+    public function getGames()
+    {
+        return $this->games;
+    }
+
+    /**
+     * Add game(s) to the existing ones.
+     *
+     * @param array|\Game\Entity\Game $games
+     */
+    public function addGames($games)
+    {
+        if (is_array($games)) {
+            foreach ($games as $game)
+                $this->games->add($game);
+        } else {
+            $this->games->add($games);
+        }
+    }
+
+    /**
+     * Remove game(s) from the existing ones.
+     *
+     * @param array|\Game\Entity\Game $games
+     */
+    public function removeGames($games)
+    {
+        if (is_array($games)) {
+            foreach ($games as $game)
+                $this->games->removeElement($game);
+        } else {
+            $this->games->removeElement($games);
+        }
+    }
+
+    /**
+     * Set the account's groups
+     *
+     * @param Group $groups
+     * @return Account
      */
     public function setGroups($groups)
     {
         $this->groups[] = $groups;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the account's groups
+     *
+     * @return ArrayCollection
      */
     public function getGroups()
     {
         return $this->groups;
     }
 
+    /**
+     * Add group(s) to the existing ones.
+     *
+     * @param array|Group $groups
+     */
     public function addGroups($groups)
     {
-        foreach ($groups as $group)
-            $this->groups->add($group);
-    }
-
-    public function removeGroups($groups)
-    {
-        $this->groups->removeElement($groups);
+        if (is_array($groups)) {
+            foreach ($groups as $group)
+                $this->groups->add($group);
+        } else {
+            $this->groups->add($groups);
+        }
     }
 
     /**
-     * @param mixed $id
+     * Remove group(s) from the existing ones.
+     *
+     * @param array|Group $groups
+     */
+    public function removeGroups($groups)
+    {
+        if (is_array($groups)) {
+            foreach ($groups as $group)
+                $this->groups->removeElement($group);
+        } else {
+            $this->groups->removeElement($groups);
+        }
+    }
+
+    /**
+     * Set the account's id.
+     *
+     * @param int $id
+     * @return Account
      */
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the account's id.
+     *
+     * @return int
      */
     public function getId()
     {
         return $this->id;
     }
 
+
     /**
-     * @param mixed $ip
+     * Set the account's ip
+     *
+     * @param string $ip
+     * @return Account
      */
     public function setIp($ip)
     {
         $this->ip = $ip;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the account's ip
+     *
+     * @return string
      */
     public function getIp()
     {
@@ -427,15 +629,21 @@ class Account
     }
 
     /**
-     * @param mixed $isActivated
+     * Set the account's activated status
+     *
+     * @param int $isActivated
+     * @return Account
      */
     public function setIsActivated($isActivated)
     {
         $this->isActivated = $isActivated;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the account's activated status
+     *
+     * @return int
      */
     public function getIsActivated()
     {
@@ -443,15 +651,23 @@ class Account
     }
 
     /**
-     * @param mixed $lastSeen
+     * Set the account's last seen time
+     * Accepted format is Y-m-d H:i:s
+     *
+     * @param string $lastSeen
+     * @return Account
      */
     public function setLastSeen($lastSeen)
     {
         $this->lastSeen = $lastSeen;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the account's last seen time
+     * The format is Y-m-d H:i:s
+     *
+     * @return string
      */
     public function getLastSeen()
     {
@@ -459,15 +675,21 @@ class Account
     }
 
     /**
-     * @param mixed $password
+     * Set the account's password
+     *
+     * @param string $password
+     * @return Account
      */
     public function setPassword($password)
     {
         $this->password = $password;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the account's password (crypted)
+     *
+     * @return string
      */
     public function getPassword()
     {
@@ -475,14 +697,74 @@ class Account
     }
 
     /**
-     * @param mixed $registerDate
+     * Set the account's feed ratings.
+     *
+     * @param $ratings
+     * @return Account
+     */
+    public function setRatings($ratings)
+    {
+        $this->ratings[] = $ratings;
+        return $this;
+    }
+
+    /**
+     * Get the account's feed ratings.
+     *
+     * @return ArrayCollection
+     */
+    public function getRatings()
+    {
+        return $this->ratings;
+    }
+
+    /**
+     * Add rating(s) to the existing ones.
+     *
+     * @param array|\Feed\Entity\Rating $ratings
+     */
+    public function addRatings($ratings)
+    {
+        if (is_array($ratings)) {
+            foreach ($ratings as $rating)
+                $this->ratings->add($rating);
+        } else {
+            $this->ratings->add($ratings);
+        }
+    }
+
+    /**
+     * Remove rating(s) from the existing ones.
+     *
+     * @param array|\Feed\Entity\Rating $ratings
+     */
+    public function removeRatings($ratings)
+    {
+        if (is_array($ratings)) {
+            foreach ($ratings as $rating)
+                $this->ratings->removeElement($rating);
+        } else {
+            $this->ratings->removeElement($ratings);
+        }
+    }
+
+    /**
+     * Set the account's register date.
+     * Accepted format is Y-m-d H:i:s
+     *
+     * @param string $registerDate
+     * @return Account
      */
     public function setRegisterDate($registerDate)
     {
         $this->registerDate = $registerDate;
+        return $this;
     }
 
     /**
+     * Get the account's register date.
+     * Format is Y-m-d H:i:s
+     *
      * @return mixed
      */
     public function getRegisterDate()
@@ -491,29 +773,78 @@ class Account
     }
 
     /**
-     * @param mixed $username
+     * Set the account's socials.
+     *
+     * @param \Application\Entity\Social $socials
+     * @return Account
+     */
+    public function setSocials($socials)
+    {
+        $this->socials[] = $socials;
+        return $this;
+    }
+
+    /**
+     * Get the account's socials
+     *
+     * @return ArrayCollection
+     */
+    public function getSocials()
+    {
+        return $this->socials;
+    }
+
+    /**
+     * Add social(s) to the existing ones.
+     *
+     * @param array|\Application\Entity\Social $socials
+     */
+    public function addSocials($socials)
+    {
+        if (is_array($socials)) {
+            foreach ($socials as $social)
+                $this->socials->add($social);
+        } else {
+            $this->socials->add($socials);
+        }
+    }
+
+    /**
+     * Remove social(s) from the existing ones.
+     *
+     * @param array|\Feed\Entity\Rating $socials
+     */
+    public function removeSocials($socials)
+    {
+        if (is_array($socials)) {
+            foreach ($socials as $social)
+                $this->socials->removeElement($social);
+        } else {
+            $this->socials->removeElement($socials);
+        }
+    }
+
+    /**
+     * Set the account's username.
+     *
+     * @param string $username
+     * @return Account
      */
     public function setUsername($username)
     {
         $this->username = $username;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the account's username.
+     *
+     * @return string
      */
     public function getUsername()
     {
         return $this->username;
     }
 
-    public static function getHashedPassword($password)
-    {
-        return crypt($password . 'leetfeedpenbour');
-    }
-
-    public static function hashPassword($user, $password)
-    {
-        return ($user->getPassword() === crypt($password . 'leetfeedpenbour', $user->getPassword()));
-    }
 
 }
