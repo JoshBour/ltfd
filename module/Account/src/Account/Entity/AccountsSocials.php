@@ -8,7 +8,7 @@ use Account\Entity\Account;
  * @ORM\Entity
  * @ORM\Table(name="accounts_socials")
  */
-class AccountSocial
+class AccountsSocials
 {
 
     /**
@@ -40,13 +40,23 @@ class AccountSocial
     /**
      * @param mixed $account
      */
+
+    /**
+     * Set the join entry's account.
+     *
+     * @param Account $account
+     * @return AccountsSocials
+     */
     public function setAccount($account)
     {
         $this->account = $account;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the join entry's account.
+     *
+     * @return Account
      */
     public function getAccount()
     {
@@ -54,15 +64,21 @@ class AccountSocial
     }
 
     /**
-     * @param mixed $id
+     * Set the join entry's id.
+     *
+     * @param int $id
+     * @return AccountsSocials
      */
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the join entry's id.
+     *
+     * @return int
      */
     public function getId()
     {
@@ -70,15 +86,21 @@ class AccountSocial
     }
 
     /**
-     * @param mixed $social
+     * Set the join entry's social.
+     *
+     * @param \Application\Entity\Social $social
+     * @return AccountsSocials
      */
     public function setSocial($social)
     {
         $this->social = $social;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the join entry's social.
+     *
+     * @return \Application\Entity\Social
      */
     public function getSocial()
     {
@@ -86,15 +108,21 @@ class AccountSocial
     }
 
     /**
-     * @param mixed $value
+     * Set the join entry's value.
+     *
+     * @param string $value
+     * @return AccountsSocials
      */
     public function setValue($value)
     {
         $this->value = $value;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the join entry's value.
+     *
+     * @return string
      */
     public function getValue()
     {

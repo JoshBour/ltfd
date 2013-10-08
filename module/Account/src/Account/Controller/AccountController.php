@@ -240,7 +240,7 @@ class AccountController extends AbstractActionController
     /**
      * Set the doctrine entity manager
      *
-     * @param $em
+     * @param \Doctrine\ORM\EntityManager $em
      */
     public function setEntityManager($em)
     {
@@ -263,7 +263,7 @@ class AccountController extends AbstractActionController
     /**
      * Set the translator
      *
-     * @param $translator
+     * @param \Zend\I18n\Translator\Translator $translator
      */
     public function setTranslator($translator)
     {
@@ -286,7 +286,7 @@ class AccountController extends AbstractActionController
     /**
      * Set the authentication service
      *
-     * @param $authService
+     * @param AuthenticationService $authService
      */
     public function setAuthenticationService($authService)
     {
@@ -309,7 +309,7 @@ class AccountController extends AbstractActionController
     /**
      * Set the auth storage
      *
-     * @param $authStorage
+     * @param \Account\Model\AuthStorage $authStorage
      */
     public function setAuthStorage($authStorage)
     {

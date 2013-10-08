@@ -44,15 +44,21 @@ class AccountsFeeds
     }
 
     /**
-     * @param mixed $account
+     * Set the feed's owner account.
+     *
+     * @param Account $account
+     * @return AccountsFeeds
      */
     public function setAccount($account)
     {
         $this->account = $account;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the feed's owner account.
+     *
+     * @return Account
      */
     public function getAccount()
     {
@@ -60,15 +66,21 @@ class AccountsFeeds
     }
 
     /**
-     * @param mixed $category
+     * Set the feed's category.
+     *
+     * @param \Game\Entity\Category $category
+     * @return AccountsFeeds
      */
     public function setCategory($category)
     {
         $this->category = $category;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the feed's category.
+     *
+     * @return \Game\Entity\Category
      */
     public function getCategory()
     {
@@ -76,15 +88,21 @@ class AccountsFeeds
     }
 
     /**
-     * @param mixed $feed
+     * Set the corresponding feed.
+     *
+     * @param \Feed\Entity\Feed $feed
+     * @return AccountsFeeds
      */
     public function setFeed($feed)
     {
         $this->feed = $feed;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the corresponding feed.
+     *
+     * @return \Feed\Entity\Feed
      */
     public function getFeed()
     {
@@ -92,15 +110,21 @@ class AccountsFeeds
     }
 
     /**
-     * @param mixed $id
+     * Set the join table's entry id.
+     *
+     * @param int $id
+     * @return AccountsFeeds
      */
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the join table's entry id.
+     *
+     * @return int
      */
     public function getId()
     {

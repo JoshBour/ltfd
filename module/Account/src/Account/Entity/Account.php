@@ -102,7 +102,7 @@ class Account
     private $games;
 
     /**
-     * @ORM\OneToMany(targetEntity="Account\Entity\AccountSocial", mappedBy="account")
+     * @ORM\OneToMany(targetEntity="Account\Entity\AccountsSocials", mappedBy="account")
      */
     private $socials;
 

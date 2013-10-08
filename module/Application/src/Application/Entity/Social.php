@@ -26,7 +26,7 @@ class Social
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity="Account\Entity\AccountSocial", mappedBy="social")
+     * @ORM\OneToMany(targetEntity="Account\Entity\AccountsSocials", mappedBy="social")
      */
     private $accounts;
 

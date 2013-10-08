@@ -25,15 +25,21 @@ class Group
     private $name;
 
     /**
-     * @param mixed $id
+     * Set the group's id.
+     *
+     * @param int $id
+     * @return Group
      */
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the group's id.
+     *
+     * @return int
      */
     public function getId()
     {
@@ -41,15 +47,21 @@ class Group
     }
 
     /**
-     * @param mixed $name
+     * Set the group's name.
+     *
+     * @param string $name
+     * @return Group
      */
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the group's name.
+     *
+     * @return string
      */
     public function getName()
     {

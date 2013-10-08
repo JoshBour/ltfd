@@ -3,6 +3,7 @@ namespace Account;
 
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
+use Zend\ServiceManager\ServiceLocator;
 
 class Module
 {
@@ -79,9 +80,6 @@ class Module
 					$form->add($fieldset);
 					return $form;
 				},
-                'Account\Entity\Account' => function($sm){
-                    return new Entity\Account();
-                }
 			),
 			'aliases' => array(
 				'auth_service' => 'Zend\Authentication\AuthenticationService'
