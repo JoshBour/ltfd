@@ -118,9 +118,22 @@ class Account
     private $ratings;
 
     /**
-     * @ORM\OneToMany(targetEntity="AccountsFeeds", mappedBy="account")
+     * @ORM\ManyToMany(targetEntity="Feed\Entity\Feed")
+     * @ORM\JoinTable(name="account_favorites",
+     *      joinColumns={@ORM\JoinColumn(name="account_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="feed_id", referencedColumnName="id")}
+     *      )
      */
-    private $categorizedFeeds;
+    private $favoriteFeeds;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Feed\Entity\Feed")
+     * @ORM\JoinTable(name="account_history",
+     *      joinColumns={@ORM\JoinColumn(name="account_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="feed_id", referencedColumnName="id")}
+     *      )
+     */
+    private $watchedFeeds;
 
 
     public function __construct()
@@ -132,7 +145,20 @@ class Account
         $this->games = new ArrayCollection();
         $this->feeds = new ArrayCollection();
         $this->ratings = new ArrayCollection();
-        $this->categorizedFeeds = new ArrayCollection();
+        $this->favoriteFeeds = new ArrayCollection();
+        $this->watchedFeeds = new ArrayCollection();
+    }
+
+    /**
+     * Returns an array with the rated feeds.
+     *
+     * @return array
+     */
+    public function getFeedRatingArray(){
+        $ratings = array();
+        foreach($this->ratings->toArray() as $rating)
+            $ratings[] = $rating->getFeed();
+        return $ratings;
     }
 
     /**
@@ -145,19 +171,6 @@ class Account
     {
         foreach ($this->ratings->toArray() as $rating)
             if ($rating->getFeed()->getId() == $feed) return $rating;
-        return null;
-    }
-
-    /**
-     * Check if the account has favorited a feed.
-     *
-     * @param \Feed\Entity\Feed $feed
-     * @return bool|null
-     */
-    public function hasFavorited($feed)
-    {
-        foreach ($this->categorizedFeeds->toArray() as $categorizedFeed)
-            if ($categorizedFeed->getFeed()->getId() == $feed && $categorizedFeed->getCategory() == 'favorites') return true;
         return null;
     }
 
@@ -230,7 +243,7 @@ class Account
     /**
      * Set the account's avatar.
      *
-     * @param string $avatar
+     * @param $avatar
      * @return Account
      */
     public function setAvatar($avatar)
@@ -247,58 +260,6 @@ class Account
     public function getAvatar()
     {
         return $this->avatar;
-    }
-
-    /**
-     * Set the account's categorized feeds.
-     *
-     * @param AccountsFeeds $categorizedFeeds
-     * @return Account
-     */
-    public function setCategorizedFeeds($categorizedFeeds)
-    {
-        $this->categorizedFeeds[] = $categorizedFeeds;
-        return $this;
-    }
-
-    /**
-     * Get the account's categorized feeds.
-     *
-     * @return ArrayCollection
-     */
-    public function getCategorizedFeeds()
-    {
-        return $this->categorizedFeeds;
-    }
-
-    /**
-     * Add categorized feeds to the existing ones.
-     *
-     * @param array|AccountsFeeds $categorizedFeeds
-     */
-    public function addCategorizedFeeds($categorizedFeeds)
-    {
-        if (is_array($categorizedFeeds)) {
-            foreach ($categorizedFeeds as $feed)
-                $this->categorizedFeeds->add($feed);
-        } else {
-            $this->categorizedFeeds->add($categorizedFeeds);
-        }
-    }
-
-    /**
-     * Remove categorized feed(s) from the existing ones.
-     *
-     * @param array|AccountsFeeds $categorizedFeeds
-     */
-    public function removeCategorizedFeeds($categorizedFeeds)
-    {
-        if (is_array($categorizedFeeds)) {
-            foreach ($categorizedFeeds as $feed)
-                $this->categorizedFeeds->removeElement($feed);
-        } else {
-            $this->categorizedFeeds->removeElement($categorizedFeeds);
-        }
     }
 
     /**
@@ -321,6 +282,54 @@ class Account
     public function getEmail()
     {
         return $this->email;
+    }
+
+    /**
+     * Set the account's favorite feeds.
+     *
+     * @param $favoriteFeeds
+     * @return Account
+     */
+    public function setFavoriteFeeds($favoriteFeeds){
+        $this->favoriteFeeds[] = $favoriteFeeds;
+        return $this;
+    }
+
+    /**
+     * Get the account's favorite feeds.
+     *
+     * @return ArrayCollection
+     */
+    public function getFavoriteFeeds(){
+        return $this->favoriteFeeds;
+    }
+
+    /**
+     * Add a feed to the account's favorites.
+     *
+     * @param array|\Feed\Entity\Feed $favoriteFeeds
+     */
+    public function addFavoriteFeeds($favoriteFeeds){
+        if (is_array($favoriteFeeds)) {
+            foreach ($favoriteFeeds as $feed)
+                $this->favoriteFeeds->add($feed);
+        } else {
+            $this->favoriteFeeds->add($favoriteFeeds);
+        }
+    }
+
+    /**
+     * Remove a feed from the account's favorites.
+     *
+     * @param array|\Feed\Entity\Feed $favoriteFeeds
+     */
+    public function removeFavoriteFeeds($favoriteFeeds){
+        if (is_array($favoriteFeeds)) {
+            foreach ($favoriteFeeds as $feed)
+                $this->favoriteFeeds->removeElement($feed);
+        } else {
+            $this->favoriteFeeds->removeElement($favoriteFeeds);
+        }
     }
 
     /**
@@ -844,6 +853,54 @@ class Account
     public function getUsername()
     {
         return $this->username;
+    }
+
+    /**
+     * Set the account's watched feeds.
+     *
+     * @param $watchedFeeds
+     * @return Account
+     */
+    public function setWatchedFeeds($watchedFeeds){
+        $this->watchedFeeds[] = $watchedFeeds;
+        return $this;
+    }
+
+    /**
+     * Get the account's watched feeds.
+     *
+     * @return ArrayCollection
+     */
+    public function getWatchedFeeds(){
+        return $this->watchedFeeds;
+    }
+
+    /**
+     * Add a feed to the account's watched ones.
+     *
+     * @param array|\Feed\Entity\Feed $watchedFeeds
+     */
+    public function addWatchedFeeds($watchedFeeds){
+        if (is_array($watchedFeeds)) {
+            foreach ($watchedFeeds as $feed)
+                $this->watchedFeeds->add($feed);
+        } else {
+            $this->watchedFeeds->add($watchedFeeds);
+        }
+    }
+
+    /**
+     * Remove a feed from the account's watched ones.
+     *
+     * @param array|\Feed\Entity\Feed $watchedFeeds
+     */
+    public function removeWatchedFeeds($watchedFeeds){
+        if (is_array($watchedFeeds)) {
+            foreach ($watchedFeeds as $feed)
+                $this->watchedFeeds->removeElement($feed);
+        } else {
+            $this->watchedFeeds->removeElement($watchedFeeds);
+        }
     }
 
 

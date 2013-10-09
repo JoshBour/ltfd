@@ -38,6 +38,9 @@ class Module
                     $form = new Form\FeedForm($sm->get('Doctrine\ORM\EntityManager'));
                     $form->add($fieldset);
                     return $form;
+                },
+                'feed_service' => function($sm){
+                    return new Service\Feed();
                 }
             )
         );

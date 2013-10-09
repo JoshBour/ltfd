@@ -6,11 +6,17 @@ use Zend\Form\Form;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
-use Zend\Authentication\AuthenticationService;
-use \Doctrine\ORM\Tools\Pagination\Paginator;
 
 class FeedController extends AbstractActionController
 {
+    const ROUTE_USER_FEEDS = 'user/feeds';
+    const ROUTE_LOGIN = 'login';
+
+    const MESSAGE_RATE_SUCCESS = 'The rating has been saved successfully.';
+    const MESSAGE_RATE_FAIL = 'Something went wrong when saving the rating, please try again.';
+    const MESSAGE_FEED_POST_SUCCESS = 'The feed has been posted successfully.';
+    const MESSAGE_FEED_POST_FAIL = 'Something went wrong when saving the post.';
+
     /**
      * @var \Doctrine\ORM\EntityManager
      */
@@ -31,6 +37,11 @@ class FeedController extends AbstractActionController
      */
     private $feedForm;
 
+    /**
+     * @var \Feed\Service\Feed
+     */
+    private $feedService;
+
     public function viewAction()
     {
         return new ViewModel();
@@ -39,27 +50,15 @@ class FeedController extends AbstractActionController
     public function newAction()
     {
         $request = $this->getRequest();
-        $entity = new Feed();
         $form = $this->getFeedForm();
-        if($request->isPost()){
+        if ($request->isPost()) {
             $data = $request->getPost();
-            $form->bind($entity);
-            $form->setData($data);
-            if($form->isValid()){
-                $entity = Feed::create($entity,$this->user(),$data['feed']['video']);
-                $em = $this->getEntityManager();
-                try{
-                    $em->persist($entity);
-                    $em->flush();
-
-                    $this->flashMessenger()->addMessage($this->getTranslator()->translate('Your feed has been saved successfully!'));
-                    $this->redirect()->toRoute('user/feeds');
-
-                }catch(Exception $e){
-                    $this->flashMessenger()->addMessage($this->getTranslator()->translate('There was an error when saving the feed: ') . $e->getMessage());
-                }
-            }else{
-                // the form was not valid
+            $feed = $this->getFeedService()->create($data);
+            if (!$feed) {
+                $this->flashMessenger()->addMessage($this->getTranslator()->translate(self::MESSAGE_FEED_POST_FAIL));
+            } else {
+                $this->flashMessenger()->addMessage($this->getTranslator()->translate(self::MESSAGE_FEED_POST_SUCCESS));
+                $this->redirect()->toRoute(self::ROUTE_USER_FEEDS);
             }
         }
         return new ViewModel(array(
@@ -76,46 +75,49 @@ class FeedController extends AbstractActionController
     public function rateAction()
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
-            if ($user = $this->user()) {
-                $em = $this->getEntityManager();
-                $feed = $this->getFeedRepository()->find($this->params('id'));
-                if ($this->params('rating') == 'up') {
-                    $rating = 1;
-                    $otherRating = 0;
-                } else {
-                    $rating = 0;
-                    $otherRating = 1;
-                }
-                $rateEntity = $em->getRepository('Feed\Entity\Rating')->findOneBy(array('user' => $user->getId(), 'feed' => $feed->getId()));
-                $success = 0;
-                $message = '';
-                try {
-                    if ($rateEntity) {
-                        // check if the rating happens to be the same with the existing one, if so exit
-                        if ($rateEntity->getRating() != $rating) {
-                            $rateEntity->setRating($rating);
-                        }
-                        $newRating = ($rating > 0) ? 2 : -2;
-                    } else {
-                        $rateEntity = new \Feed\Entity\Rating($user, $feed, $rating);
-                        $newRating = ($rating > 0) ? 1 : -1;
-                    }
-                    $feed->setRating($feed->getRating() + $newRating);
-                    $em->persist($rateEntity);
-                    $em->persist($feed);
-                    $em->flush();
+            if ($this->identity()) {
+                $id = $this->params()->fromRoute('id');
+                $rating = $this->params()->fromRoute('rating');
+                $feed = $this->getFeedService()->rate($id, $rating);
+
+                if ($feed) {
                     $success = 1;
-                } catch (Exception $e) {
-                    $message = $e->getMessage();
+                    $message = $this->getTranslator()->translate(self::MESSAGE_RATE_SUCCESS);
+                    $newRating = $feed->getRating();
+                } else {
+                    $success = 0;
+                    $message = $this->getTranslator()->translate(self::MESSAGE_RATE_FAIL);
+                    $newRating = null;
                 }
-                return new JsonModel(array('success' => $success, 'message' => $message, 'newRatingTotal' => $feed->getRating()));
+                return new JsonModel(array(
+                        'success' => $success,
+                        'message' => $message,
+                        'newRatingTotal' => $newRating
+                    )
+                );
             } else {
-                return $this->redirect()->toRoute('login');
+                return $this->redirect()->toRoute(self::ROUTE_LOGIN);
             }
         } else {
             $this->getResponse()->setStatusCode(404);
             return;
         }
+    }
+
+    public function addToHistoryAction(){
+        if($this->getRequest()->isXmlHttpRequest()){
+            if($this->identity()){
+                $feedId = $this->params->fromPost('feed');
+                $action = $this->params->fromPost('defAction');
+            }
+        }else{
+            $this->getResponse()->setStatusCode(404);
+            return;
+        }
+    }
+
+    public function favoriteAction(){
+
     }
 
     public function addToUserFeedCategoryAction()
@@ -124,7 +126,8 @@ class FeedController extends AbstractActionController
             $success = 0;
             $message = '';
             if ($this->identity()) {
-                $feed = $this->getFeedRepository()->find($this->params()->fromPost('feed'));
+                $feedId = $this->params()->fromPost('feed');
+                $feed = $this->getFeedRepository()->find($feedId);
                 if ($feed) {
                     $user = $this->user();
                     $em = $this->getEntityManager();
@@ -164,6 +167,8 @@ class FeedController extends AbstractActionController
 
 
     /**
+     * Retrieve the doctrine entity manager.
+     *
      * @return \Doctrine\ORM\EntityManager
      */
     public function getEntityManager()
@@ -174,12 +179,19 @@ class FeedController extends AbstractActionController
         return $this->entityManager;
     }
 
+    /**
+     * Set the doctrine entity manager.
+     *
+     * @param $em
+     */
     public function setEntityManager($em)
     {
         $this->entityManager = $em;
     }
 
     /**
+     * Get the translator.
+     *
      * @return \Zend\I18n\Translator\Translator
      */
     public function getTranslator()
@@ -190,12 +202,19 @@ class FeedController extends AbstractActionController
         return $this->translator;
     }
 
+    /**
+     * Set the translator.
+     *
+     * @param $translator
+     */
     public function setTranslator($translator)
     {
         $this->translator = $translator;
     }
 
     /**
+     * Get the feed repository.
+     *
      * @return \Doctrine\ORM\EntityRepository
      */
     public function getFeedRepository()
@@ -206,22 +225,58 @@ class FeedController extends AbstractActionController
         return $this->feedRepository;
     }
 
+    /**
+     * Set the feed repository.
+     *
+     * @param $feedRepository
+     */
     public function setFeedRepository($feedRepository)
     {
         $this->feedRepository = $feedRepository;
     }
 
     /**
+     * Get the feed form.
+     *
      * @return \Zend\Form\Form
      */
-    public function getFeedForm(){
-        if(!$this->feedForm){
+    public function getFeedForm()
+    {
+        if (!$this->feedForm) {
             $this->setFeedForm($this->getServiceLocator()->get('feed_form'));
         }
         return $this->feedForm;
     }
 
-    public function setFeedForm($feedForm){
+    /**
+     * Set the feed form.
+     *
+     * @param $feedForm
+     */
+    public function setFeedForm($feedForm)
+    {
         $this->feedForm = $feedForm;
+    }
+
+    /**
+     * Get the feed service.
+     *
+     * @return \Feed\Service\Feed
+     */
+    public function getFeedService()
+    {
+        if (null === $this->feedService)
+            $this->setFeedService($this->getServiceLocator()->get('feed_service'));
+        return $this->feedService;
+    }
+
+    /**
+     * Set the feed service.
+     *
+     * @param \Feed\Service\Feed $feedService
+     */
+    public function setFeedService(\Feed\Service\Feed $feedService)
+    {
+        $this->feedService = $feedService;
     }
 }
