@@ -41,6 +41,9 @@ class Module
                 },
                 'feed_service' => function($sm){
                     return new Service\Feed();
+                },
+                'comment_service' => function($sm){
+                    return new Service\Comment();
                 }
             )
         );

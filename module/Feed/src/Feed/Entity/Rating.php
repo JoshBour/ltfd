@@ -41,15 +41,43 @@ class Rating
     }
 
     /**
-     * @param mixed $id
+     * Set the rating's related feed.
+     *
+     * @param Feed $feed
+     * @return Rating
+     */
+    public function setFeed($feed)
+    {
+        $this->feed = $feed;
+        return $this;
+    }
+
+    /**
+     * Get the rating's related feed.
+     *
+     * @return Feed
+     */
+    public function getFeed()
+    {
+        return $this->feed;
+    }
+
+    /**
+     * Set the rating's id.
+     *
+     * @param int $id
+     * @return Rating
      */
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the rating's id.
+     *
+     * @return int
      */
     public function getId()
     {
@@ -57,31 +85,23 @@ class Rating
     }
 
     /**
-     * @param mixed $rating
+     * Set the rating's value.
+     * 1 stands for like and 0 for dislike.
+     *
+     * @param int $rating
+     * @return Rating
      */
     public function setRating($rating)
     {
         $this->rating = $rating;
+        return $this;
     }
 
     /**
-     * @param mixed $user
-     */
-    public function setUser($user)
-    {
-        $this->user = $user;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getUser()
-    {
-        return $this->user;
-    }
-
-    /**
-     * @return mixed
+     * Get the rating's value.
+     * 1 stands for like and 0 for dislike.
+     *
+     * @return int
      */
     public function getRating()
     {
@@ -89,19 +109,25 @@ class Rating
     }
 
     /**
-     * @param mixed $feed
+     * Set the rating's author account.
+     *
+     * @param \Account\Entity\Account $user
+     * @return Rating
      */
-    public function setFeed($feed)
+    public function setUser($user)
     {
-        $this->feed = $feed;
+        $this->user = $user;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get the rating's author account.
+     *
+     * @return \Account\Entity\Account
      */
-    public function getFeed()
+    public function getUser()
     {
-        return $this->feed;
+        return $this->user;
     }
 
 

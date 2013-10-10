@@ -173,7 +173,7 @@ class Feed
     }
 
     /**
-     * Get the time difference from now.
+     * Get the time difference between the feed's post time and now.
      *
      * @return string
      */

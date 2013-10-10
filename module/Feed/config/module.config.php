@@ -37,9 +37,18 @@ return array(
                     'watched' => array(
                         'type' => 'literal',
                         'options' => array(
-                            'route' => 'user-feed-category',
+                            'route' => 'add-to-watched',
                             'defaults' => array(
-                                'action' => 'addToUserFeedCategory',
+                                'action' => 'addToWatched',
+                            ),
+                        ),
+                    ),
+                    'favorite' => array(
+                        'type' => 'literal',
+                        'options' => array(
+                            'route' => 'set-favorite',
+                            'defaults' => array(
+                                'action' => 'setFavorite',
                             ),
                         ),
                     ),

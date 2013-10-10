@@ -40,6 +40,11 @@ class Comment
      */
     private $postTime;
 
+    /**
+     * Get the time difference between the comment's post time and now.
+     *
+     * @return string
+     */
     public function getTimeAgo(){
         $time = strtotime($this->postTime);
         $time = time() - $time; // to get the time since that moment
@@ -59,10 +64,14 @@ class Comment
             $numberOfUnits = floor($time / $unit);
             return $numberOfUnits.' '.$text.(($numberOfUnits>1)?'s':'');
         }
+        return null;
     }
 
     /**
-     * @param mixed $author
+     * Set the comment's author account.
+     *
+     * @param \Account\Entity\Account $author
+     * @return Comment
      */
     public function setAuthor($author)
     {
@@ -71,7 +80,9 @@ class Comment
     }
 
     /**
-     * @return mixed
+     * Get the comment's author account.
+     *
+     * @return \Account\Entity\Account
      */
     public function getAuthor()
     {
@@ -79,7 +90,10 @@ class Comment
     }
 
     /**
-     * @param mixed $content
+     * Set the comment's content.
+     *
+     * @param string $content
+     * @return Comment
      */
     public function setContent($content)
     {
@@ -88,7 +102,9 @@ class Comment
     }
 
     /**
-     * @return mixed
+     * Get the comment's content.
+     *
+     * @return string mixed
      */
     public function getContent()
     {
@@ -96,7 +112,10 @@ class Comment
     }
 
     /**
-     * @param mixed $feed
+     * Set the comment's related feed.
+     *
+     * @param Feed $feed
+     * @return Comment
      */
     public function setFeed($feed)
     {
@@ -105,7 +124,9 @@ class Comment
     }
 
     /**
-     * @return mixed
+     * Get the comment's related feed.
+     *
+     * @return Feed
      */
     public function getFeed()
     {
@@ -113,7 +134,10 @@ class Comment
     }
 
     /**
-     * @param mixed $id
+     * Set the comment's id.
+     *
+     * @param int $id
+     * @return Comment
      */
     public function setId($id)
     {
@@ -122,7 +146,9 @@ class Comment
     }
 
     /**
-     * @return mixed
+     * Get the comment's id.
+     *
+     * @return int
      */
     public function getId()
     {
@@ -130,7 +156,11 @@ class Comment
     }
 
     /**
-     * @param mixed $postTime
+     * Set the comment's post time.
+     * Accepted format is Y-m-d H:i:s.
+     *
+     * @param string $postTime
+     * @return Comment
      */
     public function setPostTime($postTime)
     {
@@ -139,7 +169,10 @@ class Comment
     }
 
     /**
-     * @return mixed
+     * Get the comment's post time.
+     * Format is Y-m-d H:i:s.
+     *
+     * @return string
      */
     public function getPostTime()
     {

@@ -16,6 +16,8 @@ class FeedController extends AbstractActionController
     const MESSAGE_RATE_FAIL = 'Something went wrong when saving the rating, please try again.';
     const MESSAGE_FEED_POST_SUCCESS = 'The feed has been posted successfully.';
     const MESSAGE_FEED_POST_FAIL = 'Something went wrong when saving the post.';
+    const MESSAGE_FAVORITE_SUCCESS = 'The feed has been added to your favorites.';
+    const MESSAGE_FAVORITE_FAIL = 'Something went wrong when saving the video as favorite, please try again';
 
     /**
      * @var \Doctrine\ORM\EntityManager
@@ -104,61 +106,49 @@ class FeedController extends AbstractActionController
         }
     }
 
-    public function addToHistoryAction(){
-        if($this->getRequest()->isXmlHttpRequest()){
-            if($this->identity()){
-                $feedId = $this->params->fromPost('feed');
-                $action = $this->params->fromPost('defAction');
-            }
-        }else{
-            $this->getResponse()->setStatusCode(404);
-            return;
-        }
-    }
-
-    public function favoriteAction(){
-
-    }
-
-    public function addToUserFeedCategoryAction()
+    public function addToWatchedAction()
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $success = 0;
-            $message = '';
             if ($this->identity()) {
-                $feedId = $this->params()->fromPost('feed');
-                $feed = $this->getFeedRepository()->find($feedId);
-                if ($feed) {
-                    $user = $this->user();
-                    $em = $this->getEntityManager();
-                    $action = $this->params()->fromPost('defAction', null);
-                    $category = $this->params()->fromPost('category');
+                $feedId = $this->params->fromPost('feed');
 
-                    try {
-                        if ($action && $action == 'unfavorite') {
-                            $categorizedFeed = $em->getRepository('Account\Entity\AccountsFeeds')->findOneBy(array('account' => $user->getId(), 'feed' => $feed->getId(), 'category' => $category));
-                            $em->remove($categorizedFeed);
-                        } else {
-                            $categorizedFeed = new \Account\Entity\AccountsFeeds($user, $feed, $category);
-                            $em->persist($categorizedFeed);
-                        }
-                        $em->flush();
-                        $success = 1;
-                    } catch (Exception $e) {
-                        $message = $e->getMessage();
-                    }
-                } else {
-                    $message = $this->translator->translate('There was an error when storing the feed.');
-                }
-            } else {
-                $message = $this->translator()->translate('You must be logged in to save the video to your history.');
+                $feed = $this->getFeedService()->addWatched($feedId);
+                $success = ($feed) ? 1 : 0;
+                return new JsonModel(array('success' => $success));
             }
-            return new JsonModel(array('message' => $message, 'success' => $success));
         } else {
             $this->getResponse()->setStatusCode(404);
             return;
         }
     }
+
+    public function setFavoriteAction()
+    {
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            if ($this->identity()) {
+                $feedId = $this->params->fromPost('feedId');
+                $type = $this->params->fromPost('type');
+
+                $feed = $this->getFeedService()->setFavorite($feedId, $type);
+                if ($feed) {
+                    $message = $this->getTranslator()->translate(self::MESSAGE_FAVORITE_SUCCESS);
+                    $success = 1;
+                } else {
+                    $message = $this->getTranslator()->translate(self::MESSAGE_FAVORITE_FAIL);
+                    $success = 0;
+                }
+                return new JsonModel(array(
+                    'message' => $message,
+                    'success' => $success
+                ));
+            }
+
+        } else {
+            $this->getResponse()->setStatusCode(404);
+            return;
+        }
+    }
+
 
     public function reportAction()
     {

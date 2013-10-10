@@ -22,7 +22,7 @@ class CommentFieldset extends Fieldset implements InputFilterProviderInterface
     private $entityManager;
 
     /**
-     * @var \Zend\I18n\Translator
+     * @var \Zend\I18n\Translator\Translator
      */
     private $translator;
 

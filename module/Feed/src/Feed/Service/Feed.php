@@ -38,6 +38,16 @@ class Feed implements ServiceManagerAwareInterface
     private $authService;
 
     /**
+     * @var \Doctrine\ORM\EntityRepository
+     */
+    private $feedRepository;
+
+    /**
+     * @var \Doctrine\ORM\EntityRepository
+     */
+    private $accountRepository;
+
+    /**
      * Create and store a new feed.
      *
      * @param array $data
@@ -56,12 +66,74 @@ class Feed implements ServiceManagerAwareInterface
                 $em->persist($entity);
                 $em->flush();
                 return true;
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 return false;
             }
         } else {
             return false;
         }
+    }
+
+    /**
+     * Add a feed to an account's watched ones.
+     *
+     * @param int $id
+     * @return bool
+     */
+    public function addWatched($id){
+        $feed = $this->getFeedRepository()->find($id);
+        if($feed){
+            $em = $this->getEntityManager();
+
+            /**
+             * @var \Account\Entity\Account $user
+             */
+            $user = $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getId());
+
+            $user->addWatchedFeeds($feed);
+            try{
+                $em->persist($user);
+                $em->flush;
+
+                return true;
+            }catch(\Exception $e){
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Add or remove a feed from the account's favorites.
+     *
+     * @param int $id
+     * @param string $type
+     * @return bool
+     */
+    public function setFavorite($id, $type){
+        $feed = $this->getFeedRepository()->find($id);
+        if($feed){
+            $em = $this->getEntityManager();
+
+            /**
+             * @var \Account\Entity\Account $user
+             */
+            $user = $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getId());
+            if($type == 'favorite'){
+                $user->addFavoriteFeeds($feed);
+            }else{
+                $user->removeFavoriteFeeds($feed);
+            }
+            try{
+                $em->persist($user);
+                $em->flush();
+
+                return true;
+            }catch(\Exception $e){
+                return false;
+            }
+        }
+        return false;
     }
 
     /**
@@ -99,9 +171,55 @@ class Feed implements ServiceManagerAwareInterface
             $em->flush();
 
             return $feed;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
+    }
+
+    /**
+     * Get the feed repository.
+     *
+     * @return \Doctrine\ORM\EntityRepository
+     */
+    public function getFeedRepository()
+    {
+        if (!$this->feedRepository) {
+            $this->setFeedRepository($this->getEntityManager()->getRepository('Feed\Entity\Feed'));
+        }
+        return $this->feedRepository;
+    }
+
+    /**
+     * Set the feed repository.
+     *
+     * @param $feedRepository
+     */
+    public function setFeedRepository($feedRepository)
+    {
+        $this->feedRepository = $feedRepository;
+    }
+
+    /**
+     * Get the account repository.
+     *
+     * @return \Doctrine\ORM\EntityRepository
+     */
+    public function getAccountRepository()
+    {
+        if (!$this->accountRepository) {
+            $this->setAccountRepository($this->getEntityManager()->getRepository('Account\Entity\Account'));
+        }
+        return $this->accountRepository;
+    }
+
+    /**
+     * Set the account repository.
+     *
+     * @param $accountRepository
+     */
+    public function setAccountRepository($accountRepository)
+    {
+        $this->accountRepository = $accountRepository;
     }
 
     /**
@@ -121,7 +239,7 @@ class Feed implements ServiceManagerAwareInterface
      * setAuthenticationService
      *
      * @param AuthenticationService $authService
-     * @return Account
+     * @return Feed
      */
     public function setAuthService(AuthenticationService $authService)
     {

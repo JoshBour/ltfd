@@ -10,6 +10,12 @@ use Zend\Authentication\AuthenticationService;
 
 class CommentController extends AbstractActionController
 {
+
+    const MESSAGE_COMMENT_ADD_FAIL = 'There was an error when saving the comment, please try again or refresh the page.';
+    const MESSAGE_COMMENT_ADD_SUCCESS = 'The comment has been stored successfully.';
+    const MESSAGE_NO_MORE_COMMENTS = 'There are no more comments.';
+    const MESSAGE_COMMENTS_LOAD_FAIL = 'There was an error when loading the comments, please try again or refresh the page.';
+
     /**
      * @var \Doctrine\ORM\EntityManager
      */
@@ -25,41 +31,26 @@ class CommentController extends AbstractActionController
      */
     private $commentForm;
 
+    /**
+     * @var \Feed\Service\Comment
+     */
+    private $commentService;
+
     public function addAction()
     {
         $request = $this->getRequest();
         if ($request->isXmlHttpRequest()) {
             $feedId = $this->params()->fromQuery('feedId');
-            $em = $this->getEntityManager();
-            $feed = $em->getRepository('Feed\Entity\Feed')->find($feedId);
-            $success = 0;
-            $message = '';
-            if ($feed) {
-                $form = $this->getCommentForm();
-                $entity = new \Feed\Entity\Comment();
-                $form->bind($entity);
-                $data = $request->getPost();
-                $form->setData($data);
-                if ($form->isValid()) {
-                    $entity->setAuthor($this->user())
-                        ->setFeed($feed)
-                        ->setPostTime(date('Y-m-d H:i:s'));
-                    try {
-                        $em->persist($entity);
-                        $em->flush();
-
-                        $viewModel = new ViewModel(array('comment' => $entity));
-                        $viewModel->setTerminal(true);
-                        return $viewModel;
-                    } catch (Exception $e) {
-                        $message = $e->getMessage();
-                    }
-                } else {
-                    $message = $form->getMessages();
-                }
-            } else {
-                $message = $this->translator->translate('There was something wrong with the feed, please try again.');
+            $comment = $this->getCommentService()->create($request->getPost(),$feedId);
+            if($comment){
+                $viewModel = new ViewModel(array('comment' => $comment));
+                $viewModel->setTerminal(true);
+                return $viewModel;
+            }else{
+                $success = 0;
+                $message = $this->getTranslator()->translate(self::MESSAGE_COMMENT_ADD_FAIL);
             }
+
             return new JsonModel(array(
                 'message' => $message,
                 'success' => $success
@@ -92,9 +83,6 @@ class CommentController extends AbstractActionController
             $pageNumber = $this->params()->fromQuery('page', 1);
             $commentsPerPage = $this->params()->fromQuery('itemCount', 20);
 
-            $success = 0;
-            $message = '';
-
             $viewModel = new ViewModel();
             $feed = $this->getEntityManager()->getRepository('\Feed\Entity\Feed')->find($feedId);
             if ($feed) {
@@ -102,15 +90,15 @@ class CommentController extends AbstractActionController
                 $commentNumber = $comments->count();
                 if ($commentNumber-1 > 0) {
                     if ($pageNumber >= $comments->count() - 1) {
-                        return new JsonModel(array('success' => 0, 'message' => $this->getTranslator()->translate('There are no more comments.')));
+                        return new JsonModel(array('success' => 0, 'message' => $this->getTranslator()->translate(self::MESSAGE_NO_MORE_COMMENTS)));
                     }
                     $comments->setCurrentPageNumber($pageNumber)
                         ->setItemCountPerPage($commentsPerPage);
                 } else {
-                    return new JsonModel(array('success' => 0, 'message' => $this->getTranslator()->translate('There are no comments on this feed.')));
+                    return new JsonModel(array('success' => 0, 'message' => $this->getTranslator()->translate(self::MESSAGE_NO_MORE_COMMENTS)));
                 }
             } else {
-                echo $this->getTranslator()->translate('The comments could not be retrieved, please try again.');
+                echo $this->getTranslator()->translate(self::MESSAGE_COMMENTS_LOAD_FAIL);
             }
 
 
@@ -123,7 +111,31 @@ class CommentController extends AbstractActionController
         }
     }
 
+
     /**
+     * Get the comment service.
+     *
+     * @return \Feed\Service\Comment
+     */
+    public function getCommentService(){
+        if(null === $this->commentService){
+            $this->setCommentService($this->getServiceLocator()->get('comment_service'));
+        }
+        return $this->commentService;
+    }
+
+    /**
+     * Set the comment service.
+     *
+     * @param $commentService
+     */
+    public function setCommentService($commentService){
+        $this->commentService = $commentService;
+    }
+
+    /**
+     * Retrieve the doctrine entity manager.
+     *
      * @return \Doctrine\ORM\EntityManager
      */
     public function getEntityManager()
@@ -134,12 +146,19 @@ class CommentController extends AbstractActionController
         return $this->entityManager;
     }
 
+    /**
+     * Set the doctrine entity manager.
+     *
+     * @param $em
+     */
     public function setEntityManager($em)
     {
         $this->entityManager = $em;
     }
 
     /**
+     * Retrieve the zend translator.
+     *
      * @return \Zend\I18n\Translator\Translator
      */
     public function getTranslator()
@@ -150,13 +169,20 @@ class CommentController extends AbstractActionController
         return $this->translator;
     }
 
+    /**
+     * Set the zend translator.
+     *
+     * @param $translator
+     */
     public function setTranslator($translator)
     {
         $this->translator = $translator;
     }
 
     /**
-     * @return \Zend\Form\Form
+     * Get the comment form.
+     *
+     * @return Form
      */
     public function getCommentForm()
     {
@@ -166,6 +192,11 @@ class CommentController extends AbstractActionController
         return $this->commentForm;
     }
 
+    /**
+     * Set the comment form.
+     *
+     * @param Form $commentForm
+     */
     public function setCommentForm($commentForm)
     {
         $this->commentForm = $commentForm;
