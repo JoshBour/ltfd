@@ -1,21 +1,24 @@
-<?php $user = $this->user(); ?>
+<?php
+    $user = $this->user();
+    $urlName = $game->getUrlName();
+?>
 <aside>
-    <a href="<?php echo $this->url('game/profile',array('name' => $game->getUrlName())); ?>" title="<?php echo $this->translate(sprintf("Visit %s's profile.",$game->getName())); ?>">
+    <a href="<?php echo $this->url('game/profile',array('name' => $urlName)); ?>" title="<?php echo $this->translate(sprintf("Visit %s's profile.",$game->getName())); ?>">
         <img id="gameFeedLogo" src="<?php echo $this->basePath() . '/images/' . $game->getAvatar();?>-feeds.jpg" />
     </a>
     <ul id="gameCategories">
         <li<?php echo ('all' == $activeCategory) ? ' class="active"' : ''; ?>>
-            <a href="<?php echo $this->url('game/feeds',array('name' => $game->getUrlName(),'category'=>'all')); ?>"><?php echo $this->translate('All'); ?></a>
+            <a href="<?php echo $this->url('game/feeds',array('name' => $urlName,'category'=>'all')); ?>"><?php echo $this->translate('All'); ?></a>
         </li>
         <li<?php echo ('random' == $activeCategory) ? ' class="active"' : ''; ?>>
-            <a href="<?php echo $this->url('game/feeds',array('name' => $game->getUrlName(),'category'=>'random')); ?>"><?php echo $this->translate('Random'); ?></a>
+            <a href="<?php echo $this->url('game/feeds',array('name' => $urlName,'category'=>'random')); ?>"><?php echo $this->translate('Random'); ?></a>
         </li>
         <?php
         $categories = $game->getCategories();
         foreach ($game->getCategories() as $category):
             $name = $category->getName(); ?>
             <li<?php echo ($name == $activeCategory) ? ' class="active"' : ''; ?>>
-                <a href="<?php echo $this->url('game/feeds',array('name' => $game->getUrlName(),'category'=>$name)); ?>"><?php echo ucwords($name); ?></a>
+                <a href="<?php echo $this->url('game/feeds',array('name' => $urlName,'category'=>$name)); ?>"><?php echo ucwords($name); ?></a>
             </li>
         <?php endforeach;
         ?>
@@ -26,7 +29,7 @@
         <ul>
             <?php foreach($sortOptions as $option): ?>
                 <li>
-                    <a href="<?php echo $this->url('game/feeds',array('name' => $game->getUrlName(),'category' => $activeCategory,'sort'=>$option)); ?>"<?php echo ($option == $activeSort) ? ' class="active"' : '';?>><?php echo ucwords($option); ?></a>
+                    <a href="<?php echo $this->url('game/feeds',array('name' => $urlName,'category' => $activeCategory,'sort'=>$option)); ?>"<?php echo ($option == $activeSort) ? ' class="active"' : '';?>><?php echo ucwords($option); ?></a>
                 </li>
             <?php endforeach; ?>
         </ul>
@@ -38,8 +41,8 @@
                  $ytEntry = $feed->getYoutubeEntry();
                  $author = $feed->getUploader()->getUsername();
                  $id = $feed->getId();
-                $title = (is_null($feed->getTitle())) ? $ytEntry->getVideoTitle() : $this->escapeHtml($feed->getTitle());
-                $description = (is_null($feed->getDescription())) ? $ytEntry->getVideoDescription() : $this->escapeHtml($feed->getDescription());
+                 $title = (is_null($feed->getTitle())) ? $ytEntry->getVideoTitle() : $this->escapeHtml($feed->getTitle());
+                 $description = (is_null($feed->getDescription())) ? $ytEntry->getVideoDescription() : $this->escapeHtml($feed->getDescription());
         ?>
         <li class="feed-<?php echo $id; ?>" data-video-id="<?php echo $feed->getVideoId(); ?>">
             <img src="http://img.youtube.com/vi/<?php echo $feed->getVideoId(); ?>/default.jpg" class="feedThumb" alt="feed thumbnail" />
@@ -57,22 +60,22 @@
             <div class="feedMeta">
                 <span class="totalRating"><?php echo $feed->getRating(); ?></span>
                 <?php
-                    if($user && ($rating = $user->getRated($id))){
-                        if($rating->getRating() == 1){
-                            $up = ' disabled';
-                            $down = '';
-                        }else{
-                            $up = '';
-                            $down = ' disabled';
-                        }
-                    }else{
-                        $up = '';
-                        $down = '';
-                    }
+//                    if($user && ($rating = $user->getRated($id))){
+//                        if($rating->getRating() == 1){
+//                            $up = ' disabled';
+//                            $down = '';
+//                        }else{
+//                            $up = '';
+//                            $down = ' disabled';
+//                        }
+//                    }else{
+//                        $up = '';
+//                        $down = '';
+//                    }
                 ?>
-                <span class="thumbUp<?php echo $up; ?>">Leet</span>
-                <span class="thumbDown<?php echo $down; ?>">Meh</span>
-                <span class="favorite<?php echo ($user->hasFavorited($id)) ? ' disabled' : '';?>">Favorite</span>
+                <span class="thumbUp<?php #echo $up; ?>">Leet</span>
+                <span class="thumbDown<?php #echo $down; ?>">Meh</span>
+                <span class="favorite<?php# echo ($user->hasFavorited($id)) ? ' disabled' : '';?>">Favorite</span>
             </div>
         </li>
         <?php endforeach; ?>

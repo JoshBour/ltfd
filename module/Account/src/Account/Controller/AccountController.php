@@ -15,6 +15,9 @@ class AccountController extends AbstractActionController
     const ROUTE_REGISTER = 'register';
     const ROUTE_HOMEPAGE = 'home';
 
+    const MESSAGE_ACCOUNT_CREATED = 'Your account has been created. Make sure to check your emails for the validation link.';
+    const MESSAGE_INVALID_CREDENTIALS = 'The username/password combination is invalid.';
+
     /**
      * @var Form
      */
@@ -96,7 +99,7 @@ class AccountController extends AbstractActionController
             if ($request->isPost()) {
                 $account = $service->register($request->getPost());
                 if ($account) {
-                    $this->flashMessenger()->addMessage($this->getTranslator()->translate('Your account has been created. Make sure to check your emails for the validation link.'));
+                    $this->flashMessenger()->addMessage($this->getTranslator()->translate(self::MESSAGE_ACCOUNT_CREATED));
 
                     return $this->forward()->dispatch(static::CONTROLLER_NAME, array('action' => 'authenticate',
                             'username' => $account->getUsername(),
@@ -132,7 +135,7 @@ class AccountController extends AbstractActionController
             }
             $authService->getStorage()->write($authResult->getIdentity());
         } else {
-            $this->flashMessenger()->addMessage($this->getTranslator()->translate('The username/password combination is invalid.'));
+            $this->flashMessenger()->addMessage($this->getTranslator()->translate(self::MESSAGE_INVALID_CREDENTIALS));
             return $this->redirect()->toRoute(self::ROUTE_LOGIN);
         }
 
@@ -161,8 +164,6 @@ class AccountController extends AbstractActionController
      */
     public function getAccountService()
     {
-        if (null === $this->accountService)
-            $this->setAccountService($this->getServiceLocator()->get('account_service'));
         return $this->accountService;
     }
 
@@ -185,9 +186,6 @@ class AccountController extends AbstractActionController
      */
     public function getLoginForm()
     {
-        if (!$this->loginForm) {
-            $this->setLoginForm($this->getServiceLocator()->get('account_login_form'));
-        }
         return $this->loginForm;
     }
 
@@ -195,10 +193,12 @@ class AccountController extends AbstractActionController
      * Set the account login form
      *
      * @param Form $loginForm
+     * @return AccountController
      */
     public function setLoginForm($loginForm)
     {
         $this->loginForm = $loginForm;
+        return $this;
     }
 
     /**
@@ -208,9 +208,6 @@ class AccountController extends AbstractActionController
      */
     public function getRegisterForm()
     {
-        if (!$this->registerForm) {
-            $this->setRegisterForm($this->getServiceLocator()->get('account_register_form'));
-        }
         return $this->registerForm;
     }
 
@@ -218,10 +215,12 @@ class AccountController extends AbstractActionController
      * Set the account register form
      *
      * @param Form $registerForm
+     * @return AccountController
      */
     public function setRegisterForm($registerForm)
     {
         $this->registerForm = $registerForm;
+        return $this;
     }
 
     /**
@@ -231,9 +230,6 @@ class AccountController extends AbstractActionController
      */
     public function getEntityManager()
     {
-        if (!$this->entityManager) {
-            $this->setEntityManager($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
-        }
         return $this->entityManager;
     }
 
@@ -241,10 +237,12 @@ class AccountController extends AbstractActionController
      * Set the doctrine entity manager
      *
      * @param \Doctrine\ORM\EntityManager $em
+     * @return $this
      */
     public function setEntityManager($em)
     {
         $this->entityManager = $em;
+        return $this;
     }
 
     /**
@@ -254,9 +252,6 @@ class AccountController extends AbstractActionController
      */
     public function getTranslator()
     {
-        if (!$this->translator) {
-            $this->setTranslator($this->getServiceLocator()->get('translator'));
-        }
         return $this->translator;
     }
 
@@ -264,10 +259,12 @@ class AccountController extends AbstractActionController
      * Set the translator
      *
      * @param \Zend\I18n\Translator\Translator $translator
+     * @return AccountController
      */
     public function setTranslator($translator)
     {
         $this->translator = $translator;
+        return $this;
     }
 
     /**
@@ -277,9 +274,6 @@ class AccountController extends AbstractActionController
      */
     public function getAuthenticationService()
     {
-        if (!$this->authService) {
-            $this->setAuthenticationService($this->getServiceLocator()->get('auth_service'));
-        }
         return $this->authService;
     }
 
@@ -287,10 +281,12 @@ class AccountController extends AbstractActionController
      * Set the authentication service
      *
      * @param AuthenticationService $authService
+     * @return AccountController
      */
     public function setAuthenticationService($authService)
     {
         $this->authService = $authService;
+        return $this;
     }
 
     /**
@@ -300,9 +296,6 @@ class AccountController extends AbstractActionController
      */
     public function getAuthStorage()
     {
-        if (!$this->authStorage) {
-            $this->setAuthStorage($this->getServiceLocator()->get('authStorage'));
-        }
         return $this->authStorage;
     }
 
@@ -310,9 +303,11 @@ class AccountController extends AbstractActionController
      * Set the auth storage
      *
      * @param \Account\Model\AuthStorage $authStorage
+     * @return AccountController
      */
     public function setAuthStorage($authStorage)
     {
         $this->authStorage = $authStorage;
+        return $this;
     }
 }

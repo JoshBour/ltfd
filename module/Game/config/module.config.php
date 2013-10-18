@@ -43,6 +43,7 @@ return array(
                             'defaults' => array(
                                 'controller' => 'Game\Controller\Game',
                                 'action' => 'feeds',
+                                'category' => 'all',
                                 'sort' => 'popular'
                             )
                         )

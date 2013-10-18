@@ -25,6 +25,7 @@ class IndexController extends AbstractActionController
         }else{
             $viewModel->setTemplate('application/unregistered.phtml');
         }
+
         return new ViewModel(array(
             'user' => $user
         ));

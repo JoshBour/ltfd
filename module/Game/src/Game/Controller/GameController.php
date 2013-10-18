@@ -4,9 +4,14 @@ namespace Game\Controller;
 use Zend\View\Model\JsonModel;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\Form\Form;
 
 class GameController extends AbstractActionController
 {
+    const ROUTE_HOMEPAGE = 'home';
+    const ROUTE_GAMES_LIST = 'games';
+
+
     /**
      * @var \Doctrine\ORM\EntityManager
      */
@@ -23,6 +28,16 @@ class GameController extends AbstractActionController
     private $gameRepository;
 
     /**
+     * @var \Doctrine\ORM\EntityRepository
+     */
+    private $feedRepository;
+
+    /**
+     * @var \Doctrine\ORM\EntityRepository
+     */
+    private $categoryRepository;
+
+    /**
      * @var \Zend\Form\Form
      */
     private $commentForm;
@@ -35,45 +50,51 @@ class GameController extends AbstractActionController
     public function feedsAction()
     {
         $em = $this->getEntityManager();
-        $game = $this->getGameRepository()->findOneBy(array('urlName' => $this->params('name')));
+        $gameName = $this->params()->fromRoute('name',null);
+        $game = $this->getGameRepository()->findOneBy(array('urlName' => $gameName));
         $categoryName = $this->params()->fromRoute('category');
-        $activeSort = $this->params()->fromRoute('sort', 'popular');
+        $activeSort = $this->params()->fromRoute('sort');
         $translator = $this->getTranslator();
+        $sortOptions = array($translator->translate('popular'), $translator->translate('new'));
+
+        // check if the game exists or the name is invalid
+        if(!$game || null === $gameName){
+            $this->redirect()->toRoute(self::ROUTE_GAMES_LIST);
+        }
 
         if ($categoryName == 'all' || $categoryName == 'random') {
             $category = $categoryName;
-        } else if (empty($categoryName)) {
-            $category = 'all';
-        } else {
+        }  else {
             $category = $em->getRepository('Game\Entity\Category')->findOneBy(array('name' => $categoryName));
         }
-        // if the game or the category don't exist, throw a 404
-        if (!$game || !$category) {
+
+        // if the category doesn't exist or the sorting is invalid, throw a 404
+        if (!$category || !in_array($activeSort,$sortOptions)) {
             $this->getResponse()->setStatusCode(404);
             return;
-        } else {
-            if ($category == 'all') {
-                $activeCategory = 'all';
-                $feeds = $em->getRepository('Feed\Entity\Feed')->findBySort($game->getId(),$activeSort);
-            } else if ($category == 'random') {
-                $activeCategory = 'random';
-                $feeds = $em->getRepository('Feed\Entity\Feed')->findBySort($game->getId(),$activeSort);
-            } else {
-                $activeCategory = $category->getName();
-                $feeds = $em->getRepository('Feed\Entity\Feed')->findBySort($game->getId(),$activeSort, $category->getId());
-            }
-            $sortOptions = array($translator->translate('popular'), $translator->translate('new'));
-
-            return new ViewModel(array(
-                'game' => $game,
-                'sortOptions' => $sortOptions,
-                'activeSort' => $activeSort,
-                'feeds' => $feeds,
-                'activeCategory' => $activeCategory,
-                'bodyClass' => 'gameFeeds',
-                'form' => $this->getCommentForm()
-            ));
         }
+
+        if ($category == 'all') {
+            $activeCategory = 'all';
+            $feeds = $this->getFeedRepository()->findBySort($game->getId(),$activeSort);
+        } else if ($category == 'random') {
+            $activeCategory = 'random';
+            $feeds = $this->getFeedRepository()->findBySort($game->getId(),$activeSort);
+        } else {
+            $activeCategory = $category->getName();
+            $feeds = $this->getFeedRepository()->findBySort($game->getId(),$activeSort, $category->getId());
+        }
+
+        return new ViewModel(array(
+            'game' => $game,
+            'sortOptions' => $sortOptions,
+            'activeSort' => $activeSort,
+            'feeds' => $feeds,
+            'activeCategory' => $activeCategory,
+            'bodyClass' => 'gameFeeds',
+            'form' => $this->getCommentForm()
+        ));
+
     }
 
     public function connectAction()
@@ -194,7 +215,9 @@ class GameController extends AbstractActionController
     }
 
     /**
-     * @return \Zend\Form\Form
+     * Get the comment post form.
+     *
+     * @return Form
      */
     public function getCommentForm()
     {
@@ -204,12 +227,19 @@ class GameController extends AbstractActionController
         return $this->commentForm;
     }
 
+    /**
+     * Set the comment post form.
+     *
+     * @param Form $commentForm
+     */
     public function setCommentForm($commentForm)
     {
         $this->commentForm = $commentForm;
     }
 
     /**
+     * Retrieve the doctrine entity manager.
+     *
      * @return \Doctrine\ORM\EntityManager
      */
     public function getEntityManager()
@@ -220,12 +250,20 @@ class GameController extends AbstractActionController
         return $this->entityManager;
     }
 
+
+    /**
+     * Set the doctrine entity manager.
+     *
+     * @param $em
+     */
     public function setEntityManager($em)
     {
         $this->entityManager = $em;
     }
 
     /**
+     * Get a zend translator instance.
+     *
      * @return \Zend\I18n\Translator\Translator
      */
     public function getTranslator()
@@ -236,12 +274,19 @@ class GameController extends AbstractActionController
         return $this->translator;
     }
 
+    /**
+     * Set the zend translator instance.
+     *
+     * @param $translator
+     */
     public function setTranslator($translator)
     {
         $this->translator = $translator;
     }
 
     /**
+     * Get the game repository.
+     *
      * @return \Doctrine\ORM\EntityRepository
      */
     public function getGameRepository()
@@ -252,9 +297,60 @@ class GameController extends AbstractActionController
         return $this->gameRepository;
     }
 
+    /**
+     * Set the game repository.
+     *
+     * @param $gameRepository
+     */
     public function setGameRepository($gameRepository)
     {
         $this->gameRepository = $gameRepository;
+    }
+
+    /**
+     * Get the category repository.
+     *
+     * @return \Doctrine\ORM\EntityRepository
+     */
+    public function getCategoryRepository()
+    {
+        if (!$this->categoryRepository) {
+            $this->setCategoryRepository($this->getEntityManager()->getRepository('Game\Entity\Category'));
+        }
+        return $this->categoryRepository;
+    }
+
+    /**
+     * Set the category repository.
+     *
+     * @param $categoryRepository
+     */
+    public function setCategoryRepository($categoryRepository)
+    {
+        $this->categoryRepository = $categoryRepository;
+    }
+
+    /**
+     * Get the feed repository.
+     *
+     * @return \Doctrine\ORM\EntityRepository
+     */
+    public function getFeedRepository()
+    {
+        if (!$this->feedRepository) {
+            $this->setFeedRepository($this->getEntityManager()->getRepository('Feed\Entity\Feed'));
+        }
+        return $this->feedRepository;
+    }
+
+    /**
+     * Set the feed repository.
+     *
+     * @param $feedRepository
+     */
+    public function setFeedRepository($feedRepository)
+    {
+        $this->feedRepository = $feedRepository;
     }
 
 

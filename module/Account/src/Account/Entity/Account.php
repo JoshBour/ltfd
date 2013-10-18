@@ -12,6 +12,8 @@ use Zend\Filter\Null;
 class Account
 {
 
+    const CACHE_RATING_KEY = 'user-ratings-';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -135,7 +137,6 @@ class Account
      */
     private $watchedFeeds;
 
-
     public function __construct()
     {
         $this->followers = new ArrayCollection();
@@ -160,6 +161,7 @@ class Account
             $ratings[] = $rating->getFeed();
         return $ratings;
     }
+
 
     /**
      * Check if the user has rated a feed.

@@ -2,13 +2,10 @@
 namespace Account\Form;
 
 use Zend\Form\Form;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
-use Account\Entity\Account;
-use Zend\InputFilter\InputFilter;
 
 class LoginForm extends Form
 {
-    public function __construct($em)
+    public function __construct()
     {
         parent::__construct('loginForm');
 
@@ -16,9 +13,6 @@ class LoginForm extends Form
             'method' => 'post',
             'class' => 'standardForm'
         ));
-
-        $this->setHydrator(new DoctrineHydrator($em, '\Account\Entity\Account'));
-        $this->setInputFilter(new InputFilter());
 
         $this->add(array(
             'name' => 'security',

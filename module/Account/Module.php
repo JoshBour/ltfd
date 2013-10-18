@@ -3,7 +3,10 @@ namespace Account;
 
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
-use Zend\ServiceManager\ServiceLocator;
+use Zend\ServiceManager\ServiceManager;
+use \Zend\InputFilter\InputFilter;
+
+use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 
 class Module
 {
@@ -16,9 +19,23 @@ class Module
 	
 	public function getControllerConfig(){
 		return array(
-	        'invokables' => array(
-	            'Account\Controller\Account' => 'Account\Controller\AccountController'
-	        ),
+            'factories' => array(
+                'Account\Controller\Account' => function($sm){
+                    $serviceLocator = $sm->getServiceLocator();
+                    $entityManager = $serviceLocator->get('Doctrine\ORM\EntityManager');
+                    $controller = new Controller\AccountController();
+                    $controller->setTranslator($serviceLocator->get('translator'))
+                               ->setAuthenticationService($serviceLocator->get('auth_service'))
+                               ->setAuthStorage($serviceLocator->get('authStorage'))
+                               ->setEntityManager($entityManager)
+                               ->setRegisterForm($serviceLocator->get('account_register_form'))
+                               ->setLoginForm($serviceLocator->get('account_login_form'))
+                               ->setAccountService($serviceLocator->get('account_service'));
+
+
+                    return $controller;
+                }
+            ),
             'aliases' => array(
                 'account_controller' => 'Account\Controller\Account'
             )
@@ -29,7 +46,7 @@ class Module
         return array(
             'factories' => array(
                 'user' => function($sm){
-                    $plugin = new \Account\Plugin\ActiveAccount();
+                    $plugin = new Plugin\ActiveAccount();
                     $plugin->setServiceManager($sm->getServiceLocator());
                     return $plugin;
                 }
@@ -41,7 +58,7 @@ class Module
         return array(
           'factories' => array(
               'user' => function($sm){
-                  $helper = new \Account\View\Helper\User();
+                  $helper = new View\Helper\User();
                   $helper->setServiceManager($sm->getServiceLocator());
                   return $helper;
               }
@@ -65,19 +82,35 @@ class Module
 				}
 				,
 				'account_login_form' => function($sm){
-					$em = $sm->get('Doctrine\ORM\EntityManager');
-                    $fieldset = new \Account\Form\LoginFieldset($sm);
-                    $fieldset->setUseAsBaseFieldset(true);
-                    $form = new \Account\Form\LoginForm($em);
-                    $form->add($fieldset);
+					$entityManager = $sm->get('Doctrine\ORM\EntityManager');
+                    $fieldset = new Form\LoginFieldset();
+                    $form = new Form\LoginForm();
+
+                    $fieldset->setUseAsBaseFieldset(true)
+                             ->setTranslator($sm->get('translator'))
+                             ->setHydrator(new DoctrineHydrator($entityManager, 'Entity\Account'))
+                             ->setObject(new Entity\Account);
+
+                    $form->add($fieldset)
+                         ->setInputFilter(new InputFilter())
+                         ->setHydrator(new DoctrineHydrator($entityManager, 'Entity\Account'));
+
 					return $form;
 				},
 				'account_register_form' => function($sm){
-					$em = $sm->get('Doctrine\ORM\EntityManager');
-					$fieldset = new \Account\Form\RegisterFieldset($sm);
-					$fieldset->setUseAsBaseFieldset(true);
-					$form = new \Account\Form\RegisterForm($em);
-					$form->add($fieldset);
+                    $entityManager = $sm->get('Doctrine\ORM\EntityManager');
+					$fieldset = new Form\RegisterFieldset();
+                    $form = new Form\RegisterForm();
+
+                    $fieldset->setAccountRepository($entityManager->getRepository('Entity\Account'))
+                             ->setUseAsBaseFieldset(true)
+                             ->setTranslator($sm->get('translator'))
+                             ->setHydrator(new DoctrineHydrator($entityManager, 'Entity\Account'))
+                             ->setObject(new Entity\Account);
+
+					$form->add($fieldset)
+                         ->setInputFilter(new InputFilter())
+                         ->setHydrator(new DoctrineHydrator($entityManager, 'Entity\Account'));
 					return $form;
 				},
 			),

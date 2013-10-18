@@ -21,6 +21,32 @@ class Module {
 		$moduleRouteListener -> attach($eventManager);
 	}
 
+    public function getServiceConfig(){
+        return array(
+            'factories' => array(
+                'cache' => function () {
+                    return \Zend\Cache\StorageFactory::factory(array(
+                        'adapter' => array(
+                            'name' => 'filesystem',
+                            'options' => array(
+                                'cache_dir' => __DIR__ . '/../../data/cache',
+                                'ttl' => 100
+                            ),
+                        ),
+                        'plugins' => array(
+                            array(
+                                'name' => 'serializer',
+                                'options' => array(
+
+                                )
+                            )
+                        )
+                    ));
+                },
+            )
+        );
+    }
+
 	public function getConfig()
 	{
 		return include __DIR__ . '/config/module.config.php';

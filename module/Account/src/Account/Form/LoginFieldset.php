@@ -3,30 +3,37 @@ namespace Account\Form;
 
 use Zend\Form\Fieldset;
 use Zend\InputFilter\InputFilterProviderInterface;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
-use Account\Entity\Account;
 
 class LoginFieldset extends Fieldset implements InputFilterProviderInterface{
 
-    private $entityManager;
+    const PLACEHOLDER_USERNAME = 'Enter your username..';
+    const PLACEHOLDER_PASSWORD = 'Enter your password..';
+
+    const LABEL_USERNAME = 'Username:';
+    const LABEL_PASSWORD = 'Password:';
+    const LABEL_REMEMBER_ME = 'Remember Me:';
+
+    const ERROR_USERNAME_EMPTY = "The username can't be empty.";
+    const ERROR_USERNAME_INVALID = "The username is invalid.";
+    const ERROR_PASSWORD_EMPTY = "The password can't be empty.";
+    const ERROR_PASSWORD_INVALID = "The password is invalid.";
+
+    /**
+     * @var \Zend\I18n\Translator\Translator
+     */
     private $translator;
 
-    public function __construct($sm){
+    public function __construct(){
         parent::__construct('account');
-
-        $this->entityManager = $sm->get('Doctrine\ORM\EntityManager');
-        $this->translator = $sm->get('translator');
-        $this->setHydrator(new DoctrineHydrator($this->entityManager,'Account\Entity\Account'))
-             ->setObject(new Account());
 
         $this->add(array(
             'name' => 'username',
             'type' => 'text',
             'options' => array(
-                'label' => $this->translator->translate('Username:')
+                'label' => $this->translator->translate(self::LABEL_USERNAME)
             ),
             'attributes' => array(
-                'placeholder' => $this->translator->translate('Enter your username..')
+                'placeholder' => $this->translator->translate(self::PLACEHOLDER_USERNAME)
             ),
         ));
 
@@ -34,10 +41,10 @@ class LoginFieldset extends Fieldset implements InputFilterProviderInterface{
             'name' => 'password',
             'type' => 'password',
             'options' => array(
-                'label' => $this->translator->translate('Password:')
+                'label' => $this->translator->translate(self::LABEL_PASSWORD)
             ),
             'attributes' => array(
-                'placeholder' => $this->translator->translate('Enter your password..')
+                'placeholder' => $this->translator->translate(self::PLACEHOLDER_PASSWORD)
             ),
         ));
 
@@ -48,7 +55,7 @@ class LoginFieldset extends Fieldset implements InputFilterProviderInterface{
                 'value' => "1"
             ),
             'options' => array(
-                'label' => $this->translator->translate('Remember Me:'),
+                'label' => $this->translator->translate(self::LABEL_REMEMBER_ME),
             ),
         ));
     }
@@ -63,7 +70,7 @@ class LoginFieldset extends Fieldset implements InputFilterProviderInterface{
                         'break_chain_on_failure' => true,
                         'options' => array(
                             'messages' => array(
-                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate("The username can't be empty.")
+                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate(self::ERROR_USERNAME_EMPTY)
                             )
                         )
                     ),
@@ -73,7 +80,7 @@ class LoginFieldset extends Fieldset implements InputFilterProviderInterface{
                             'min' => 4,
                             'max' => 15,
                             'messages' => array(
-                                \Zend\Validator\StringLength::INVALID => $this->translator->translate("The username is invalid.")
+                                \Zend\Validator\StringLength::INVALID => $this->translator->translate(self::ERROR_USERNAME_INVALID)
                             )
                         )
                     ),
@@ -91,7 +98,7 @@ class LoginFieldset extends Fieldset implements InputFilterProviderInterface{
                         'break_chain_on_failure' => true,
                         'options' => array(
                             'messages' => array(
-                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate("The password can't be empty.")
+                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate(self::ERROR_PASSWORD_EMPTY)
                             )
                         )
                     ),
@@ -101,7 +108,7 @@ class LoginFieldset extends Fieldset implements InputFilterProviderInterface{
                             'min' => 4,
                             'max' => 15,
                             'messages' => array(
-                                \Zend\Validator\StringLength::INVALID => $this->translator->translate("The password is invalid.")
+                                \Zend\Validator\StringLength::INVALID => $this->translator->translate(self::ERROR_PASSWORD_INVALID)
                             )
                         )
                     ),
@@ -113,4 +120,28 @@ class LoginFieldset extends Fieldset implements InputFilterProviderInterface{
             )
         );
     }
+
+    /**
+     * Set the zend translator.
+     *
+     * @param \Zend\I18n\Translator\Translator $translator
+     * @return LoginFieldset
+     */
+    public function setTranslator($translator)
+    {
+        $this->translator = $translator;
+        return $this;
+    }
+
+    /**
+     * Get the zend translator.
+     *
+     * @return \Zend\I18n\Translator\Translator
+     */
+    public function getTranslator()
+    {
+        return $this->translator;
+    }
+
+
 }
