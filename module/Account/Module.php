@@ -19,22 +19,8 @@ class Module
 	
 	public function getControllerConfig(){
 		return array(
-            'factories' => array(
-                'Account\Controller\Account' => function($sm){
-                    $serviceLocator = $sm->getServiceLocator();
-                    $entityManager = $serviceLocator->get('Doctrine\ORM\EntityManager');
-                    $controller = new Controller\AccountController();
-                    $controller->setTranslator($serviceLocator->get('translator'))
-                               ->setAuthenticationService($serviceLocator->get('auth_service'))
-                               ->setAuthStorage($serviceLocator->get('authStorage'))
-                               ->setEntityManager($entityManager)
-                               ->setRegisterForm($serviceLocator->get('account_register_form'))
-                               ->setLoginForm($serviceLocator->get('account_login_form'))
-                               ->setAccountService($serviceLocator->get('account_service'));
-
-
-                    return $controller;
-                }
+            'invokables' => array(
+                'Account\Controller\Account'  => 'Account\Controller\AccountController'
             ),
             'aliases' => array(
                 'account_controller' => 'Account\Controller\Account'
@@ -85,15 +71,16 @@ class Module
 					$entityManager = $sm->get('Doctrine\ORM\EntityManager');
                     $fieldset = new Form\LoginFieldset();
                     $form = new Form\LoginForm();
+                    $hydrator = new DoctrineHydrator($entityManager, 'Entity\Account');
 
                     $fieldset->setUseAsBaseFieldset(true)
                              ->setTranslator($sm->get('translator'))
-                             ->setHydrator(new DoctrineHydrator($entityManager, 'Entity\Account'))
+                             ->setHydrator($hydrator)
                              ->setObject(new Entity\Account);
 
                     $form->add($fieldset)
                          ->setInputFilter(new InputFilter())
-                         ->setHydrator(new DoctrineHydrator($entityManager, 'Entity\Account'));
+                         ->setHydrator($hydrator);
 
 					return $form;
 				},

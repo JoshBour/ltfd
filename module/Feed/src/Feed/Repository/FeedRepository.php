@@ -32,7 +32,7 @@ class FeedRepository extends EntityRepository{
 //        }
 //    }
 
-    public function findBySort($gameId,$sort,$category = null,$firstResult = 0,$maxResults = 20){
+    public function findBySort($gameId,$sort,$firstResult = 0,$maxResults = 20){
         $qb = $this->createQueryBuilder('f');
         $qb->select()
             ->where($qb->expr()->eq('f.game',':gameId'));
@@ -44,10 +44,6 @@ class FeedRepository extends EntityRepository{
                 ->orderBy('f.postTime','DESC');
         }else{
             throw new InvalidArgumentException("The sorting is of invalid type");
-        }
-        if($category){
-            $qb->andWhere($qb->expr()->eq('f.category',':category'))
-                ->setParameter('category',$category);
         }
         $qb->setParameter('gameId',$gameId)
             ->setFirstResult($firstResult)
@@ -64,7 +60,6 @@ class FeedRepository extends EntityRepository{
             ->setFirstResult($firstResults)
             ->setMaxResults($maxResults);
 
-        echo $qb->getParameter('date')->getValue();
         return new Paginator($qb->getQuery(),true);
     }
 

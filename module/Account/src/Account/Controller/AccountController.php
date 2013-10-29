@@ -164,6 +164,9 @@ class AccountController extends AbstractActionController
      */
     public function getAccountService()
     {
+        if(null === $this->accountService){
+            $this->setAccountService($this->getServiceLocator()->get('account_service'));
+        }
         return $this->accountService;
     }
 
@@ -186,6 +189,9 @@ class AccountController extends AbstractActionController
      */
     public function getLoginForm()
     {
+        if(null === $this->loginForm){
+            $this->setLoginForm($this->getServiceLocator()->get('account_login_form'));
+        }
         return $this->loginForm;
     }
 
@@ -208,6 +214,9 @@ class AccountController extends AbstractActionController
      */
     public function getRegisterForm()
     {
+        if(null === $this->registerForm){
+            $this->setRegisterForm($this->getServiceLocator()->get('account_register_form'));
+        }
         return $this->registerForm;
     }
 
@@ -230,6 +239,9 @@ class AccountController extends AbstractActionController
      */
     public function getEntityManager()
     {
+        if(null === $this->entityManager){
+            $this->setEntityManager($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+        }
         return $this->entityManager;
     }
 
@@ -252,6 +264,9 @@ class AccountController extends AbstractActionController
      */
     public function getTranslator()
     {
+        if(null === $this->translator){
+            $this->setTranslator($this->getServiceLocator()->get('translator'));
+        }
         return $this->translator;
     }
 
@@ -274,6 +289,9 @@ class AccountController extends AbstractActionController
      */
     public function getAuthenticationService()
     {
+        if(null === $this->authService){
+            $this->setAuthenticationService($this->getServiceLocator()->get('auth_service'));
+        }
         return $this->authService;
     }
 
@@ -296,6 +314,9 @@ class AccountController extends AbstractActionController
      */
     public function getAuthStorage()
     {
+        if(null === $this->authService){
+            $this->setAuthStorage($this->getServiceLocator()->get('authStorage'));
+        }
         return $this->authStorage;
     }
 

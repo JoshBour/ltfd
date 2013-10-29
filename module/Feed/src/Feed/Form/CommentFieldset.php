@@ -16,25 +16,19 @@ use Feed\Entity\Comment;
 class CommentFieldset extends Fieldset implements InputFilterProviderInterface
 {
 
-    /**
-     * @var \Doctrine\ORM\EntityManager
-     */
-    private $entityManager;
+    const PLACEHOLDER_POST_COMMENT = "Enter a comment..";
+
+    const ERROR_COMMENT_EMPTY = "The comment can't be empty.";
+    const ERROR_COMMENT_INVALID = "The comment length must be between 4-150 characters long.";
 
     /**
      * @var \Zend\I18n\Translator\Translator
      */
     private $translator;
 
-    public function __construct(ServiceManager $sm)
+    public function __construct()
     {
         parent::__construct('comment');
-
-        $this->entityManager = $sm->get('Doctrine\ORM\EntityManager');
-        $this->translator = $sm->get('translator');
-
-        $this->setHydrator(new DoctrineHydrator($this->entityManager, '\Feed\Entity\Comment'))
-            ->setObject(new Comment());
 
         $this->add(array(
             'name' => 'id',
@@ -45,7 +39,7 @@ class CommentFieldset extends Fieldset implements InputFilterProviderInterface
             'name' => 'content',
             'type' => 'text',
             'attributes' => array(
-                'placeholder' => $this->translator->translate('Post a comment..')
+                'placeholder' => $this->translator->translate(self::PLACEHOLDER_POST_COMMENT)
             ),
         ));
     }
@@ -61,7 +55,7 @@ class CommentFieldset extends Fieldset implements InputFilterProviderInterface
                         'break_chain_on_failure' => true,
                         'options' => array(
                             'messages' => array(
-                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate("The comment can't be empty.")
+                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate(self::ERROR_COMMENT_EMPTY)
                             )
                         )
                     ),
@@ -72,7 +66,7 @@ class CommentFieldset extends Fieldset implements InputFilterProviderInterface
                             'min' => 4,
                             'max' => 150,
                             'messages' => array(
-                                \Zend\Validator\StringLength::INVALID => $this->translator->translate("The comment length must be between 4-150 characters long.")
+                                \Zend\Validator\StringLength::INVALID => $this->translator->translate(self::ERROR_COMMENT_INVALID)
                             )
                         )
                     )
@@ -83,5 +77,27 @@ class CommentFieldset extends Fieldset implements InputFilterProviderInterface
                 )
             )
         );
+    }
+
+    /**
+     * Set the zend translator.
+     *
+     * @param \Zend\I18n\Translator\Translator $translator
+     * @return LoginFieldset
+     */
+    public function setTranslator($translator)
+    {
+        $this->translator = $translator;
+        return $this;
+    }
+
+    /**
+     * Get the zend translator.
+     *
+     * @return \Zend\I18n\Translator\Translator
+     */
+    public function getTranslator()
+    {
+        return $this->translator;
     }
 }

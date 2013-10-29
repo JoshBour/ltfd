@@ -13,16 +13,13 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use Zend\InputFilter\InputFilter;
 
 class FeedForm extends Form{
-    public function __construct(EntityManager $em){
+    public function __construct(){
         parent::__construct('feedForm');
 
         $this->setAttributes(array(
             'method' => 'post',
             'class' => 'standardForm'
         ));
-
-        $this->setHydrator(new DoctrineHydrator($em, '\Feed\Entity\Feed'))
-            ->setInputFilter(new InputFilter());
 
         $this->add(array(
             'name' => 'security',
@@ -41,7 +38,6 @@ class FeedForm extends Form{
                 'description',
                 'video',
                 'game',
-                'category'
             )
         ));
     }

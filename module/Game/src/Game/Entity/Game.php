@@ -58,47 +58,17 @@ class Game
     private $followers;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Game\Entity\Category")
-     * @ORM\JoinTable(name="games_categories",
-     *      joinColumns={@ORM\JoinColumn(name="game_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="category_id", referencedColumnName="id")}
-     *      )
-     */
-    private $categories;
-
-    /**
      * @ORM\OneToMany(targetEntity="Feed\Entity\Feed", mappedBy="game")
      */
     private $feeds;
 
     public function __construct(){
         $this->followers = new ArrayCollection();
-        $this->categories = new ArrayCollection();
         $this->feeds = new ArrayCollection();
     }
 
     public function getAvatar(){
         return 'games/' . strtolower(implode('',preg_split("/[\s,\:\-\!]+/", $this->name)));
-    }
-
-    public function setCategories($categories)
-    {
-        $this->categories[] = $categories;
-    }
-
-    public function getCategories()
-    {
-        return $this->categories;
-    }
-
-    public function addCategories($categories){
-        foreach($categories as $category)
-            $this->categories->add($category);
-    }
-
-    public function removeCategories($categories){
-        foreach($categories as $category)
-            $this->categories->removeElement($category);
     }
 
     public function getUrlName(){

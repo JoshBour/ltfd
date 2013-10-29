@@ -36,6 +36,11 @@ class CommentController extends AbstractActionController
      */
     private $commentService;
 
+    /**
+     * @var \Doctrine\ORM\EntityRepository
+     */
+    private $feedRepository;
+
     public function addAction()
     {
         $request = $this->getRequest();

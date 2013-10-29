@@ -13,17 +13,13 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 
 class CommentForm extends Form
 {
-    public function __construct($em)
+    public function __construct()
     {
         parent::__construct('commentForm');
 
         $this->setAttributes(array(
             'method' => 'post',
         ));
-
-        $this->setHydrator(new DoctrineHydrator($em, '\Feed\Entity\Comment'))
-            ->setInputFilter(new InputFilter());
-
 
         $this->add(array(
             'name' => 'submit',

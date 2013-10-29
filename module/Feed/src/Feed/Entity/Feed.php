@@ -61,12 +61,6 @@ class Feed
     private $game;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Game\Entity\Category", inversedBy="feeds")
-     * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
-     */
-    private $category;
-
-    /**
      * @ORM\Column(type="datetime")
      * @ORM\Column(name="post_time")
      */
@@ -197,28 +191,6 @@ class Feed
                 return $numberOfUnits.' '.$text.(($numberOfUnits>1)?'s':'');
             }
         return null;
-    }
-
-    /**
-     * Set the feed's category.
-     *
-     * @param $category
-     * @return Feed
-     */
-    public function setCategory($category)
-    {
-        $this->category = $category;
-        return $this;
-    }
-
-    /**
-     * Get the feed's category.
-     *
-     * @return \Game\Entity\Category
-     */
-    public function getCategory()
-    {
-        return $this->category;
     }
 
     /**

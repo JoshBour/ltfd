@@ -66,6 +66,13 @@ class Account
     private $isActivated;
 
     /**
+     * @ORM\Column(type="smallint")
+     * @ORM\Column(length=1)
+     * @ORM\Column(name="is_active")
+     */
+    private $isActive;
+
+    /**
      * @ORM\Column(type="string")
      * @ORM\Column(length=50)
      */
@@ -659,6 +666,28 @@ class Account
     public function getIsActivated()
     {
         return $this->isActivated;
+    }
+
+    /**
+     * Set the account's activate status
+     *
+     * @param int $isActive
+     * @return Account
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+        return $this;
+    }
+
+    /**
+     * Get the account's activate status
+     *
+     * @return int
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
     }
 
     /**
