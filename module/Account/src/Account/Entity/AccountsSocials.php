@@ -38,10 +38,6 @@ class AccountsSocials
     private $value;
 
     /**
-     * @param mixed $account
-     */
-
-    /**
      * Set the join entry's account.
      *
      * @param Account $account

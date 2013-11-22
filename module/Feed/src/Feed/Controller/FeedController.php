@@ -17,7 +17,10 @@ class FeedController extends AbstractActionController
     const MESSAGE_FEED_POST_SUCCESS = 'The feed has been posted successfully.';
     const MESSAGE_FEED_POST_FAIL = 'Something went wrong when saving the post.';
     const MESSAGE_FAVORITE_SUCCESS = 'The feed has been added to your favorites.';
-    const MESSAGE_FAVORITE_FAIL = 'Something went wrong when saving the video as favorite, please try again';
+    const MESSAGE_UNFAVORITE_SUCCESS = 'The feed has been removed from your favorites.';
+    const MESSAGE_FAVORITE_FAIL = 'Something went wrong when saving the feed as favorite, please try again';
+    const MESSAGE_REMOVE_SUCCESS = 'The feed has been removed successfully.';
+    const MESSAGE_REMOVE_FAIL = 'Something went wrong when removing the feed, please try again';
 
     /**
      * @var \Doctrine\ORM\EntityManager
@@ -56,9 +59,10 @@ class FeedController extends AbstractActionController
         if ($request->isPost()) {
             $data = $request->getPost();
             $feed = $this->getFeedService()->create($data);
-            if (!$feed) {
+            if(!$feed || $feed instanceof Form){
                 $this->flashMessenger()->addMessage($this->getTranslator()->translate(self::MESSAGE_FEED_POST_FAIL));
-            } else {
+                if($feed instanceof Form) $form = $feed;
+            }else{
                 $this->flashMessenger()->addMessage($this->getTranslator()->translate(self::MESSAGE_FEED_POST_SUCCESS));
                 $this->redirect()->toRoute(self::ROUTE_USER_FEEDS);
             }
@@ -69,32 +73,52 @@ class FeedController extends AbstractActionController
         ));
     }
 
-    public function deleteAction()
+    public function removeAction()
     {
-        return new ViewModel();
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            if ($this->identity()) {
+                $id = $this->params()->fromPost('feedId');
+                $feed = $this->getFeedService()->remove($id);
+
+                if ($feed) {
+                    $success = 1;
+                    $message = $this->getTranslator()->translate(self::MESSAGE_REMOVE_SUCCESS);
+                } else {
+                    $success = 0;
+                    $message = $this->getTranslator()->translate(self::MESSAGE_REMOVE_FAIL);
+                }
+                return new JsonModel(array(
+                        'success' => $success,
+                        'message' => $message,
+                    )
+                );
+            } else {
+                return $this->redirect()->toRoute(self::ROUTE_LOGIN);
+            }
+        } else {
+            $this->getResponse()->setStatusCode(404);
+            return;
+        }
     }
 
     public function rateAction()
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
             if ($this->identity()) {
-                $id = $this->params()->fromRoute('id');
-                $rating = $this->params()->fromRoute('rating');
-                $feed = $this->getFeedService()->rate($id, $rating);
+                $id = $this->params()->fromPost('feedId');
+                $type = $this->params()->fromPost('type');
+                $feed = $this->getFeedService()->rate($id, $type);
 
                 if ($feed) {
                     $success = 1;
                     $message = $this->getTranslator()->translate(self::MESSAGE_RATE_SUCCESS);
-                    $newRating = $feed->getRating();
                 } else {
                     $success = 0;
                     $message = $this->getTranslator()->translate(self::MESSAGE_RATE_FAIL);
-                    $newRating = null;
                 }
                 return new JsonModel(array(
                         'success' => $success,
                         'message' => $message,
-                        'newRatingTotal' => $newRating
                     )
                 );
             } else {
@@ -110,7 +134,7 @@ class FeedController extends AbstractActionController
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
             if ($this->identity()) {
-                $feedId = $this->params->fromPost('feed');
+                $feedId = $this->params()->fromPost('feedId');
 
                 $feed = $this->getFeedService()->addWatched($feedId);
                 $success = ($feed) ? 1 : 0;
@@ -126,12 +150,17 @@ class FeedController extends AbstractActionController
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
             if ($this->identity()) {
-                $feedId = $this->params->fromPost('feedId');
-                $type = $this->params->fromPost('type');
+                $feedId = $this->params()->fromPost('feedId');
+                $type = $this->params()->fromPost('type');
+                $activeGame = $this->params()->fromPost('activeGame');
 
-                $feed = $this->getFeedService()->setFavorite($feedId, $type);
+                $feed = $this->getFeedService()->setFavorite($feedId, $type,$activeGame);
                 if ($feed) {
-                    $message = $this->getTranslator()->translate(self::MESSAGE_FAVORITE_SUCCESS);
+                    if($type == "favorite"){
+                        $message = $this->getTranslator()->translate(self::MESSAGE_FAVORITE_SUCCESS);
+                    }else{
+                        $message = $this->getTranslator()->translate(self::MESSAGE_UNFAVORITE_SUCCESS);
+                    }
                     $success = 1;
                 } else {
                     $message = $this->getTranslator()->translate(self::MESSAGE_FAVORITE_FAIL);

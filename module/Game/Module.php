@@ -1,6 +1,7 @@
 <?php
 namespace Game;
 
+use Feed\Service\Game;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 
@@ -18,7 +19,10 @@ class Module
             'factories' => array(
                 'game_search_form' => function($sm){
                     return new Form\SearchForm($sm);
-                }
+                },
+                'game_service' => function($sm){
+                    return new Service\Game();
+                },
             )
         );
     }

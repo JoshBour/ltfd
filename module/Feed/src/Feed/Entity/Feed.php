@@ -3,7 +3,6 @@ namespace Feed\Entity;
 
 use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 use Zend\Paginator\Paginator;
 use ZendGData\YouTube;
 
@@ -22,37 +21,11 @@ class Feed
     private $id;
 
     /**
-     * @ORM\Column(type="string")
-     * @ORM\Column(length=50)
-     * @ORM\Column(nullable=true)
-     */
-    private $title;
-
-    /**
-     * @ORM\Column(type="string")
-     * @ORM\Column(length=50)
-     * @ORM\Column(nullable=true)
-     */
-    private $description;
-
-    /**
      * @ORM\Column(type="integer")
-     * @ORM\Column(length=11)
-     */
-    private $rating;
-
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Column(length=11)
+     * @ORM\Column(length=80)
      * @ORM\Column(name="video_id")
      */
     private $videoId;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Account\Entity\Account", inversedBy="feeds")
-     * @ORM\JoinColumn(name="uploader_id", referencedColumnName="id")
-     */
-    private $uploader;
 
     /**
      * @ORM\ManyToOne(targetEntity="Game\Entity\Game", inversedBy="feeds")
@@ -61,56 +34,65 @@ class Feed
     private $game;
 
     /**
+     * @ORM\Column(type="string")
+     * @ORM\Column(length=50)
+     */
+    private $title;
+
+    /**
+     * @ORM\Column(type="string")
+     * @ORM\Column(length=200)
+     */
+    private $description;
+
+    /**
+     * @ORM\Column(type="string")
+     * @ORM\Column(length=100)
+     */
+    private $author;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @ORM\Column(length=11)
+     */
+    private $views;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @ORM\Column(length=11)
+     */
+    private $rating;
+
+    /**
      * @ORM\Column(type="datetime")
      * @ORM\Column(name="post_time")
      */
     private $postTime;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Feed\Entity\Rating", mappedBy="feed")
-     */
-    private $ratings;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Comment", mappedBy="feed")
-     * @ORM\OrderBy({"postTime" = "DESC"})
-     */
-    private $comments;
-
-    public function __construct()
-    {
-        $this->ratings = new ArrayCollection();
-        $this->comments = new ArrayCollection();
-        $this->watchedFeeds = new ArrayCollection();
-        $this->favoriteFeeds = new ArrayCollection();
+    public static function createFromEntry($entry,$game){
+        $ytEntry = new \Feed\Model\YoutubeEntry($entry);
+        $feed = new Feed();
+        $filter = new \Zend\Filter\HtmlEntities(array('quotestyle' => ENT_QUOTES));
+        $feed->setAuthor($ytEntry->getAuthor())
+            ->setGame($game)
+            ->setDescription(substr(self::filterData($ytEntry->getDescription()), 0, 160))
+            ->setVideoId($ytEntry->getVideoId())
+            ->setTitle(substr(self::filterData($ytEntry->getTitle()),0,40))
+            ->setViews(0)
+            ->setRating(0)
+            ->setPostTime(date("Y-m-d H:i:s", time()));
+        return $feed;
     }
 
-    /**
-     * @param $entity \Feed\Entity\Feed
-     * @param $user \Account\Entity\Account
-     * @param $videoUrl int
-     * @return Feed
-     * @throws \Doctrine\Common\Proxy\Exception\InvalidArgumentException
-     */
-    public static function create($entity,$user,$videoUrl){
-        if($entity instanceof Feed){
-            parse_str( parse_url( $videoUrl, PHP_URL_QUERY ), $varArray );
-            $entity->setUploader($user);
-            $entity->setPostTime(date('Y-m-d H:i:s'));
-            $entity->setVideoId($varArray['v']);
-            $entity->setRating(0);
-            $title = $entity->getTitle();
-            $description = $entity->getDescription();
-            if(empty($title)){
-                $entity->setTitle(null);
-            }
-            if(empty($description)){
-                $entity->setDescription(null);
-            }
-            return $entity;
-        }else{
-            throw new InvalidArgumentException('The provided arguments are invalid');
+    private static function filterData($data){
+        $entities = new \Zend\Filter\HtmlEntities(array('quotestyle' => ENT_QUOTES));
+        $tags = new \Zend\Filter\StripTags(array('quotestyle' => ENT_QUOTES));
+        $newLine = new \Zend\Filter\StripNewlines(array('quotestyle' => ENT_QUOTES));
+        $filters = array($entities,$tags,$newLine);
+        foreach($filters as $filter){
+            $data = $filter->filter($data);
         }
+        return $data;
     }
 
     /**
@@ -118,52 +100,16 @@ class Feed
      *
      * @return YouTube\VideoEntry
      */
-    public function getYoutubeEntry(){
+    public function getYoutubeEntry()
+    {
         $video = new Youtube();
         $adapter = new \Zend\Http\Client\Adapter\Curl();
-        $adapter = $adapter->setCurlOption(CURLOPT_SSL_VERIFYHOST,false);
-        $adapter = $adapter->setCurlOption(CURLOPT_SSL_VERIFYPEER,false);
+        $adapter = $adapter->setCurlOption(CURLOPT_SSL_VERIFYHOST, false);
+        $adapter = $adapter->setCurlOption(CURLOPT_SSL_VERIFYPEER, false);
         $httpClient = new \ZendGData\HttpClient();
         $httpClient->setAdapter($adapter);
         $video->setHttpClient($httpClient);
-        return $video->getVideoEntry($this->videoId);
-    }
-
-
-    /**
-     * Get the total rating in a 'k' format.
-     *
-     * @return string
-     */
-    public function getTotalRating(){
-        $ratingArray = $this->getRatingArray();
-        $sum = $ratingArray['up'] - $ratingArray['down'];
-
-        if(abs($sum) > 1000){
-            $k = substr($sum,0,1);
-            $decimal = substr($sum,1,1);
-            $sum = $k . ',' . $decimal . 'k';
-        }
-        return $sum;
-    }
-
-    /**
-     * Returns an array containing the down and up votes.
-     * Up votes : $ratings['up']
-     * Down votes : $ratings['down']
-     *
-     * @return array
-     */
-    public function getRatingArray(){
-        $ratings = array('up' => 0,'down' => 0);
-        foreach($this->ratings as $rating){
-            if($rating->getRating() == '1'){
-                $ratings['up']++;
-            }else{
-                $ratings['down']++;
-            }
-        }
-        return $ratings;
+        return new \Feed\Model\YoutubeEntry($video->getVideoEntry($this->videoId));
     }
 
     /**
@@ -171,81 +117,48 @@ class Feed
      *
      * @return string
      */
-    public function getTimeAgo(){
-            $time = strtotime($this->postTime);
-            $time = time() - $time; // to get the time since that moment
+    public function getTimeAgo()
+    {
+        $time = strtotime($this->postTime);
+        $time = time() - $time; // to get the time since that moment
 
-            $tokens = array (
-                31536000 => 'year',
-                2592000 => 'month',
-                604800 => 'week',
-                86400 => 'day',
-                3600 => 'hour',
-                60 => 'minute',
-                1 => 'second'
-            );
+        $tokens = array(
+            31536000 => 'year',
+            2592000 => 'month',
+            604800 => 'week',
+            86400 => 'day',
+            3600 => 'hour',
+            60 => 'minute',
+            1 => 'second'
+        );
 
-            foreach ($tokens as $unit => $text) {
-                if ($time < $unit) continue;
-                $numberOfUnits = floor($time / $unit);
-                return $numberOfUnits.' '.$text.(($numberOfUnits>1)?'s':'');
-            }
+        foreach ($tokens as $unit => $text) {
+            if ($time < $unit) continue;
+            $numberOfUnits = floor($time / $unit);
+            return $numberOfUnits . ' ' . $text . (($numberOfUnits > 1) ? 's' : '');
+        }
         return null;
     }
 
     /**
-     * Set the feed's comments.
-     *
-     * @param $comments
+     * @param string $author
      * @return Feed
      */
-    public function setComments($comments)
+    public function setAuthor($author)
     {
-        $this->comments[] = $comments;
+        $this->author = $author;
         return $this;
     }
 
     /**
-     * Get the feed's comments.
-     *
-     * @return ArrayCollection
+     * @return string
      */
-    public function getComments()
+    public function getAuthor()
     {
-        return $this->comments;
+        return $this->author;
     }
 
     /**
-     * Add comment(s) to the existing ones.
-     *
-     * @param array|Comment $comments
-     */
-    public function addComments($comments){
-        if (is_array($comments)) {
-            foreach ($comments as $comment)
-                $this->comments->add($comment);
-        } else {
-            $this->comments->add($comments);
-        }
-    }
-
-    /**
-     * Remove comment(s) from the existing ones.
-     *
-     * @param array|Comment $comments
-     */
-    public function removeComments($comments){
-        if (is_array($comments)) {
-            foreach ($comments as $comment)
-                $this->comments->removeElement($comment);
-        } else {
-            $this->comments->removeElement($comments);
-        }
-    }
-
-    /**
-     * Set the feed's description.
-     *
      * @param string $description
      * @return Feed
      */
@@ -256,8 +169,6 @@ class Feed
     }
 
     /**
-     * Get the feed's description.
-     *
      * @return string
      */
     public function getDescription()
@@ -266,8 +177,6 @@ class Feed
     }
 
     /**
-     * Set the feed's game.
-     *
      * @param \Game\Entity\Game $game
      * @return Feed
      */
@@ -278,8 +187,6 @@ class Feed
     }
 
     /**
-     * Get the feed's game.
-     *
      * @return \Game\Entity\Game
      */
     public function getGame()
@@ -288,8 +195,6 @@ class Feed
     }
 
     /**
-     * Set the feed's id.
-     *
      * @param int $id
      * @return Feed
      */
@@ -300,8 +205,6 @@ class Feed
     }
 
     /**
-     * Get the feed's id.
-     *
      * @return int
      */
     public function getId()
@@ -310,9 +213,6 @@ class Feed
     }
 
     /**
-     * Set the feed's post time.
-     * Accepted format is Y-m-d H:i:s
-     *
      * @param string $postTime
      * @return Feed
      */
@@ -323,9 +223,6 @@ class Feed
     }
 
     /**
-     * Get the feed's post time.
-     * The format is Y-m-d H:i:s
-     *
      * @return string
      */
     public function getPostTime()
@@ -334,8 +231,6 @@ class Feed
     }
 
     /**
-     * Set the feed's total rating.
-     *
      * @param int $rating
      * @return Feed
      */
@@ -346,8 +241,6 @@ class Feed
     }
 
     /**
-     * Get the feed's total rating.
-     *
      * @return int
      */
     public function getRating()
@@ -356,58 +249,6 @@ class Feed
     }
 
     /**
-     * Set the feed's ratings.
-     *
-     * @param $ratings
-     * @return Feed
-     */
-    public function setRatings($ratings)
-    {
-        $this->ratings[] = $ratings;
-        return $this;
-    }
-
-    /**
-     * Get the feed's ratings.
-     *
-     * @return ArrayCollection
-     */
-    public function getRatings()
-    {
-        return $this->ratings;
-    }
-
-    /**
-     * Add rating(s) to the existing ones.
-     *
-     * @param array|Rating $ratings
-     */
-    public function addRatings($ratings){
-        if (is_array($ratings)) {
-            foreach ($ratings as $rating)
-                $this->ratings->add($rating);
-        } else {
-            $this->ratings->add($ratings);
-        }
-    }
-
-    /**
-     * Remove rating(s) from the existing ones.
-     *
-     * @param array|Rating $ratings
-     */
-    public function removeRatings($ratings){
-        if (is_array($ratings)) {
-            foreach ($ratings as $rating)
-                $this->ratings->removeElement($rating);
-        } else {
-            $this->ratings->removeElement($ratings);
-        }
-    }
-
-    /**
-     * Set the feed's title.
-     *
      * @param string $title
      * @return Feed
      */
@@ -418,8 +259,6 @@ class Feed
     }
 
     /**
-     * Get the feed's title.
-     *
      * @return string
      */
     public function getTitle()
@@ -428,30 +267,6 @@ class Feed
     }
 
     /**
-     * Set the feed's uploader account.
-     *
-     * @param \Account\Entity\Account $uploader
-     * @return Feed
-     */
-    public function setUploader($uploader)
-    {
-        $this->uploader = $uploader;
-        return $this;
-    }
-
-    /**
-     * Get the feed's uploader account.
-     *
-     * @return \Account\Entity\Account
-     */
-    public function getUploader()
-    {
-        return $this->uploader;
-    }
-
-    /**
-     * Set the video's youtube id.
-     *
      * @param string $videoId
      * @return Feed
      */
@@ -462,13 +277,29 @@ class Feed
     }
 
     /**
-     * Get the video's youtube id.
-     *
      * @return string
      */
     public function getVideoId()
     {
         return $this->videoId;
+    }
+
+    /**
+     * @param int $views
+     * @return Feed
+     */
+    public function setViews($views)
+    {
+        $this->views = $views;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getViews()
+    {
+        return $this->views;
     }
 
 

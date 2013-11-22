@@ -5,17 +5,25 @@
  * Time: 1:04 μμ
  */
 
-namespace Feed\Service;
+namespace Game\Service;
 
 
+use Game\Controller\GameController;
 use Zend\ServiceManager\ServiceManager;
 use Zend\ServiceManager\ServiceManagerAwareInterface;
 use Zend\Form\Form;
 use Zend\Authentication\AuthenticationService;
 use Doctrine\ORM\EntityManager;
 
-class Gane implements ServiceManagerAwareInterface
+class Game implements ServiceManagerAwareInterface
 {
+    const ERROR_FAIL_GAME_CONNECT = "Something went wrong when trying to connect with the game.";
+    const ERROR_ALREADY_FOLLOWING_GAME = "You are already following this game.";
+    const ERROR_ALREADY_NOT_FOLLOWING_GAME = "You are already not following this game.";
+
+    const MESSAGE_UNFOLLOW = 'You are not following %s anymore.';
+    const MESSAGE_FOLLOW_SUCCESS = "You are now following %s";
+    const MESSAGE_FOLLOW = 'You are now following %s.';
 
     /**
      * @var ServiceManager
@@ -38,6 +46,11 @@ class Gane implements ServiceManagerAwareInterface
     private $gameRepository;
 
     /**
+     * @var \Zend\I18n\Translator\Translator
+     */
+    private $translator;
+
+    /**
      * @var \Doctrine\ORM\EntityRepository
      */
     private $feedRepository;
@@ -46,6 +59,46 @@ class Gane implements ServiceManagerAwareInterface
      * @var \Doctrine\ORM\EntityRepository
      */
     private $accountRepository;
+
+    public function connect($gameId,$type){
+        /**
+         * @var $game \Game\Entity\Game
+         */
+        $game = $this->getGameRepository()->find($gameId);
+        $user = $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getId());
+        $result = array("success" => 0, "message" => "");
+        $em = $this->getEntityManager();
+        try {
+            $followers = $game->getFollowers();
+            if ($type == 'follow') {
+                // check if the user already follows the game
+                if (!$followers->contains($user)) {
+                    $game->addFollowers(array($user));
+                    $game->setFollowersCount($game->getFollowersCount()+1);
+                    $result["message"] = sprintf($this->getTranslator()->translate(self::MESSAGE_FOLLOW), $game->getName());
+                } else {
+                    $result["message"] = $this->getTranslator()->translate(self::ERROR_ALREADY_FOLLOWING_GAME);
+                    return $result;
+                }
+            } else if ($type == 'unfollow') {
+                // check if the user follows the game in order to unfollow it
+                if ($followers->contains($user)) {
+                    $game->removeFollowers(array($user));
+                    $game->setFollowersCount($game->getFollowersCount()-1);
+                    $result["message"] = sprintf($this->getTranslator()->translate(self::MESSAGE_UNFOLLOW), $game->getName());
+                } else {
+                    $result["message"] = $this->getTranslator()->translate(self::ERROR_ALREADY_NOT_FOLLOWING_GAME);
+                    return $result;
+                }
+            }
+            $em->persist($game);
+            $em->flush();
+            $result["success"] = 1;
+        } catch (\Exception $e) {
+            $result["message"] = $e->getMessage();
+        }
+        return $result;
+    }
 
     /**
      * Get the game repository.
@@ -133,7 +186,7 @@ class Gane implements ServiceManagerAwareInterface
      * setAuthenticationService
      *
      * @param AuthenticationService $authService
-     * @return Feed
+     * @return Game
      */
     public function setAuthService(AuthenticationService $authService)
     {
@@ -142,7 +195,7 @@ class Gane implements ServiceManagerAwareInterface
     }
 
     /**
-     * Set the doctrine entity manager.
+     * Sets the doctrine entity manager.
      *
      * @param EntityManager $entityManager
      */
@@ -152,7 +205,7 @@ class Gane implements ServiceManagerAwareInterface
     }
 
     /**
-     * Retrieve the doctrine entity manager.
+     * Returns the doctrine entity manager.
      *
      * @return EntityManager
      */
@@ -164,7 +217,7 @@ class Gane implements ServiceManagerAwareInterface
     }
 
     /**
-     * Set service manager.
+     * Sets the service manager.
      *
      * @param ServiceManager $serviceManager
      */
@@ -174,7 +227,7 @@ class Gane implements ServiceManagerAwareInterface
     }
 
     /**
-     * Retrieve the service manager.
+     * Returns the service manager.
      *
      * @return ServiceManager
      */
@@ -184,26 +237,26 @@ class Gane implements ServiceManagerAwareInterface
     }
 
     /**
-     * Set the feed post form.
+     * Returns a zend translator instance.
      *
-     * @param Form $feedForm
+     * @return \Zend\I18n\Translator\Translator
      */
-    public function setFeedForm(Form $feedForm)
+    public function getTranslator()
     {
-        $this->feedForm = $feedForm;
+        if (!$this->translator) {
+            $this->setTranslator($this->getServiceManager()->get('translator'));
+        }
+        return $this->translator;
     }
 
     /**
-     * Retrieve the feed post form.
+     * Sets the zend translator instance.
      *
-     * @return Form
+     * @param $translator
      */
-    public function getFeedForm()
+    public function setTranslator($translator)
     {
-        if (null === $this->feedForm)
-            $this->setFeedForm($this->getServiceManager()->get('feed_form'));
-        return $this->feedForm;
+        $this->translator = $translator;
     }
-
 
 }

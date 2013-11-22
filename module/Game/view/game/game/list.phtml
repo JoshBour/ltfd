@@ -1,4 +1,9 @@
-<?php $user = $this->user(); ?>
+<?php
+/**
+ * @var $user \Account\Entity\Account
+ */
+$user = $this->user();
+?>
 <aside>
     <h1><?php echo $this->translate("Search Game"); ?></h1>
     <?php
@@ -8,6 +13,7 @@
 <div id="main">
     <ul id="gamesList">
         <?php
+            $userGames = $user->getGames();
             foreach($games as $game):
                 $name = $game->getName();
                 $urlName = $game->getUrlName();
@@ -20,14 +26,14 @@
                 <div class="gameMeta">
                     <a href="<?php echo $this->url('game/profile',array('name' => $urlName)); ?>" title="<?php echo $this->translate("The game's profile"); ?>">Profile</a> •
                     <?php
-                        if(!$game->getFollowers()->contains($user)){
+                        if(!$userGames->contains($game)){
                     ?>
                             <a href="#" class="follow" title="<?php echo $this->translate("Follow the game"); ?>">Follow</a>
                     <?php }else{ ?>
                             <a href="#" class="unfollow" title="<?php echo $this->translate("Unfollow the game"); ?>">Unfollow</a>
                     <?php }?>
                     •
-                    <p class="gameFollowers"><?php echo count($game->getFollowers()); ?></p>
+                    <p class="gameFollowers"><?php echo $game->getFollowersCount(); ?></p>
                 </div>
             </li>
         <?php endforeach; ?>

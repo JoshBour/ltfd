@@ -69,12 +69,11 @@ class Module
 				,
 				'account_login_form' => function($sm){
 					$entityManager = $sm->get('Doctrine\ORM\EntityManager');
-                    $fieldset = new Form\LoginFieldset();
+                    $fieldset = new Form\LoginFieldset($sm->get('translator'));
                     $form = new Form\LoginForm();
-                    $hydrator = new DoctrineHydrator($entityManager, 'Entity\Account');
+                    $hydrator = new DoctrineHydrator($entityManager, '\Account\Entity\Account');
 
                     $fieldset->setUseAsBaseFieldset(true)
-                             ->setTranslator($sm->get('translator'))
                              ->setHydrator($hydrator)
                              ->setObject(new Entity\Account);
 
@@ -86,18 +85,17 @@ class Module
 				},
 				'account_register_form' => function($sm){
                     $entityManager = $sm->get('Doctrine\ORM\EntityManager');
-					$fieldset = new Form\RegisterFieldset();
+					$fieldset = new Form\RegisterFieldset($sm->get('translator'));
                     $form = new Form\RegisterForm();
 
-                    $fieldset->setAccountRepository($entityManager->getRepository('Entity\Account'))
+                    $fieldset->setAccountRepository($entityManager->getRepository('\Account\Entity\Account'))
                              ->setUseAsBaseFieldset(true)
-                             ->setTranslator($sm->get('translator'))
-                             ->setHydrator(new DoctrineHydrator($entityManager, 'Entity\Account'))
+                             ->setHydrator(new DoctrineHydrator($entityManager, '\Account\Entity\Account'))
                              ->setObject(new Entity\Account);
 
 					$form->add($fieldset)
                          ->setInputFilter(new InputFilter())
-                         ->setHydrator(new DoctrineHydrator($entityManager, 'Entity\Account'));
+                         ->setHydrator(new DoctrineHydrator($entityManager, '\Account\Entity\Account'));
 					return $form;
 				},
 			),

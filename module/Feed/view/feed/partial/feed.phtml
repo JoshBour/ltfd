@@ -1,0 +1,32 @@
+<?php
+$author = $feed->getAuthor();
+$id = $feed->getId();
+$videoId = $feed->getVideoId();
+$title = $this->escapeHtml($feed->getTitle());
+$description = $this->escapeHtml($feed->getDescription());
+?>
+<li class="feed-<?php echo $id; ?>" data-video-id="<?php echo $videoId; ?>">
+    <img src="http://img.youtube.com/vi/<?php echo $videoId; ?>/default.jpg" class="feedThumb"
+         alt="feed thumbnail"/>
+
+    <div class="feedHeader">
+        <a href="http://www.youtube.com/watch?v=<?php echo $videoId; ?>"
+           title="<?php echo $title; ?>"><?php echo (strlen($title) > 50) ? substr($title, 0, 50) . '..' : $title; ?></a>
+
+        <div class="feedInfo">
+            by <a href="http://www.youtube.com/user/<?php echo $author; ?>"
+                  class="feedAuthor"><?php echo $author; ?></a>
+        </div>
+    </div>
+    <div class="feedBody">
+        <?php
+        echo (strlen($description) > 200) ? substr($description, 0, 200) . '..' : $description;
+        ?>
+    </div>
+    <div class="feedMeta">
+        <span class="totalRating"><?php echo substr($feed->getRating(), 0, 4); ?></span>
+        <span class="like<?php echo ($user && in_array($id,$this->likedFeeds)) ? " disabled" : ""; ?>">Leet</span>
+        <span class="favorite<?php echo ($user && in_array($id,$this->favoriteFeeds)) ? " disabled" : ""; ?>">Favorite</span>
+        <span class="remove">Remove</span>
+    </div>
+</li>

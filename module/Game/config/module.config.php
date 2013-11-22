@@ -43,8 +43,7 @@ return array(
                             'defaults' => array(
                                 'controller' => 'Game\Controller\Game',
                                 'action' => 'feeds',
-                                'category' => 'all',
-                                'sort' => 'popular'
+                                'category' => 'feeds',
                             )
                         )
                     ),
@@ -113,16 +112,6 @@ return array(
                     ),
                     'constraints' => array(
                         'type' => 'follow|unfollow',
-                    ),
-                ),
-            ),
-            'game_get_categories' => array(
-                'type' => 'literal',
-                'options' => array(
-                    'route' => '/game/getGameCategories',
-                    'defaults' => array(
-                        'controller' => 'Game\Controller\Game',
-                        'action' => 'getGameCategories'
                     ),
                 ),
             ),

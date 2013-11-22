@@ -140,6 +140,16 @@ header #logo{
     float:left;
 }
 
+nav #userSettings img:hover{
+    -webkit-animation:spin 4s linear infinite;
+    -moz-animation:spin 4s linear infinite;
+    animation:spin 4s linear infinite;
+}
+
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
 #flash {
     position: absolute;
     top: 50px;
@@ -253,7 +263,7 @@ nav ul a:hover{
 }
 
 body.connectPage{
-    background:#222 url('../images/login-bg.jpg') center center;
+    /*background:#222 url('../images/login-bg.jpg') center center;*/
 }
 
 #login a, #register a{
@@ -262,6 +272,13 @@ body.connectPage{
 
 #login input, #register input{
     width: 375px;
+}
+
+#login input:focus, #register input:focus{
+
+    border-color: #fff;
+    -webkit-box-shadow: inset 0 1px 3px rgba(0,0,0,.05),0 0 8px rgba(82,168,236,.6);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,.05),0 0 8px rgba(82,168,236,.6);
 }
 
 #login h1, #register h1{
@@ -559,31 +576,31 @@ ul#following {
 
 #feeds .feedMeta .totalRating{
     background:transparent url('../images/rating-total-icon.png') center left no-repeat;
-    padding-left:17px;
+    padding:0 17px;
 }
 
-#feeds .feedMeta .thumbUp{
+#feeds .feedMeta .like{
     background:transparent url('../images/thumbup-icon.png') center left no-repeat;
-    padding-left:7px;
+    padding:0 17px 0 7px;
 }
 
-#feeds .feedMeta .thumbDown{
-    background:transparent url('../images/thumbdown-icon.png') center left no-repeat;
-    padding-left:7px;
+#feeds .feedMeta .remove{
+    background:transparent url('../images/remove-icon.png') center left no-repeat;
+    padding:0 17px;
 }
 
 #feeds .feedMeta .favorite{
     background:transparent url('../images/favorite-icon.png') center left no-repeat;
-    padding-left:17px;
+    padding:0 17px;
 }
 
-#feeds .feedMeta .thumbUp:hover, #feeds .feedMeta .thumbUp.disabled{
+#feeds .feedMeta .like:hover, #feeds .feedMeta .like.disabled{
     background:transparent url('../images/thumbup-icon-hover.png') center left no-repeat;
     color:green;
 }
 
-#feeds .feedMeta .thumbDown:hover, #feeds .feedMeta .thumbDown.disabled{
-    background:transparent url('../images/thumbdown-icon-hover.png') center left no-repeat;
+#feeds .feedMeta .remove:hover, #feeds .feedMeta .remove.disabled{
+    background:transparent url('../images/remove-icon-hover.png') center left no-repeat;
     color:red;
 }
 
@@ -650,7 +667,7 @@ ul#following {
 }
 
 #stageWrapper{
-    position: absolute;
+    position: fixed;
     width: 85%;
     top: 50%;
     left: 50%;
@@ -660,7 +677,6 @@ ul#following {
 }
 
 #stage{
-    position:relative;
     background: black url("../images/content_bg.png");
     overflow: hidden;
     border: 1px solid #333;
@@ -668,7 +684,7 @@ ul#following {
 
 #stage #videoWrapper{
     position: relative;
-    width: 80%;
+    width: 100%;
     float: left;
     border-right: 1px solid #333;
     padding-bottom: 56.25%;
@@ -681,86 +697,6 @@ ul#following {
     width: 100%;
     height: 100%;
 }
-
-#stage #commentWrapper{
-    float: left;
-    width: 19%;
-    /*padding-bottom: 56.25%;*/
-    border-left: 1px solid #333;
-}
-
-#stage #comments{
-    position: absolute;
-    height: 96%;
-    width: 20%;
-    top: 0;
-    right: 0;
-    margin-top: 35px;
-    overflow:hidden;
-    box-sizing: border-box;
-}
-
-#commentForm{
-    display: none;
-    position: absolute;
-    top: 0;
-    width: inherit;
-}
-
-#stage #commentWrapper input{
-    width:100%;
-    height:20px;
-    border:none;
-    border-bottom:1px solid #444;
-    background:#111 url('../images/comment-input-bg.png');
-}
-
-#stage #comments ul{
-    border-bottom:1px solid black;
-}
-
-.comment{
-    padding:5px;
-    border-bottom:1px solid #222;
-    border-top:1px solid black;
-    overflow:auto;
-    position:relative;
-}
-
-.comment .commentThumb{
-    float:left;
-    width:10%;
-    margin-right:3px;
-    vertical-align:middle;
-}
-
-/*
-    typing too much stuff into the input box will get it streched
-*/
-
-.comment .commentContentWrapper{
-    padding: 3px;
-    float:right;
-    width:85%;
-}
-
-.commentHeader a, .commentHeader .commentInfo{
-    display:inline-block;
-}
-
-.comment .commentInfo{
-    float:right;
-}
-
-.commentHeader .commentInfo{
-    font-style:italic;
-    font-size:11px;
-}
-
-.comment .commentBody{
-    padding-top:6px;
-}
-
 
 /* ===================================================== */
 /*                   Common Module Values                */

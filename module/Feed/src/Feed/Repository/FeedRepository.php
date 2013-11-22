@@ -9,7 +9,8 @@ namespace Feed\Repository;
 
 use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Tools\Pagination\Paginator;
+use Zend\Paginator\Paginator;
+use Zend\Paginator\Adapter\ArrayAdapter;
 
 class FeedRepository extends EntityRepository{
 //    public function findFeedsByCategory($category, $userId,$firstResult = 0, $maxResults = 10)
@@ -32,7 +33,16 @@ class FeedRepository extends EntityRepository{
 //        }
 //    }
 
-    public function findBySort($gameId,$sort,$firstResult = 0,$maxResults = 20){
+    public function getVideoIdAssocArray(){
+        $feeds = $this->findAll();
+        $ids = array();
+        foreach($feeds as $feed){
+            $ids[$feed->getVideoId()] = $feed;
+        }
+        return $ids;
+    }
+
+    public function findBySort($gameId,$sort,$maxResults = 20,$firstResult = 0){
         $qb = $this->createQueryBuilder('f');
         $qb->select()
             ->where($qb->expr()->eq('f.game',':gameId'));
@@ -47,9 +57,10 @@ class FeedRepository extends EntityRepository{
         }
         $qb->setParameter('gameId',$gameId)
             ->setFirstResult($firstResult)
-            ->setMaxResults(20);
+            ->setMaxResults($maxResults);
 
-        return new Paginator($qb->getQuery(),true);
+        $query = $qb->getQuery();
+        return new Paginator(new ArrayAdapter($query->getResult()),true);
 
     }
 
@@ -60,7 +71,8 @@ class FeedRepository extends EntityRepository{
             ->setFirstResult($firstResults)
             ->setMaxResults($maxResults);
 
-        return new Paginator($qb->getQuery(),true);
+        $query = $qb->getQuery();
+        return new Paginator(new ArrayAdapter($query->getResult()),true);
     }
 
 
@@ -77,7 +89,8 @@ class FeedRepository extends EntityRepository{
                 ->setFirstResult($firstResult)
                 ->setMaxResults($maxResults);
 
-            return new Paginator($qb->getQuery(),true);
+            $query = $qb->getQuery();
+            return new Paginator(new ArrayAdapter($query->getResult()),true);
         }else {
             throw new InvalidArgumentException('The provided arguments are invalid.');
         }

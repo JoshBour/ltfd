@@ -19,7 +19,6 @@ class Module
     {
         return array(
             'invokables' => array(
-                'Feed\Controller\Comment' => 'Feed\Controller\CommentController',
                 'Feed\Controller\Feed' => 'Feed\Controller\FeedController'
             ),
         );
@@ -29,48 +28,13 @@ class Module
     {
         return array(
             'factories' => array(
-                'comment_form' => function ($sm) {
-                    $entityManager = $sm->get('Doctrine\ORM\EntityManager');
-                    $fieldset = new Form\CommentFieldset();
-                    $form = new Form\CommentForm();
-                    $hydrator = new DoctrineHydrator($entityManager, 'Entity\Comment');
-
-                    $fieldset->setUseAsBaseFieldset(true)
-                        ->setTranslator($sm->get('translator'))
-                        ->setHydrator($hydrator)
-                        ->setObject(new Entity\Comment());
-
-                    $form->add($fieldset)
-                        ->setInputFilter(new InputFilter())
-                        ->setHydrator($hydrator);
-
-                    return $form;
-                },
-                'feed_form' => function ($sm) {
-                    $entityManager = $sm->get('Doctrine\ORM\EntityManager');
-                    $fieldset = new Form\FeedFieldset();
-                    $form = new Form\FeedForm();
-                    $hydrator = new DoctrineHydrator($entityManager, 'Entity\Feed');
-
-                    $fieldset->setUseAsBaseFieldset(true)
-                        ->setTranslator($sm->get('translator'))
-                        ->setEntityManager($entityManager)
-                        ->setHydrator($hydrator)
-                        ->setObject(new Entity\Feed());
-
-                    $form->add($fieldset)
-                        ->setInputFilter(new InputFilter())
-                        ->setHydrator($hydrator);
-
-                    return $form;
-                },
                 'feed_service' => function ($sm) {
                     return new Service\Feed();
                 },
-                'comment_service' => function ($sm) {
-                    return new Service\Comment();
+                'feed_queue_generator' => function($sm){
+                    return new Model\FeedQueueGenerator();
                 }
-            )
+            ),
         );
     }
 

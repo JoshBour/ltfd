@@ -69,24 +69,6 @@ $(function () {
         }
     });
 
-    // search bar auto-complete
-    $('#searchBox').on('keyup', function (event) {
-        //var key = String.fromCharCode(event.keyCode);
-        var value = $(this).val();
-        var resultBox = $('#resultBox');
-        var resultBoxList = resultBox.children('ul');
-        if (value.length >= 3) {
-            resultBox.show();
-            var jqxhr = $.post(baseUrl + '/search/get-users/value/' + value + '/format/html',function (data) {
-                resultBoxList.find('li').detach();
-                resultBoxList.append(data);
-            }).fail(function () {
-                    alert('Something with wrong with the feed search, please try again.');
-                });
-        } else {
-            resultBox.hide();
-        }
-    });
 
     // prevent the search box from being submitted
     $('#searchInput').on('submit', function (event) {
@@ -96,7 +78,9 @@ $(function () {
     // ======================================================= //
     // ================= Game Page related =================//
 
-    // search bar auto-complete
+    /**
+     * @description The game search bar function.
+     */
     var isSearching = false;
     var completeList = $('#gamesList').html();
     $('input[name="gameSearch"]').on('keyup', function (event) {
@@ -107,15 +91,13 @@ $(function () {
                 isSearching = true;
                 var key = event.keyCode || event.charCode;
                 var resultList = $('#gamesList');
-                console.log(value);
                 if (value.length == 0) {
                     resultList.html(completeList);
                 } else if (value.length > 2) {
                     resultList.slideUp();
                     $.ajax({
                         url: baseUrl + '/game/search/name/' + value,
-                        timeout: 5000,
-                        ifModified: true
+                        timeout: 5000
                     }).done(function (data) {
                             resultList.html('').append(data).slideDown();
                         }).fail(function (jqXHR, textStatus) {
@@ -131,6 +113,9 @@ $(function () {
         }, 500);
     });
 
+    /**
+     * @description Animates the list when the mouseenter event is triggered
+     */
     $(document).on('mouseenter', '#gamesList li, #following li', function (e) {
         var item = $(this);
         if (!item.hasClass('animated')) {
@@ -142,6 +127,9 @@ $(function () {
         }
     });
 
+    /**
+     * @description Animates the list when the mouseleave event is triggered
+     */
     $(document).on('mouseleave', '#gamesList li, #following li', function (e) {
         var item = $(this);
         if (item.hasClass('animated')) {
@@ -153,22 +141,21 @@ $(function () {
         }
     });
 
-//    $('.gameFollow').on('click',function(e){
-//        e.preventDefault();
-//        var btn = $(this);
-//        var url = btn.attr('url');
-//    });
-
+    /**
+     * @description Follow or unfollow a game
+     */
     $(document).on('click', '.gameMeta .follow, .gameMeta .unfollow', function (e) {
         e.preventDefault();
         var element = $(this);
         var type = element.attr('class');
         var followers = element.siblings('.gameFollowers');
         var gameId = element.closest('li').attr('class').split(' ')[0].substring(5);
+        console.log(type);
+        delay(function () {
         $.ajax({
             url: baseUrl + '/game/connect/' + type + '/id/' + gameId,
-            timeout: 5000
-        }).done(function (data) {
+            dataType: 'json'
+        }).success(function (data) {
                 if (data.success == 1) {
                     if (type == 'follow') {
                         element.replaceWith($('<a/>', {
@@ -178,7 +165,7 @@ $(function () {
                                 "text": "Unfollow"
                             }
                         ));
-                        followers.html(data.followers);
+                        followers.html(parseInt(followers.html())+1);
                     } else {
                         element.replaceWith($('<a/>', {
                                 "href": "#",
@@ -187,39 +174,116 @@ $(function () {
                                 "text": "Follow"
                             }
                         ));
-                        followers.html(data.followers);
+                        followers.html(parseInt(followers.html())-1);
                     }
                 }
                 addMessage(data.message);
             }).fail(function (jqXHR, textStatus) {
+                alert(textStatus);
+                console.log(jqXHR.statusText);
                 if (textStatus == 'timeout') {
                     alert('The request has timed out, please try again.');
                 }
             });
+        },500);
+    });
+
+    /**
+     * @description Rates a feed.
+     */
+    $(document).on('click', '.feedMeta .like', function (e) {
+        var btn = $(this);
+        var isDisabled = btn.hasClass('disabled');
+        var type = (isDisabled) ? "unlike" : "like";
+        var feed = btn.closest('li');
+        var feedId = feed.attr('class').substring(5);
+        $.ajax({
+            url: baseUrl + '/feed/rate',
+            timeout: 5000,
+            type : "POST",
+            data : {
+                "type" : type,
+                "feedId" : feedId
+            }
+        }).success(function (data) {
+                if (data.success == 1) {
+                    if(isDisabled){
+                        btn.removeClass('disabled');
+                    }else{
+                        btn.addClass('disabled');
+                    }
+                    addMessage(data.message);
+                } else {
+                    addMessage(data.message);
+                }
+                console.log(data);
+            });
+
 
     });
 
-    $(document).on('click', '.feedMeta span[class^="thumb"]', function (e) {
-        var btn = $(this);
-        var otherBtn = btn.siblings('span[class^="thumb"]');
-        if (!btn.hasClass('disabled')) {
-            btn.addClass('disabled');
-            otherBtn.removeClass('disabled');
-            var rating = "up";
+    /**
+     * @description Removes a feed.
+     */
+    $(document).on('click', '.feedMeta .remove', function (e) {
+        if(confirm("Do you really want to delete this feed?")){
+            var btn = $(this);
             var feed = btn.closest('li');
             var feedId = feed.attr('class').substring(5);
-            if (btn.hasClass('thumbDown')) rating = "down";
-
             $.ajax({
-                url: baseUrl + '/feed/rate/' + rating + '/id/' + feedId,
-                timeout: 5000
+                url: baseUrl + '/feed/remove',
+                timeout: 5000,
+                type : "POST",
+                data : {
+                    "feedId" : feedId
+                }
             }).success(function (data) {
-                    if (data.success == 1)
-                        feed.find('.totalRating').html(data.newRatingTotal);
+                    console.log(data);
+                    if(data.success == 1) feed.detach();
+                    addMessage(data.message);
                 });
-
         }
+
     });
+
+    /**
+     * @description Add a feed to the user's favorites.
+     */
+    $(document).on('click', '#feeds li .favorite', function (e) {
+        var btn = $(this);
+        var type = 'favorite';
+        var listItem = btn.closest('li');
+        var feedId = listItem.attr('class').substring(5);
+        var isGenerated = 0;
+        var activeGame = $('a[id^="activeGame"]').attr('id').substring(11);
+
+        if (!btn.hasClass('disabled')) {
+            btn.addClass('disabled');
+        } else {
+            btn.removeClass('disabled');
+            type = 'unfavorite';
+        }
+        $.ajax({
+            url: baseUrl + '/feed/set-favorite',
+            type: "POST",
+            data: {
+                'feedId': feedId,
+                'type': type,
+                'activeGame': activeGame
+            }
+        }).success(function (data) {
+                if($("#gameCategories li.active a").hasClass("favorites")){
+                    listItem.detach();
+                }
+                addMessage(data.message);
+        }).fail(function (jqXHR, textStatus) {
+                alert(textStatus);
+                console.log(jqXHR.statusText);
+                if (textStatus == 'timeout') {
+                    alert('The request has timed out, please try again.');
+                }
+            });
+    })
 
     $('#feeds li').on('mouseenter', function (e) {
         var item = $(this);
@@ -236,6 +300,9 @@ $(function () {
         if (mask.length > 0) mask.detach();
     });
 
+    /**
+     * @description Creates the stage and plays a video.
+     */
     $(document).on('click', '#feeds li .videoMask', function (e) {
         var playBtn = $(this);
         var listItem = playBtn.closest('li');
@@ -261,118 +328,36 @@ $(function () {
             "src": "http://www.youtube.com/embed/" + id + "?autoplay=1"
         }).appendTo(videoWrapper);
 
-        var commentWrapper = $('<div/>', {
-            "id": "commentWrapper"
-        }).appendTo(stage);
-
-        var comments = $('<div/>', {
-            "id": "comments"
-        }).appendTo(commentWrapper);
-
-
-        $('#commentForm').clone().appendTo(commentWrapper);
-
-        $('#stage #commentForm').show();
         focusedDiv = stageWrapper;
         stageWrapper.addClass('target-' + feedId).focusLight();
-        // empty the list and get the comments
-        $.ajax({
-            url: baseUrl + '/feed/comment/list',
-            data: {
-                "feedId": feedId
-            }
-        }).done(function (data) {
-                // check if there are comments
-                if (data.success == 0) {
-                    $('<div />', {
-                        'class': 'notFound',
-                        'text': data.message
-                    }).prependTo(comments);
-                } else {
-                  //  $('#comments .notFound').detach();
-                    var commentList = $('<ul />', {
-                        'html': data
-                    }).appendTo(comments);
 
-                    // add the scrollbar
-                    comments.perfectScrollbar({
-                        wheelSpeed: 50,
-                        wheelPropagation: false,
-                        minScrollbarLength: 20
-                    });
-
-                    //bind the scroll event
-                    var isLoading = false;
-                    comments.scroll(function () {
-                        // http://stackoverflow.com/questions/2837741/jquery-detecting-reaching-bottom-of-scroll-doesnt-work-only-detects-the-top
-                        if ((comments.innerHeight() == (comments.prop('scrollHeight') - comments.scrollTop())) && !isLoading) {
-                            isLoading = true;
-                            $.ajax({
-                                url: baseUrl + '/feed/comment/list',
-                                data: {
-                                    "feedId": feedId,
-                                    "page": page++
-                                }
-                            }).done(function (data) {
-                                    if (data.success == 0) {
-                                        return;
-                                    } else {
-                                        console.log(page);
-                                        commentList.append(data);
-                                        commentList.toggleLoadingImage();
-                                        comments.perfectScrollbar('update');
-                                    }
-                                    isLoading = false;
-                                });
-                        }
-                    });
-
-                }
-            });
-
-        // if the user watches this in the userPage, don't add it to the history
+        //if the user watches this in the userPage, don't add it to the history
+        console.log(feedId);
         if (!$('body').hasClass('userPage')) {
             $.ajax({
-                url: baseUrl + '/feed/user-feed-category',
+                url: baseUrl + '/feed/add-to-watched',
                 type: "POST",
                 data: {
-                    'feed': feedId,
-                    'category': 'history'
+                    'feedId': feedId
                 }
-            }).done(function (data) {
+            }).success(function (data) {
                     console.log(data);
+            }).fail(function (jqXHR, textStatus) {
+                    console.log(textStatus);
+                    if (textStatus == 'timeout') {
+                        alert('The request has timed out, please try again.');
+                    }
                 });
         }
     });
+
+
+    // =================== Stage related ================= //
 
     $(document).on('resize', '#stage #comments', function (e) {
         var element = $(this);
         element.perfectScrollbar('update');
     });
-
-    $(document).on('click', '#feeds li .favorite', function (e) {
-        var btn = $(this);
-        var category = 'favorites';
-        var defAction = '';
-        if (!btn.hasClass('disabled')) {
-            btn.addClass('disabled');
-        } else {
-            btn.removeClass('disabled');
-            var defAction = 'unfavorite';
-        }
-        var listItem = btn.closest('li');
-        $.ajax({
-            url: baseUrl + '/feed/user-feed-category',
-            type: "POST",
-            data: {
-                'feed': listItem.attr('class').substring(5),
-                'category': 'favorites',
-                'defAction': defAction
-            }
-        }).done(function (data) {
-                console.log(data);
-            });
-    })
 
     $(document).on('submit', '#stage #commentForm', function (e) {
         e.preventDefault();
@@ -408,41 +393,13 @@ $(function () {
 
     // ======================================================= //
     // =================== Feed Page related ================= //
-    $('select[name="feed[game]"]').on('change', function (e) {
-        var value = $(this).val();
-        var gameCategories = $('select[name="feed[category]"]');
-        $(gameCategories).find('option:gt(0)').detach();
-        if (!empty(value)) {
-            var gameId = $(this).val();
-            $.ajax({
-                url: baseUrl + '/game/getGameCategories',
-                data: {gameId: gameId}
-            }).done(function (data) {
-                    if (data.success == 1) {
-                        var categories = data.categories;
-                        gameCategories.parent().toggleLoadingImage();
-                        for (var key in data.categories) {
-                            var name = data.categories[key];
-                            gameCategories.append(
-                                '<option value="' + key + '">' + name + '</option>'
-                            );
-                        }
-
-                        $('.loadingImg').detach();
-                    } else {
-                        alert('Something went wrong when loading the game categories, please try again.');
-                    }
-                });
-        }
-    });
 
     $('input[name="feed[title]"]').on('keyup', function (e) {
         var input = $(this);
         var val = input.val();
         if (val.length > 50) {
-            input.attr('disabled', 'disabled');
+            input.val(val.substr(0, 50));
         } else {
-            if (input.attr('disabled') == 'disabled') input.removeAttr('disabled');
             var remainingChars = input.parent().find('.remainingChars');
             remainingChars.html(50 - val.length);
 
@@ -453,9 +410,8 @@ $(function () {
         var input = $(this);
         var val = input.val();
         if (val.length > 200) {
-            input.attr('disabled', 'disabled');
+            input.val(val.substr(0, 200));
         } else {
-            if (input.attr('disabled') == 'disabled') input.removeAttr('disabled');
             var remainingChars = input.parent().find('.remainingChars');
             remainingChars.html(200 - val.length);
 

@@ -4,6 +4,9 @@ namespace Account\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Zend\Filter\Null;
+use Feed\Entity\Feed;
+use Zend\Paginator\Paginator;
+use Zend\Paginator\Adapter\ArrayAdapter;
 
 /**
  * @ORM\Entity(repositoryClass="\Account\Repository\AccountRepository")
@@ -116,19 +119,8 @@ class Account
     private $socials;
 
     /**
-     * @ORM\OneToMany(targetEntity="Feed\Entity\Feed", mappedBy="uploader")
-     * @ORM\OrderBy({"postTime" = "DESC"})
-     */
-    private $feeds;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Feed\Entity\Rating", mappedBy="user")
-     */
-    private $ratings;
-
-    /**
      * @ORM\ManyToMany(targetEntity="Feed\Entity\Feed")
-     * @ORM\JoinTable(name="account_favorites",
+     * @ORM\JoinTable(name="accounts_feeds_favorites",
      *      joinColumns={@ORM\JoinColumn(name="account_id", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="feed_id", referencedColumnName="id")}
      *      )
@@ -137,12 +129,39 @@ class Account
 
     /**
      * @ORM\ManyToMany(targetEntity="Feed\Entity\Feed")
-     * @ORM\JoinTable(name="account_history",
+     * @ORM\JoinTable(name="accounts_feeds_history",
      *      joinColumns={@ORM\JoinColumn(name="account_id", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="feed_id", referencedColumnName="id")}
      *      )
      */
     private $watchedFeeds;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Feed\Entity\Feed")
+     * @ORM\JoinTable(name="accounts_feeds_deleted",
+     *      joinColumns={@ORM\JoinColumn(name="account_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="feed_id", referencedColumnName="id")}
+     *      )
+     */
+    private $deletedFeeds;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Feed\Entity\Feed")
+     * @ORM\JoinTable(name="accounts_feeds_liked",
+     *      joinColumns={@ORM\JoinColumn(name="account_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="feed_id", referencedColumnName="id")}
+     *      )
+     */
+    private $likedFeeds;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Feed\Entity\Feed")
+     * @ORM\JoinTable(name="accounts_feeds_queue",
+     *      joinColumns={@ORM\JoinColumn(name="account_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="feed_id", referencedColumnName="id")}
+     *      )
+     */
+    private $feedQueue;
 
     public function __construct()
     {
@@ -151,38 +170,88 @@ class Account
         $this->socials = new ArrayCollection();
         $this->groups = new ArrayCollection();
         $this->games = new ArrayCollection();
-        $this->feeds = new ArrayCollection();
-        $this->ratings = new ArrayCollection();
         $this->favoriteFeeds = new ArrayCollection();
         $this->watchedFeeds = new ArrayCollection();
+        $this->deletedFeeds = new ArrayCollection();
+        $this->feedQueue = new ArrayCollection();
+        $this->likedFeeds = new ArrayCollection();
+    }
+
+    public function hasInteractedWithFeed(Feed $feed)
+    {
+        return (in_array($feed->getVideoId(), $this->getInteractedFeedIds(true, null, true)));
+    }
+
+    public function hasFavorite($feedId)
+    {
+        $feedFavoriteArray = $this->getInteractedFeedIds(false, 'favorites');
+        return in_array($feedId, $feedFavoriteArray);
+    }
+
+    public function hasLiked($feedId)
+    {
+        $feedFavoriteArray = $this->getInteractedFeedIds(false, 'liked');
+        return in_array($feedId, $feedFavoriteArray);
     }
 
     /**
-     * Returns an array with the rated feeds.
+     * Returns an array with the video ids of the feed queue's videos.
+     * If an feed array is provided, it returns the video ids using that array.
      *
+     * @param null|ArrayCollection $feeds
      * @return array
      */
-    public function getFeedRatingArray(){
-        $ratings = array();
-        foreach($this->ratings->toArray() as $rating)
-            $ratings[] = $rating->getFeed();
-        return $ratings;
+    public function getFeedQueueVideoIds($feeds = null)
+    {
+        $ids = array();
+        if ($feeds == null) {
+            $feeds = $this->feedQueue;
+        }
+        /**
+         * @var Feed $feed
+         */
+        foreach ($feeds as $feed) {
+            $ids[] = $feed->getVideoId();
+        }
+        return $ids;
     }
-
 
     /**
-     * Check if the user has rated a feed.
+     * Returns an array of ids from a type of feeds the user has interacted with.
+     * Valid types: history, favorites, liked, deleted
      *
-     * @param \Feed\Entity\Feed $feed
-     * @return null|\Feed\Entity\Rating
+     * @param bool $merged If set to true it will return all the interacted feeds.
+     * @param string $defaultType The type of feeds to return
+     * @param bool $useVideoUrls  If set to true it will return the video ids instead of the feed ids
+     * @return array
      */
-    public function getRated($feed)
+    public function getInteractedFeedIds($merged = false, $defaultType = "history", $useVideoUrls = false)
     {
-        foreach ($this->ratings->toArray() as $rating)
-            if ($rating->getFeed()->getId() == $feed) return $rating;
-        return null;
+        $feedIds = array();
+        if ($merged) {
+            $feeds = array_merge($this->watchedFeeds->toArray(),
+                $this->favoriteFeeds->toArray(),
+                $this->likedFeeds->toArray(),
+                $this->deletedFeeds->toArray());
+        } else {
+            if ($defaultType == "history") {
+                $feeds = $this->watchedFeeds->toArray();
+            } else if ($defaultType == "favorites") {
+                $feeds = $this->favoriteFeeds->toArray();
+            } else if ($defaultType == "liked") {
+                $feeds = $this->likedFeeds->toArray();
+            } else {
+                $feeds = $this->deletedFeeds->toArray();
+            }
+        }
+        /**
+         * @var Feed $feed
+         */
+        foreach ($feeds as $feed) {
+            $feedIds[] = ($useVideoUrls) ? $feed->getVideoId() : $feed->getId();
+        }
+        return $feedIds;
     }
-
 
     /**
      * Get the fields that need to be validated
@@ -272,6 +341,69 @@ class Account
     }
 
     /**
+     * Set the account's deleted feeds.
+     *
+     * @param \Feed\Entity\Feed|Array $deletedFeeds
+     */
+    public function setDeletedFeeds($deletedFeeds)
+    {
+        $this->deletedFeeds[] = $deletedFeeds;
+    }
+
+    /**
+     * Gets the account's deleted feeds.
+     *
+     * @param bool $paginated
+     * @param null|\Game\Entity\Game $game
+     * @return array|Paginator
+     */
+    public function getDeletedFeeds($paginated = false, $game = null)
+    {
+        $feeds = array();
+        if ($game != null) {
+            /**
+             * @var Feed $feed
+             */
+            foreach ($this->deletedFeeds as $feed) {
+                if ($feed->getGame()->getName() == $game->getName()) $feeds[] = $feed;
+            }
+        } else {
+            $feeds = $this->deletedFeeds->toArray();
+        }
+        return ($paginated) ? new Paginator(new ArrayAdapter($feeds)) : $feeds;
+    }
+
+    /**
+     * Add feed(s) to the account's deleted.
+     *
+     * @param \Feed\Entity\Feed|Array $deletedFeeds
+     */
+    public function addDeletedFeeds($deletedFeeds)
+    {
+        if (is_array($deletedFeeds)) {
+            foreach ($deletedFeeds as $feed)
+                $this->deletedFeeds->add($feed);
+        } else {
+            $this->deletedFeeds->add($deletedFeeds);
+        }
+    }
+
+    /**
+     * Remove feed(s) from the account's deleted.
+     *
+     * @param \Feed\Entity\Feed|Array $deletedFeeds
+     */
+    public function removeDeletedFeeds($deletedFeeds)
+    {
+        if (is_array($deletedFeeds)) {
+            foreach ($deletedFeeds as $feed)
+                $this->deletedFeeds->removeElement($feed);
+        } else {
+            $this->deletedFeeds->removeElement($deletedFeeds);
+        }
+    }
+
+    /**
      * Set the account's email.
      *
      * @param string $email
@@ -299,7 +431,8 @@ class Account
      * @param $favoriteFeeds
      * @return Account
      */
-    public function setFavoriteFeeds($favoriteFeeds){
+    public function setFavoriteFeeds($favoriteFeeds)
+    {
         $this->favoriteFeeds[] = $favoriteFeeds;
         return $this;
     }
@@ -307,10 +440,24 @@ class Account
     /**
      * Get the account's favorite feeds.
      *
-     * @return ArrayCollection
+     * @param bool $paginated
+     * @param \Game\Entity\Game|null $game
+     * @return ArrayCollection | Paginator
      */
-    public function getFavoriteFeeds(){
-        return $this->favoriteFeeds;
+    public function getFavoriteFeeds($paginated = false, $game = null)
+    {
+        $feeds = array();
+        if ($game != null) {
+            /**
+             * @var Feed $feed
+             */
+            foreach ($this->favoriteFeeds as $feed) {
+                if ($feed->getGame()->getName() == $game->getName()) $feeds[] = $feed;
+            }
+        } else {
+            $feeds = $this->favoriteFeeds->toArray();
+        }
+        return ($paginated) ? new Paginator(new ArrayAdapter($feeds)) : $feeds;
     }
 
     /**
@@ -318,7 +465,8 @@ class Account
      *
      * @param array|\Feed\Entity\Feed $favoriteFeeds
      */
-    public function addFavoriteFeeds($favoriteFeeds){
+    public function addFavoriteFeeds($favoriteFeeds)
+    {
         if (is_array($favoriteFeeds)) {
             foreach ($favoriteFeeds as $feed)
                 $this->favoriteFeeds->add($feed);
@@ -332,7 +480,8 @@ class Account
      *
      * @param array|\Feed\Entity\Feed $favoriteFeeds
      */
-    public function removeFavoriteFeeds($favoriteFeeds){
+    public function removeFavoriteFeeds($favoriteFeeds)
+    {
         if (is_array($favoriteFeeds)) {
             foreach ($favoriteFeeds as $feed)
                 $this->favoriteFeeds->removeElement($feed);
@@ -342,54 +491,64 @@ class Account
     }
 
     /**
-     * Set the account's feeds.
+     * Sets the account's feed queue.
      *
-     * @param \Feed\Entity\Feed $feeds
-     * @return Account
      */
-    public function setFeeds($feeds)
+    public function setFeedQueue($feedQueue)
     {
-        $this->feeds[] = $feeds;
-        return $this;
+        $this->feedQueue[] = $feedQueue;
     }
 
     /**
-     * Get the account's feeds.
+     * Returns the account's feed queue.
      *
-     * @return ArrayCollection
+     * @param bool $paginated
+     * @param null|\Game\Entity\Game $game
+     * @return array|Paginator
      */
-    public function getFeeds()
+    public function getFeedQueue($paginated = false, $game = null)
     {
-        return $this->feeds;
-    }
-
-    /**
-     * Add feed(s) to the existing ones.
-     *
-     * @param array|\Feed\Entity\Feed $feeds
-     */
-    public function addFeeds($feeds)
-    {
-        if (is_array($feeds)) {
-            foreach ($feeds as $feed)
-                $this->feeds->add($feed);
+        $feeds = array();
+        if ($game != null) {
+            /**
+             * @var Feed $feed
+             */
+            foreach ($this->feedQueue as $feed) {
+                if ($feed->getGame()->getName() == $game->getName()) $feeds[] = $feed;
+            }
         } else {
-            $this->feeds->add($feeds);
+            $feeds = ($paginated) ? $this->feedQueue->toArray() : $this->feedQueue;
+        }
+        return ($paginated) ? new Paginator(new ArrayAdapter($feeds)) : $feeds;
+    }
+
+    /**
+     * Add a feed to the account's queue.
+     *
+     * @param array|\Feed\Entity\Feed $feedQueue
+     */
+    public function addFeedQueue($feedQueue)
+    {
+        if (is_array($feedQueue)) {
+            foreach ($feedQueue as $feed)
+                $this->feedQueue->add($feed);
+        } else {
+            $this->feedQueue->add($feedQueue);
         }
     }
 
     /**
-     * Remove feed(s) from the existing ones.
+     * Remove a feed from the account's queue.
      *
-     * @param array|\Feed\Entity\Feed $feeds
+     * @param array|\Feed\Entity\Feed $feedQueue
      */
-    public function removeFeeds($feeds)
+    public function removeFeedQueue($feedQueue)
     {
-        if (is_array($feeds)) {
-            foreach ($feeds as $feed)
-                $this->feeds->removeElement($feed);
+        if (is_array($feedQueue)) {
+            foreach ($feedQueue as $feed)
+                $this->feedQueue->removeElement($feed);
         } else {
-            $this->feeds->removeElement($feeds);
+            $this->feedQueue->removeElement($feedQueue);
         }
     }
 
@@ -715,6 +874,67 @@ class Account
     }
 
     /**
+     * Sets the account's liked feeds.
+     *
+     * @param ArrayCollection $likedFeeds
+     */
+    public function setLikedFeeds($likedFeeds)
+    {
+        $this->likedFeeds[] = $likedFeeds;
+    }
+
+    /**
+     * @param bool $paginated
+     * @param null|\Game\Entity\Game $game
+     * @return array|Paginator
+     */
+    public function getLikedFeeds($paginated = false, $game = null)
+    {
+        $feeds = array();
+        if ($game != null) {
+            /**
+             * @var Feed $feed
+             */
+            foreach ($this->likedFeeds as $feed) {
+                if ($feed->getGame()->getName() == $game->getName()) $feeds[] = $feed;
+            }
+        } else {
+            $feeds = $this->likedFeeds->toArray();
+        }
+        return ($paginated) ? new Paginator(new ArrayAdapter($feeds)) : $feeds;
+    }
+
+    /**
+     * Adds feed(s) to the account liked ones.
+     *
+     * @param array|\Feed\Entity\Feed $likedFeeds
+     */
+    public function addLikedFeeds($likedFeeds)
+    {
+        if (is_array($likedFeeds)) {
+            foreach ($likedFeeds as $feed)
+                $this->likedFeeds->add($feed);
+        } else {
+            $this->likedFeeds->add($likedFeeds);
+        }
+    }
+
+    /**
+     * Removes feed(s) from the account liked ones.
+     *
+     * @param array|\Feed\Entity\Feed $likedFeeds
+     */
+    public function removeLikedFeeds($likedFeeds)
+    {
+        if (is_array($likedFeeds)) {
+            foreach ($likedFeeds as $feed)
+                $this->likedFeeds->removeElement($feed);
+        } else {
+            $this->likedFeeds->removeElement($likedFeeds);
+        }
+    }
+
+    /**
      * Set the account's password
      *
      * @param string $password
@@ -734,58 +954,6 @@ class Account
     public function getPassword()
     {
         return $this->password;
-    }
-
-    /**
-     * Set the account's feed ratings.
-     *
-     * @param $ratings
-     * @return Account
-     */
-    public function setRatings($ratings)
-    {
-        $this->ratings[] = $ratings;
-        return $this;
-    }
-
-    /**
-     * Get the account's feed ratings.
-     *
-     * @return ArrayCollection
-     */
-    public function getRatings()
-    {
-        return $this->ratings;
-    }
-
-    /**
-     * Add rating(s) to the existing ones.
-     *
-     * @param array|\Feed\Entity\Rating $ratings
-     */
-    public function addRatings($ratings)
-    {
-        if (is_array($ratings)) {
-            foreach ($ratings as $rating)
-                $this->ratings->add($rating);
-        } else {
-            $this->ratings->add($ratings);
-        }
-    }
-
-    /**
-     * Remove rating(s) from the existing ones.
-     *
-     * @param array|\Feed\Entity\Rating $ratings
-     */
-    public function removeRatings($ratings)
-    {
-        if (is_array($ratings)) {
-            foreach ($ratings as $rating)
-                $this->ratings->removeElement($rating);
-        } else {
-            $this->ratings->removeElement($ratings);
-        }
     }
 
     /**
@@ -852,7 +1020,7 @@ class Account
     /**
      * Remove social(s) from the existing ones.
      *
-     * @param array|\Feed\Entity\Rating $socials
+     * @param array|\Application\Entity\Social $socials
      */
     public function removeSocials($socials)
     {
@@ -892,26 +1060,42 @@ class Account
      * @param $watchedFeeds
      * @return Account
      */
-    public function setWatchedFeeds($watchedFeeds){
+    public function setWatchedFeeds($watchedFeeds)
+    {
         $this->watchedFeeds[] = $watchedFeeds;
         return $this;
     }
 
     /**
-     * Get the account's watched feeds.
+     * Returns the account's feed history.
      *
-     * @return ArrayCollection
+     * @param bool $paginated
+     * @param null|\Game\Entity\Game $game
+     * @return array|Paginator
      */
-    public function getWatchedFeeds(){
-        return $this->watchedFeeds;
+    public function getWatchedFeeds($paginated = false, $game = null)
+    {
+        $feeds = array();
+        if ($game != null) {
+            /**
+             * @var Feed $feed
+             */
+            foreach ($this->watchedFeeds as $feed) {
+                if ($feed->getGame()->getName() == $game->getName()) $feeds[] = $feed;
+            }
+        } else {
+            $feeds = $this->watchedFeeds->toArray();
+        }
+        return ($paginated) ? new Paginator(new ArrayAdapter($feeds)) : $feeds;
     }
 
     /**
      * Add a feed to the account's watched ones.
      *
-     * @param array|\Feed\Entity\Feed $watchedFeeds
+     * @param array|Feed $watchedFeeds
      */
-    public function addWatchedFeeds($watchedFeeds){
+    public function addWatchedFeeds($watchedFeeds)
+    {
         if (is_array($watchedFeeds)) {
             foreach ($watchedFeeds as $feed)
                 $this->watchedFeeds->add($feed);
@@ -925,7 +1109,8 @@ class Account
      *
      * @param array|\Feed\Entity\Feed $watchedFeeds
      */
-    public function removeWatchedFeeds($watchedFeeds){
+    public function removeWatchedFeeds($watchedFeeds)
+    {
         if (is_array($watchedFeeds)) {
             foreach ($watchedFeeds as $feed)
                 $this->watchedFeeds->removeElement($feed);

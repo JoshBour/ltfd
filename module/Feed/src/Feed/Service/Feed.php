@@ -12,7 +12,11 @@ use Zend\ServiceManager\ServiceManager;
 use Zend\ServiceManager\ServiceManagerAwareInterface;
 use Zend\Form\Form;
 use Zend\Authentication\AuthenticationService;
+use Zend\Paginator\Paginator;
+use Zend\Paginator\Adapter\ArrayAdapter;
+use Feed\Entity\Feed as FeedEntity;
 use Doctrine\ORM\EntityManager;
+use ZendGData\Youtube;
 
 class Feed implements ServiceManagerAwareInterface
 {
@@ -26,6 +30,11 @@ class Feed implements ServiceManagerAwareInterface
      * @var EntityManager
      */
     private $entityManager;
+
+    /**
+     * @var \Feed\Model\FeedQueueGenerator
+     */
+    private $feedQueueGenerator;
 
     /**
      * @var Form
@@ -48,30 +57,99 @@ class Feed implements ServiceManagerAwareInterface
     private $accountRepository;
 
     /**
+     * @var \Doctrine\ORM\EntityRepository
+     */
+    private $gameRepository;
+
+    /**
+     * Generates a feed list from youtube.
+     *
+     * @param String $game
+     * @param int $startIndex
+     * @param int $page
+     * @return null|Paginator
+     */
+    public function generateFeedsFromYoutube($game)
+    {
+//        if (!empty($videoFeed)) {
+//            $feedList = array();
+//            $feedScores = array();
+//            foreach ($videoFeed as $feed) {
+//                $ytEntry = new \Feed\Model\YoutubeEntry($feed);
+//                if ($ytEntry == null || $user->hasInteractedWithVideo($ytEntry->getVideoId())) continue;
+//                $feedScores[] = $ytEntry->getScore();
+//                $feedList[] = $ytEntry;
+//            }
+//            array_multisort($feedScores, SORT_DESC, $feedList);
+//
+//            $paginatorAdapter = new ArrayAdapter($feedList);
+//            $paginator = new Paginator($paginatorAdapter);
+//            return $paginator;
+//        }
+        $generator = $this->getFeedQueueGenerator();
+        $generator->setGame($game);
+        $generator->update();
+        $user = $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getId());
+        return $user->getFeedQueue(true,$game);
+    }
+
+
+    /**
      * Create and store a new feed.
      *
      * @param array $data
-     * @return bool
+     * @return bool | Form
      */
     public function create($data)
     {
         $form = $this->getFeedForm();
-        $entity = new \Feed\Entity\Feed();
+        $entity = new FeedEntity();
         $form->bind($entity);
         $form->setData($data);
         if ($form->isValid()) {
-            $entity = \Feed\Entity\Feed::create($entity, $this->getAuthService()->getIdentity(), $data['feed']['video']);
+            $entity = FeedEntity::create($entity, $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getId()), $data['feed']['video']);
             $em = $this->getEntityManager();
             try {
                 $em->persist($entity);
                 $em->flush();
                 return true;
             } catch (\Exception $e) {
+                echo $e->getMessage();
                 return false;
             }
         } else {
-            return false;
+            return $form;
         }
+    }
+
+    public function rate($id,$type){
+        /**
+         * @var \Account\Entity\Account $user
+         */
+        $user = $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getId());
+        /**
+         * @var FeedEntity $feed
+         */
+        $feed = $this->getFeedRepository()->find($id);
+
+        if($feed){
+            $em = $this->getEntityManager();
+            if($type == "like"){
+                $user->addLikedFeeds($feed);
+                $user->removeFeedQueue($feed);
+            }else{
+                $user->removeLikedFeeds($feed);
+            }
+            try {
+                $em->persist($user);
+                $em->flush();
+
+                return true;
+            } catch (\Exception $e) {
+                return false;
+            }
+        }
+        return false;
     }
 
     /**
@@ -80,23 +158,59 @@ class Feed implements ServiceManagerAwareInterface
      * @param int $id
      * @return bool
      */
-    public function addWatched($id){
+    public function addWatched($id)
+    {
+        /**
+         * @var \Account\Entity\Account $user
+         */
+        $user = $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getId());
+        /**
+         * @var FeedEntity $feed
+         */
         $feed = $this->getFeedRepository()->find($id);
-        if($feed){
+        if ($feed) {
             $em = $this->getEntityManager();
-
-            /**
-             * @var \Account\Entity\Account $user
-             */
-            $user = $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getId());
-
             $user->addWatchedFeeds($feed);
-            try{
+            $user->removeFeedQueue($feed);
+            $feed->setViews($feed->getViews()+1);
+            try {
                 $em->persist($user);
-                $em->flush;
+                $em->persist($feed);
+                $em->flush();
 
                 return true;
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Add a feed to an account's watched ones.
+     *
+     * @param int $id
+     * @return bool
+     */
+    public function remove($id)
+    {
+        /**
+         * @var \Account\Entity\Account $user
+         */
+        $user = $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getId());
+        /**
+         * @var FeedEntity $feed
+         */
+        $feed = $this->getFeedRepository()->find($id);
+        if ($feed) {
+            $em = $this->getEntityManager();
+            $user->addDeletedFeeds($feed);
+            try {
+                $em->persist($user);
+                $em->flush();
+
+                return true;
+            } catch (\Exception $e) {
                 return false;
             }
         }
@@ -110,70 +224,35 @@ class Feed implements ServiceManagerAwareInterface
      * @param string $type
      * @return bool
      */
-    public function setFavorite($id, $type){
+    public function setFavorite($id, $type, $activeGame = '')
+    {
+        /**
+         * @var \Account\Entity\Account $user
+         */
+        $user = $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getId());
         $feed = $this->getFeedRepository()->find($id);
-        if($feed){
-            $em = $this->getEntityManager();
+        $em = $this->getEntityManager();
 
-            /**
-             * @var \Account\Entity\Account $user
-             */
-            $user = $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getId());
-            if($type == 'favorite'){
+        if ($feed) {
+
+            if ($type == 'favorite') {
                 $user->addFavoriteFeeds($feed);
-            }else{
+                $user->removeFeedQueue($feed);
+            } else {
                 $user->removeFavoriteFeeds($feed);
+                $user->addFeedQueue($feed);
             }
-            try{
+            try {
                 $em->persist($user);
                 $em->flush();
 
                 return true;
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
+                echo $e->getMessage();
                 return false;
             }
         }
         return false;
-    }
-
-    /**
-     * Rate a feed.
-     *
-     * @param int $id
-     * @param string $rating
-     * @return bool|\Feed\Entity\Feed
-     */
-    public function rate($id, $rating)
-    {
-        $em = $this->getEntityManager();
-        $feed = $this->getFeedRepository()->find($id);
-        $user = $this->getAuthService()->getIdentity();
-        $rating = ($rating == 'up') ? 1 : 0;
-        $rateEntity = $em->getRepository('Feed\Entity\Rating')->findOneBy(array(
-                'user' => $user->getId(),
-                'feed' => $feed->getId()
-            )
-        );
-        try {
-            if ($rateEntity) {
-                // check if the rating happens to be the same with the existing one, if so exit
-                if ($rateEntity->getRating() != $rating) {
-                    $rateEntity->setRating($rating);
-                }
-                $newRating = ($rating > 0) ? 2 : -2;
-            } else {
-                $rateEntity = new \Feed\Entity\Rating($user, $feed, $rating);
-                $newRating = ($rating > 0) ? 1 : -1;
-            }
-            $feed->setRating($feed->getRating() + $newRating);
-            $em->persist($rateEntity);
-            $em->persist($feed);
-            $em->flush();
-
-            return $feed;
-        } catch (\Exception $e) {
-            return false;
-        }
     }
 
     /**
@@ -267,6 +346,49 @@ class Feed implements ServiceManagerAwareInterface
         if (null === $this->entityManager)
             $this->setEntityManager($this->getServiceManager()->get('Doctrine\ORM\EntityManager'));
         return $this->entityManager;
+    }
+
+    /**
+     * Gets the feed queue generator.
+     *
+     * @return \Feed\Model\FeedQueueGenerator
+     */
+    public function getFeedQueueGenerator(){
+        if(null === $this->feedQueueGenerator)
+            $this->setFeedQueueGenerator($this->getServiceManager()->get('feed_queue_generator'));
+        return $this->feedQueueGenerator;
+    }
+
+    /**
+     * Sets the feed queue generator.
+     *
+     * @param $feedQueueGenerator
+     */
+    public function setFeedQueueGenerator($feedQueueGenerator){
+        $this->feedQueueGenerator = $feedQueueGenerator;
+    }
+
+    /**
+     * Get the game repository.
+     *
+     * @return \Doctrine\ORM\EntityRepository
+     */
+    public function getGameRepository()
+    {
+        if (!$this->gameRepository) {
+            $this->setGameRepository($this->getEntityManager()->getRepository('Game\Entity\Game'));
+        }
+        return $this->gameRepository;
+    }
+
+    /**
+     * Set the game repository.
+     *
+     * @param $gameRepository
+     */
+    public function setGameRepository($gameRepository)
+    {
+        $this->gameRepository = $gameRepository;
     }
 
     /**

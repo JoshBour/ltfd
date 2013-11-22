@@ -1,6 +1,7 @@
 <?php
 namespace Game\Controller;
 
+use Feed\Service\Game;
 use Zend\View\Model\JsonModel;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
@@ -11,6 +12,8 @@ class GameController extends AbstractActionController
     const ROUTE_HOMEPAGE = 'home';
     const ROUTE_GAMES_LIST = 'games';
 
+    const ERROR_INVALID_CATEGORY = "The category is invalid.";
+    const ERROR_CATEGORY_NOT_FOUND = "The category was not found or is invalid.";
 
     /**
      * @var \Doctrine\ORM\EntityManager
@@ -23,24 +26,24 @@ class GameController extends AbstractActionController
     private $translator;
 
     /**
-     * @var \Doctrine\ORM\EntityRepository
+     * @var \Game\Repository\GameRepository
      */
     private $gameRepository;
 
     /**
-     * @var \Doctrine\ORM\EntityRepository
+     * @var \Feed\Repository\FeedRepository
      */
     private $feedRepository;
 
     /**
-     * @var \Doctrine\ORM\EntityRepository
+     * @var \Feed\Service\Feed
      */
-    private $categoryRepository;
+    private $feedService;
 
     /**
-     * @var \Zend\Form\Form
+     * @var \Game\Service\Game
      */
-    private $commentForm;
+    private $gameService;
 
     public function profileAction()
     {
@@ -50,49 +53,46 @@ class GameController extends AbstractActionController
     public function feedsAction()
     {
         $em = $this->getEntityManager();
-        $gameName = $this->params()->fromRoute('name',null);
+        $gameName = $this->params()->fromRoute('name', null);
         $game = $this->getGameRepository()->findOneBy(array('urlName' => $gameName));
-        $categoryName = $this->params()->fromRoute('category');
-        $activeSort = $this->params()->fromRoute('sort');
+        $category = $this->params()->fromRoute('category', 'feeds');
         $translator = $this->getTranslator();
-        $sortOptions = array($translator->translate('popular'), $translator->translate('new'));
+        $maxResults = 35;
 
         // check if the game exists or the name is invalid
-        if(!$game || null === $gameName){
+        if (!$game || null === $gameName) {
+            $this->flashMessenger()->addMessage(self::ERROR_CATEGORY_NOT_FOUND);
             $this->redirect()->toRoute(self::ROUTE_GAMES_LIST);
         }
 
-        if ($categoryName == 'all' || $categoryName == 'random') {
-            $category = $categoryName;
-        }  else {
-            $category = $em->getRepository('Game\Entity\Category')->findOneBy(array('name' => $categoryName));
-        }
-
         // if the category doesn't exist or the sorting is invalid, throw a 404
-        if (!$category || !in_array($activeSort,$sortOptions)) {
+        if (!$category) {
+            $this->getResponse()->setStatusCode(404);
+            return;
+        }
+        if ($category == 'feeds') {
+            $feeds = $this->getFeedService()->generateFeedsFromYoutube($game);
+        } else if ($category == 'history') {
+            $feeds = $this->user()->getWatchedFeeds(true,$game);
+        } else if($category == 'favorites'){
+            $feeds = $this->user()->getFavoriteFeeds(true,$game);
+        }else if($category == 'leet'){
+            $feeds = $this->user()->getLikedFeeds(true,$game);
+        }else{
+            $this->flashMessenger()->addMessage(self::ERROR_CATEGORY_NOT_FOUND);
             $this->getResponse()->setStatusCode(404);
             return;
         }
 
-        if ($category == 'all') {
-            $activeCategory = 'all';
-            $feeds = $this->getFeedRepository()->findBySort($game->getId(),$activeSort);
-        } else if ($category == 'random') {
-            $activeCategory = 'random';
-            $feeds = $this->getFeedRepository()->findBySort($game->getId(),$activeSort);
-        } else {
-            $activeCategory = $category->getName();
-            $feeds = $this->getFeedRepository()->findBySort($game->getId(),$activeSort, $category->getId());
-        }
+
+        $feeds->setItemCountPerPage($maxResults)
+            ->setCurrentPageNumber(1);
 
         return new ViewModel(array(
             'game' => $game,
-            'sortOptions' => $sortOptions,
-            'activeSort' => $activeSort,
             'feeds' => $feeds,
-            'activeCategory' => $activeCategory,
+            'category' => $category,
             'bodyClass' => 'gameFeeds',
-            'form' => $this->getCommentForm()
         ));
 
     }
@@ -100,51 +100,11 @@ class GameController extends AbstractActionController
     public function connectAction()
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $em = $this->getEntityManager();
-            $game = $this->getGameRepository()->find($this->params('id'));
-            $type = $this->params('type');
-            $user = $this->user();
-            $jsonModel = new JsonModel();
-            $success = 0;
-            $message = '';
-            if ($game) {
-                try {
-                    $followers = $game->getFollowers();
-                    if ($type == 'follow') {
-                        // check if the user already follows the game
-                        if (!$followers->contains($user)) {
-                            $game->addFollowers(array($user));
-                            $message = sprintf($this->getTranslator()->translate('You are now following %s.'), $game->getName());
-                        } else {
-                            return new JsonModel(array('success' => $success, 'message' => $this->getTranslator()->translate('You are already following this game.')));
-                        }
-                    } else if ($type == 'unfollow') {
-                        // check if the user follows the game in order to unfollow it
-                        if ($followers->contains($user)) {
-                            $game->removeFollowers(array($user));
-                            $message = sprintf($this->getTranslator()->translate('You are not following %s anymore.'), $game->getName());
-                        } else {
-                            return new JsonModel(array('success' => $success, 'message' => $this->getTranslator()->translate('You are already not following this game.')));
-                        }
-                    } else {
-                        $this->getResponse()->setStatusCode(404);
-                        return;
-                    }
-                    $em->persist($game);
-                    $em->flush();
-                    $success = 1;
-                } catch (Exception $e) {
-                    $message = $e->getMessage();
-                }
-                $jsonModel->setVariable('followers', count($followers));
-            } else {
-                $message = $this->translator->translate("Something went wrong when trying to connect with the game.");
-            }
-            $jsonModel->setVariables(array(
-                'message' => $message,
-                'success' => $success
-            ));
-            return $jsonModel;
+            $gameId = $this->params()->fromRoute('id');
+            $type = $this->params()->fromRoute('type');
+            $result = $this->getGameService()->connect($gameId,$type);
+
+            return new JsonModel($result);
         } else {
             $this->getResponse()->setStatusCode(404);
             return;
@@ -168,36 +128,11 @@ class GameController extends AbstractActionController
         ));
     }
 
-    public function getGameCategoriesAction()
-    {
-        if ($this->getRequest()->isXmlHttpRequest()) {
-            $gameId = $this->params()->fromQuery('gameId');
-            $success = 0;
-            $jsonModel = new JsonModel();
-            if (!empty($gameId)) {
-                $game = $this->getGameRepository()->find($gameId);
-                if ($game) {
-                    $categories = array();
-                    foreach ($game->getCategories() as $category) {
-                        $categories[$category->getId()] = ucwords($category->getName());
-                    }
-                    $jsonModel->setVariable('categories', $categories);
-                    $success = 1;
-                }
-            }
-            $jsonModel->setVariable('success', $success);
-            return $jsonModel;
-        } else {
-            $this->getResponse()->setStatusCode(404);
-            return;
-        }
-    }
-
     public function searchAction()
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
             $viewModel = new ViewModel();
-            $name = $this->params('name', null);
+            $name = $this->params()->fromRoute('name', null);
             $games = $this->getGameRepository()->searchByName($name);
 
             $viewModel->setVariables(array('games' => $games));
@@ -212,29 +147,6 @@ class GameController extends AbstractActionController
     public function suggestAction()
     {
         return new ViewModel();
-    }
-
-    /**
-     * Get the comment post form.
-     *
-     * @return Form
-     */
-    public function getCommentForm()
-    {
-        if (!$this->commentForm) {
-            $this->setCommentForm($this->getServiceLocator()->get('comment_form'));
-        }
-        return $this->commentForm;
-    }
-
-    /**
-     * Set the comment post form.
-     *
-     * @param Form $commentForm
-     */
-    public function setCommentForm($commentForm)
-    {
-        $this->commentForm = $commentForm;
     }
 
     /**
@@ -259,6 +171,52 @@ class GameController extends AbstractActionController
     public function setEntityManager($em)
     {
         $this->entityManager = $em;
+    }
+
+    /**
+     * Get the feed service.
+     *
+     * @return \Feed\Service\Feed
+     */
+    public function getFeedService()
+    {
+        if (null === $this->feedService) {
+            $this->setFeedService($this->getServiceLocator()->get('feed_service'));
+        }
+        return $this->feedService;
+    }
+
+    /**
+     * Set the feed service.
+     *
+     * @param $feedService
+     */
+    public function setFeedService($feedService)
+    {
+        $this->feedService = $feedService;
+    }
+
+    /**
+     * Get the game service.
+     *
+     * @return \Game\Service\Game
+     */
+    public function getGameService()
+    {
+        if (null === $this->gameService) {
+            $this->setGameService($this->getServiceLocator()->get('game_service'));
+        }
+        return $this->gameService;
+    }
+
+    /**
+     * Set the game service.
+     *
+     * @param $gameService
+     */
+    public function setGameService($gameService)
+    {
+        $this->gameService = $gameService;
     }
 
     /**
@@ -287,7 +245,7 @@ class GameController extends AbstractActionController
     /**
      * Get the game repository.
      *
-     * @return \Doctrine\ORM\EntityRepository
+     * @return \Game\Repository\GameRepository
      */
     public function getGameRepository()
     {
@@ -308,32 +266,9 @@ class GameController extends AbstractActionController
     }
 
     /**
-     * Get the category repository.
-     *
-     * @return \Doctrine\ORM\EntityRepository
-     */
-    public function getCategoryRepository()
-    {
-        if (!$this->categoryRepository) {
-            $this->setCategoryRepository($this->getEntityManager()->getRepository('Game\Entity\Category'));
-        }
-        return $this->categoryRepository;
-    }
-
-    /**
-     * Set the category repository.
-     *
-     * @param $categoryRepository
-     */
-    public function setCategoryRepository($categoryRepository)
-    {
-        $this->categoryRepository = $categoryRepository;
-    }
-
-    /**
      * Get the feed repository.
      *
-     * @return \Doctrine\ORM\EntityRepository
+     * @return \Feed\Repository\FeedRepository
      */
     public function getFeedRepository()
     {

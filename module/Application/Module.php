@@ -19,6 +19,12 @@ class Module {
 		$eventManager = $app -> getEventManager();
 		$moduleRouteListener = new ModuleRouteListener();
 		$moduleRouteListener -> attach($eventManager);
+
+//        $eventManager->attach('dispatch',function($e){
+//            $routeMatch = $e->getRouteMatch();
+//            $viewModel = $e->getViewModel();
+//            $viewModel->setVariable('action',$routeMatch->getParam('action'));
+//        },-100);
 	}
 
     public function getServiceConfig(){

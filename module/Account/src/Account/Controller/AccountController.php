@@ -314,7 +314,7 @@ class AccountController extends AbstractActionController
      */
     public function getAuthStorage()
     {
-        if(null === $this->authService){
+        if(null === $this->authStorage){
             $this->setAuthStorage($this->getServiceLocator()->get('authStorage'));
         }
         return $this->authStorage;

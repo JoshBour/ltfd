@@ -61,12 +61,21 @@ return array(
                             ),
                         ),
                     ),
-                    'delete' => array(
+                    'remove' => array(
                         'type' => 'literal',
                         'options' => array(
-                            'route' => 'delete',
+                            'route' => 'remove',
                             'defaults' => array(
-                                'action' => 'delete',
+                                'action' => 'remove',
+                            ),
+                        ),
+                    ),
+                    'rate' => array(
+                        'type' => 'literal',
+                        'options' => array(
+                            'route' => 'rate',
+                            'defaults' => array(
+                                'action' => 'rate',
                             ),
                         ),
                     ),
@@ -78,74 +87,6 @@ return array(
                                 'action' => 'report',
                             ),
                         ),
-                    ),
-                    'rate' => array(
-                        'type' => 'segment',
-                        'options' => array(
-                            'route' => 'rate/:rating/id/:id',
-                            'defaults' => array(
-                                'action' => 'rate',
-                            ),
-                            'constraints' => array(
-                                'rating' => 'up|down'
-                            )
-                        ),
-                    ),
-                    'comment' => array(
-                        'type' => 'literal',
-                        'options' => array(
-                            'route' => 'comment/',
-                            'defaults' => array(
-                                'controller' => 'Feed/Controller/Comment'
-                            )
-                        ),
-                        'child_routes' => array(
-                            'add' => array(
-                                'type' => 'literal',
-                                'options' => array(
-                                    'route' => 'add',
-                                    'defaults' => array(
-                                        'action' => 'add',
-                                    )
-                                )
-                            ),
-                            'delete' => array(
-                                'type' => 'literal',
-                                'options' => array(
-                                    'route' => 'delete',
-                                    'defaults' => array(
-                                        'action' => 'delete',
-                                    )
-                                )
-                            ),
-                            'report' => array(
-                                'type' => 'literal',
-                                'options' => array(
-                                    'route' => 'report',
-                                    'defaults' => array(
-                                        'action' => 'report',
-                                    )
-                                )
-                            ),
-                            'edit' => array(
-                                'type' => 'literal',
-                                'options' => array(
-                                    'route' => 'edit',
-                                    'defaults' => array(
-                                        'action' => 'edit',
-                                    )
-                                )
-                            ),
-                            'list' => array(
-                                'type' => 'literal',
-                                'options' => array(
-                                    'route' => 'list',
-                                    'defaults' => array(
-                                        'action' => 'list',
-                                    )
-                                )
-                            ),
-                        )
                     ),
                     'view' => array(
                         'type' => 'segment',

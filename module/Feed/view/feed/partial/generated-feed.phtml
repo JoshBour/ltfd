@@ -1,0 +1,31 @@
+<?php
+if($this->feed instanceof \Feed\Entity\Feed){
+    $this->feed = $this->feed->getYoutubeEntry();
+}
+$videoId = $this->feed->getVideoId();
+$title = $this->feed->getTitle();
+$author = $this->feed->getAuthor();
+$description = $this->feed->getDescription();
+?>
+<li class="feed generated" data-video-id="<?php echo $videoId; ?>">
+    <img src="http://img.youtube.com/vi/<?php echo $videoId; ?>/default.jpg" class="feedThumb"
+         alt="feed thumbnail"/>
+
+    <div class="feedHeader">
+        <a href="<?php echo $this->feed->getUri(); ?>"><?php echo (strlen($title) > 50) ? substr($title, 0, 50) . '..' : $title; ?></a>
+
+        <div class="feedInfo">
+            by <a href="http://www.youtube.com/user/<?php echo $author; ?>"
+                  class="feedAuthor"><?php echo $author; ?></a>
+        </div>
+    </div>
+    <div class="feedBody">
+        <?php
+        echo (strlen($description) > 200) ? substr($description, 0, 200) . '..' : $description;
+        ?>
+    </div>
+    <div class="feedMeta">
+        <span class="totalRating"><?php echo substr($this->feed->getScore(), 0, 4); ?></span>
+        <span class="favorite<?php echo ($user && $user->isFavorite($videoId,true)) ? " disabled" : ""; ?>">Favorite</span>
+    </div>
+</li>

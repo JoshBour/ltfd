@@ -34,9 +34,11 @@ class RegisterFieldset extends Fieldset implements InputFilterProviderInterface
      */
     private $translator;
 
-    public function __construct()
+    public function __construct($translator)
     {
         parent::__construct('account');
+
+        $this->translator = $translator;
 
         $this->add(array(
             'name' => 'username',

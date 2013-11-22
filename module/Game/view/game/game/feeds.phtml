@@ -1,103 +1,43 @@
 <?php
-    $user = $this->user();
-    $urlName = $game->getUrlName();
+/**
+ * @var $user \Account\Entity\Account
+ */
+$user = $this->user();
+$gameName = $game->getName();
+$urlName = $game->getUrlName();
 ?>
 <aside>
-    <a href="<?php echo $this->url('game/profile',array('name' => $urlName)); ?>" title="<?php echo $this->translate(sprintf("Visit %s's profile.",$game->getName())); ?>">
-        <img id="gameFeedLogo" src="<?php echo $this->basePath() . '/images/' . $game->getAvatar();?>-feeds.jpg" />
+    <a href="<?php echo $this->url('game/profile', array('name' => $urlName)); ?>"
+       title="<?php echo $this->translate(sprintf("Visit %s's profile.", $gameName)); ?>"
+       id="activeGame-<?php echo $game->getId(); ?>">
+        <img id="gameFeedLogo" src="<?php echo $this->basePath() . '/images/' . $game->getAvatar(); ?>-feeds.jpg"/>
     </a>
     <ul id="gameCategories">
-        <li<?php echo ('all' == $activeCategory) ? ' class="active"' : ''; ?>>
-            <a href="<?php echo $this->url('game/feeds',array('name' => $urlName,'category'=>'all')); ?>"><?php echo $this->translate('All'); ?></a>
-        </li>
-        <li<?php echo ('random' == $activeCategory) ? ' class="active"' : ''; ?>>
-            <a href="<?php echo $this->url('game/feeds',array('name' => $urlName,'category'=>'random')); ?>"><?php echo $this->translate('Random'); ?></a>
-        </li>
         <?php
-        $categories = $game->getCategories();
-        foreach ($game->getCategories() as $category):
-            $name = $category->getName(); ?>
-            <li<?php echo ($name == $activeCategory) ? ' class="active"' : ''; ?>>
-                <a href="<?php echo $this->url('game/feeds',array('name' => $urlName,'category'=>$name)); ?>"><?php echo ucwords($name); ?></a>
+        $categories = array($this->translate("feeds") => $this->translate("Generated Feeds From Youtube"),
+            $this->translate("favorites") => $this->translate("Feeds you marked as favorite from") . " {$gameName}",
+            $this->translate("leet") => $this->translate("Feeds you marked as Leet from") . " {$gameName}",
+            $this->translate("history") => $this->translate("Feeds you watched from") . " {$gameName}");
+        foreach ($categories as $categoryName => $categoryTitle):
+            ?>
+            <li<?php echo ($categoryName == $category) ? ' class="active"' : ''; ?>>
+                <a href="<?php echo $this->url('game/feeds', array('name' => $urlName, 'category' => $categoryName)); ?>" class="<?php echo $categoryName; ?>" title="<?php echo $categoryTitle; ?>"><?php echo $this->translate(ucfirst($categoryName)); ?></a>
             </li>
-        <?php endforeach;
-        ?>
+        <?php endforeach; ?>
     </ul>
 </aside>
 <div id="main">
-    <div id="categorySort">
-        <ul>
-            <?php foreach($sortOptions as $option): ?>
-                <li>
-                    <a href="<?php echo $this->url('game/feeds',array('name' => $urlName,'category' => $activeCategory,'sort'=>$option)); ?>"<?php echo ($option == $activeSort) ? ' class="active"' : '';?>><?php echo ucwords($option); ?></a>
-                </li>
-            <?php endforeach; ?>
+    <!--        <div id="categorySort">-->
+    <!--        </div>-->
+    <?php if ($feeds->count() > 0) { ?>
+        <ul id="feeds">
+            <?php
+            foreach ($feeds as $feed) {
+                echo $this->partial("/Feed/Partial/feed.phtml", array('feed' => $feed, 'user' => $user, 'likedFeeds' => $user->getInteractedFeedIds(false,"liked"),'favoriteFeeds' => $user->getInteractedFeedIds(false,"favorites")));
+            }
+            ?>
         </ul>
-    </div>
-    <?php if($feeds->count() > 0){ ?>
-    <ul id="feeds">
-        <?php
-            foreach($feeds as $feed):
-                 $ytEntry = $feed->getYoutubeEntry();
-                 $author = $feed->getUploader()->getUsername();
-                 $id = $feed->getId();
-                 $title = (is_null($feed->getTitle())) ? $ytEntry->getVideoTitle() : $this->escapeHtml($feed->getTitle());
-                 $description = (is_null($feed->getDescription())) ? $ytEntry->getVideoDescription() : $this->escapeHtml($feed->getDescription());
-        ?>
-        <li class="feed-<?php echo $id; ?>" data-video-id="<?php echo $feed->getVideoId(); ?>">
-            <img src="http://img.youtube.com/vi/<?php echo $feed->getVideoId(); ?>/default.jpg" class="feedThumb" alt="feed thumbnail" />
-            <div class="feedHeader">
-                <a href="<?php echo $this->url('feed/view',array('id' => $id)); ?>" title="<?php echo $title; ?>"><?php echo (strlen($title) > 50) ? substr($title,0,50) . '..' : $title; ?></a>
-                <div class="feedInfo">
-                    by <a href="<?php echo $this->url('profile',array('user' => $author)); ?>" class="feedAuthor"><?php echo $author; ?></a> , <?php echo $feed->getTimeAgo() . ' ago.'; ?></p>
-                </div>
-            </div>
-            <div class="feedBody">
-                <?php
-                    echo (strlen($description) > 200) ? substr($description,0,200) . '..' : $description;
-                ?>
-            </div>
-            <div class="feedMeta">
-                <span class="totalRating"><?php echo $feed->getRating(); ?></span>
-                <?php
-//                    if($user && ($rating = $user->getRated($id))){
-//                        if($rating->getRating() == 1){
-//                            $up = ' disabled';
-//                            $down = '';
-//                        }else{
-//                            $up = '';
-//                            $down = ' disabled';
-//                        }
-//                    }else{
-//                        $up = '';
-//                        $down = '';
-//                    }
-                ?>
-                <span class="thumbUp<?php #echo $up; ?>">Leet</span>
-                <span class="thumbDown<?php #echo $down; ?>">Meh</span>
-                <span class="favorite<?php# echo ($user->hasFavorited($id)) ? ' disabled' : '';?>">Favorite</span>
-            </div>
-        </li>
-        <?php endforeach; ?>
-    </ul>
-    <?php }else{ ?>
-        <div class="notFound"><?php echo $this->translate('There are no feeds available in this category at the moment.'); ?></div>
+    <?php } else { ?>
+        <div class="notFound"><?php echo $this->translate('There are no feeds available at the moment.'); ?></div>
     <?php } ?>
 </div>
-<?php
-$form->prepare();
-$form->setAttribute('action', $this->url('user/feeds'));
-$fieldset = $form->get('comment');
-
-echo $this->form()->openTag($form);
-echo $this->formHidden($fieldset->get('id'));
-?>
-
-    <div class="element">
-        <?php
-        echo $this->formElementErrors($fieldset->get('content'), array('class' => 'formError'));
-        echo $this->formInput($fieldset->get('content'));
-        ?>
-    </div>
-
-<?php echo $this->form()->closeTag() ?>
