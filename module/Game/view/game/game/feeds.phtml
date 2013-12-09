@@ -9,15 +9,16 @@ $urlName = $game->getUrlName();
 <aside>
     <a href="<?php echo $this->url('game/profile', array('name' => $urlName)); ?>"
        title="<?php echo $this->translate(sprintf("Visit %s's profile.", $gameName)); ?>"
-       id="activeGame-<?php echo $game->getId(); ?>">
+       id="activeGame">
+        <span id="activeGameName" class="url-<?php echo $urlName; ?>"><?php echo $gameName; ?></span>
         <img id="gameFeedLogo" src="<?php echo $this->basePath() . '/images/' . $game->getAvatar(); ?>-feeds.jpg"/>
     </a>
     <ul id="gameCategories">
         <?php
         $categories = array($this->translate("feeds") => $this->translate("Generated Feeds From Youtube"),
-            $this->translate("favorites") => $this->translate("Feeds you marked as favorite from") . " {$gameName}",
-            $this->translate("leet") => $this->translate("Feeds you marked as Leet from") . " {$gameName}",
-            $this->translate("history") => $this->translate("Feeds you watched from") . " {$gameName}");
+            $this->translate("favorites") => $this->translate("Favorite Feeds"),
+            $this->translate("leet") => $this->translate("Leet Feeds"),
+            $this->translate("history") => $this->translate("Feed History"));
         foreach ($categories as $categoryName => $categoryTitle):
             ?>
             <li<?php echo ($categoryName == $category) ? ' class="active"' : ''; ?>>
@@ -30,10 +31,10 @@ $urlName = $game->getUrlName();
     <!--        <div id="categorySort">-->
     <!--        </div>-->
     <?php if ($feeds->count() > 0) { ?>
-        <ul id="feeds">
+        <ul id="feeds" data-index="<?php echo $index; ?>" data-page="<?php echo $feeds->getCurrentPageNumber(); ?>">
             <?php
             foreach ($feeds as $feed) {
-                echo $this->partial("/Feed/Partial/feed.phtml", array('feed' => $feed, 'user' => $user, 'likedFeeds' => $user->getInteractedFeedIds(false,"liked"),'favoriteFeeds' => $user->getInteractedFeedIds(false,"favorites")));
+                echo $this->partial("/Feed/Partial/feed.phtml", array('feed' => $feed, 'user' => $user, 'likedFeeds' => $user->getInteractedFeeds(false,"leet",true),'favoriteFeeds' => $user->getInteractedFeeds(false,"favorites")));
             }
             ?>
         </ul>

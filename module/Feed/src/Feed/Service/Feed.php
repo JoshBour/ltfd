@@ -69,7 +69,7 @@ class Feed implements ServiceManagerAwareInterface
      * @param int $page
      * @return null|Paginator
      */
-    public function generateFeedsFromYoutube($game)
+    public function generateFeedsFromYoutube($game,$page = 1,$index = 1)
     {
 //        if (!empty($videoFeed)) {
 //            $feedList = array();
@@ -86,11 +86,14 @@ class Feed implements ServiceManagerAwareInterface
 //            $paginator = new Paginator($paginatorAdapter);
 //            return $paginator;
 //        }
+        $user = $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getId());
         $generator = $this->getFeedQueueGenerator();
         $generator->setGame($game);
-        $generator->update();
-        $user = $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getId());
-        return $user->getFeedQueue(true,$game);
+        $generator->setUser($user);
+        $generator->setStartIndex($index);
+        $queue = $generator->update($page);
+        $index = $generator->getStartIndex();
+        return array('index' => $index, 'feeds' => $queue);
     }
 
 
@@ -224,7 +227,7 @@ class Feed implements ServiceManagerAwareInterface
      * @param string $type
      * @return bool
      */
-    public function setFavorite($id, $type, $activeGame = '')
+    public function setFavorite($id, $type)
     {
         /**
          * @var \Account\Entity\Account $user

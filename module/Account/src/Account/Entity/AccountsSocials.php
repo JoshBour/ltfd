@@ -5,6 +5,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Account\Entity\Account;
 
 /**
+ * Class AccountsSocials
+ * @package Account\Entity
  * @ORM\Entity
  * @ORM\Table(name="accounts_socials")
  */
@@ -13,19 +15,13 @@ class AccountsSocials
 
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
-     * @ORM\Column(length=11)
-     */
-    private $id;
-
-    /**
      * @ORM\ManyToOne(targetEntity="Account", inversedBy="socials")
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id")
      **/
     private $account;
 
     /**
+     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Application\Entity\Social", inversedBy="accounts")
      * @ORM\JoinColumn(name="social_id", referencedColumnName="id")
      **/
@@ -38,7 +34,7 @@ class AccountsSocials
     private $value;
 
     /**
-     * Set the join entry's account.
+     * Sets the join entry's account.
      *
      * @param Account $account
      * @return AccountsSocials
@@ -50,7 +46,7 @@ class AccountsSocials
     }
 
     /**
-     * Get the join entry's account.
+     * Gets the join entry's account.
      *
      * @return Account
      */
@@ -60,29 +56,7 @@ class AccountsSocials
     }
 
     /**
-     * Set the join entry's id.
-     *
-     * @param int $id
-     * @return AccountsSocials
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * Get the join entry's id.
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set the join entry's social.
+     * Sets the join entry's social.
      *
      * @param \Application\Entity\Social $social
      * @return AccountsSocials
@@ -94,7 +68,7 @@ class AccountsSocials
     }
 
     /**
-     * Get the join entry's social.
+     * Gets the join entry's social.
      *
      * @return \Application\Entity\Social
      */
@@ -104,7 +78,7 @@ class AccountsSocials
     }
 
     /**
-     * Set the join entry's value.
+     * Sets the join entry's value.
      *
      * @param string $value
      * @return AccountsSocials
@@ -116,7 +90,7 @@ class AccountsSocials
     }
 
     /**
-     * Get the join entry's value.
+     * Gets the join entry's value.
      *
      * @return string
      */

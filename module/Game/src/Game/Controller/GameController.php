@@ -2,6 +2,7 @@
 namespace Game\Controller;
 
 use Feed\Service\Game;
+use Feed\Entity\Feed;
 use Zend\View\Model\JsonModel;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
@@ -52,48 +53,51 @@ class GameController extends AbstractActionController
 
     public function feedsAction()
     {
-        $em = $this->getEntityManager();
         $gameName = $this->params()->fromRoute('name', null);
-        $game = $this->getGameRepository()->findOneBy(array('urlName' => $gameName));
         $category = $this->params()->fromRoute('category', 'feeds');
+        $game = $this->getGameRepository()->findOneBy(array('urlName' => $gameName));
+        $page = $this->params()->fromRoute('page');
+        $index = $this->params()->fromRoute('index');
         $translator = $this->getTranslator();
+        $isHttpRequest = $this->getRequest()->isXmlHttpRequest();
+        $viewModel = new ViewModel();
         $maxResults = 35;
-
+        if ($isHttpRequest) {
+            $viewModel->setTemplate('Game/Game/feeds.ajax.phtml');
+            $viewModel->setTerminal(true);
+        }
         // check if the game exists or the name is invalid
         if (!$game || null === $gameName) {
-            $this->flashMessenger()->addMessage(self::ERROR_CATEGORY_NOT_FOUND);
+            $this->flashMessenger()->addMessage($translator->translate(self::ERROR_CATEGORY_NOT_FOUND));
             $this->redirect()->toRoute(self::ROUTE_GAMES_LIST);
         }
 
-        // if the category doesn't exist or the sorting is invalid, throw a 404
-        if (!$category) {
+        // if the category doesn't exist, throw a 404
+        if (!$category || !in_array($category, Feed::$feedTypes)) {
             $this->getResponse()->setStatusCode(404);
             return;
         }
         if ($category == 'feeds') {
-            $feeds = $this->getFeedService()->generateFeedsFromYoutube($game);
-        } else if ($category == 'history') {
-            $feeds = $this->user()->getWatchedFeeds(true,$game);
-        } else if($category == 'favorites'){
-            $feeds = $this->user()->getFavoriteFeeds(true,$game);
-        }else if($category == 'leet'){
-            $feeds = $this->user()->getLikedFeeds(true,$game);
-        }else{
-            $this->flashMessenger()->addMessage(self::ERROR_CATEGORY_NOT_FOUND);
-            $this->getResponse()->setStatusCode(404);
-            return;
+            $indexedFeeds = $this->getFeedService()->generateFeedsFromYoutube($game,$page,$index);
+            $feeds = $indexedFeeds["feeds"];
+            $index = $indexedFeeds["index"];
+        } else {
+            $feeds = $this->getFeedRepository()->findFeedsByType($game->getId(), $category);
+            $index = 0;
         }
-
-
         $feeds->setItemCountPerPage($maxResults)
-            ->setCurrentPageNumber(1);
+            ->setCurrentPageNumber($page);
 
-        return new ViewModel(array(
+        $viewModel->setVariables(array(
             'game' => $game,
             'feeds' => $feeds,
             'category' => $category,
             'bodyClass' => 'gameFeeds',
+            'index' => $index
         ));
+
+
+        return $viewModel;
 
     }
 
@@ -102,7 +106,7 @@ class GameController extends AbstractActionController
         if ($this->getRequest()->isXmlHttpRequest()) {
             $gameId = $this->params()->fromRoute('id');
             $type = $this->params()->fromRoute('type');
-            $result = $this->getGameService()->connect($gameId,$type);
+            $result = $this->getGameService()->connect($gameId, $type);
 
             return new JsonModel($result);
         } else {

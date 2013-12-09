@@ -39,7 +39,7 @@ class Game
 
     /**
      * @ORM\Column(type="string")
-     * @ORM\Column(length=75)
+     * @ORM\Column(length=100)
      */
     private $website;
 
@@ -56,11 +56,7 @@ class Game
     private $followersCount;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Account\Entity\Account")
-     * @ORM\JoinTable(name="games_followers",
-     *      joinColumns={@ORM\JoinColumn(name="game_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="follower_id", referencedColumnName="id")}
-     *      )
+     * @ORM\ManyToMany(targetEntity="Account\Entity\Account", mappedBy="games")
      */
     private $followers;
 

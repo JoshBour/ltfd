@@ -9,62 +9,105 @@ namespace Feed\Repository;
 
 use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Zend\Paginator\Paginator;
 use Zend\Paginator\Adapter\ArrayAdapter;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
 
-class FeedRepository extends EntityRepository{
-//    public function findFeedsByCategory($category, $userId,$firstResult = 0, $maxResults = 10)
-//    {
-//        if ($category) {
-//            $qb = $this->createQueryBuilder('f');
-//            $qb->select('f')
-//                ->add('from','\Feed\Entity\Feed f LEFT JOIN f.categorizedFeeds af')
-//             #   ->innerJoin('\Account\Entity\AccountsFeeds', 'af', 'WITH', 'af.feed = f.id')
-//                ->where($qb->expr()->eq('af.account','?1'))
-//                ->andWhere($qb->expr()->eq('af.category','?2'))
-//                ->orderBy('f.postTime','DESC')
-//                ->setParameters(array('1' => $userId, '2' => $category))
-//                ->setFirstResult($firstResult)
-//                ->setMaxResults($maxResults);
-//
-//            return new Paginator($qb->getQuery(),true);
-//        } else {
-//            throw new InvalidArgumentException('The provided arguments are invalid.');
-//        }
-//    }
+class FeedRepository extends EntityRepository
+{
 
-    public function getVideoIdAssocArray(){
+    public function findInteractedFeed($userId,$feedId){
+
+        $query = $this->getEntityManager()->getConnection()->prepare(
+            "SELECT account_id,feed_id FROM accounts_feeds_liked WHERE account_id = :accId AND feed_id = :feedId
+            UNION
+            SELECT account_id,feed_id FROM accounts_feeds_deleted WHERE account_id = :accId AND feed_id = :feedId
+            UNION
+            SELECT account_id,feed_id FROM accounts_feeds_favorites WHERE account_id = :accId AND feed_id = :feedId
+            UNION
+            SELECT account_id,feed_id FROM accounts_feeds_history WHERE account_id = :accId AND feed_id = :feedId "
+        );
+        $query->bindValue('accId',$userId);
+        $query->bindValue('feedId',$feedId);
+        $query->execute();
+//        $query->s
+//        $qb = $this->createQueryBuilder('f');
+//        $qb->select('f')
+//            ->add('from','deletedFeedsAccounts, f.deletedFeedsAccounts, f.favoritedFeedsAccounts')
+//            ->where($qb->expr()->eq('fr.feed','?1'))
+//            ->setParameter('1',$feedId);
+//        $query = $qb->getQuery();
+        return $query->fetch();
+    }
+
+    public function findFeedsByType($gameId, $type)
+    {
+        $feedTypes = \Feed\Entity\Feed::$feedTypes;
+        if(!in_array($type,$feedTypes)) return false;
+
+        // figure out which table to query
+        switch($type){
+            case "favorites":
+                $table = "f.favoritedFeedsAccounts";
+                break;
+            case "history":
+                $table = "f.watchedFeedsAccounts";
+                break;
+            case "leet" :
+                $table = "f.likedFeedsAccounts";
+                break;
+            case "deleted":
+                $table = "f.deletedFeedsAccounts";
+                break;
+            default:
+                return false;
+        }
+        $qb = $this->createQueryBuilder('f');
+        $qb->select('f')
+            ->add('from', "\Feed\Entity\Feed f JOIN f.likedFeedsAccounts df")
+            ->where($qb->expr()->eq('f.game', '?1'))
+            ->setParameters(array('1' => $gameId));
+
+        $query = $qb->getQuery();
+        return new Paginator(new ArrayAdapter($query->getResult()), true);
+    }
+
+    public function getVideoIdAssocArray()
+    {
         $feeds = $this->findAll();
         $ids = array();
-        foreach($feeds as $feed){
+        foreach ($feeds as $feed) {
             $ids[$feed->getVideoId()] = $feed;
         }
         return $ids;
     }
 
-    public function findBySort($gameId,$sort,$maxResults = 20,$firstResult = 0){
+    public function findBySort($gameId, $sort, $maxResults = 20, $firstResult = 0)
+    {
         $qb = $this->createQueryBuilder('f');
         $qb->select()
-            ->where($qb->expr()->eq('f.game',':gameId'));
-        if($sort == 'popular'){
+            ->where($qb->expr()->eq('f.game', ':gameId'));
+        if ($sort == 'popular') {
             $qb->add('orderBy', ('Log10(ABS(f.rating) + 1) * SIGN(f.rating) + (UNIX_TIMESTAMP(f.postTime) / 300000) DESC'));
-        }else if($sort == 'new'){
-            $qb->andWhere($qb->expr()->lt('f.postTime',':date'))
-                ->setParameter('date',date('Y-m-d H:i:s'))
-                ->orderBy('f.postTime','DESC');
-        }else{
+        } else if ($sort == 'new') {
+            $qb->andWhere($qb->expr()->lt('f.postTime', ':date'))
+                ->setParameter('date', date('Y-m-d H:i:s'))
+                ->orderBy('f.postTime', 'DESC');
+        } else {
             throw new InvalidArgumentException("The sorting is of invalid type");
         }
-        $qb->setParameter('gameId',$gameId)
+        $qb->setParameter('gameId', $gameId)
             ->setFirstResult($firstResult)
             ->setMaxResults($maxResults);
 
         $query = $qb->getQuery();
-        return new Paginator(new ArrayAdapter($query->getResult()),true);
+        return new Paginator(new ArrayAdapter($query->getResult()), true);
 
     }
 
-    public function findLatestFeeds($category = 'all',$firstResults = 0,$maxResults = 20){
+    public function findLatestFeeds($category = 'all', $firstResults = 0, $maxResults = 20)
+    {
         $qb = $this->createQueryBuilder('f');
         $qb->select()
             ->where($qb->expr()->gte('f.postTime', ':date'))
@@ -72,26 +115,26 @@ class FeedRepository extends EntityRepository{
             ->setMaxResults($maxResults);
 
         $query = $qb->getQuery();
-        return new Paginator(new ArrayAdapter($query->getResult()),true);
+        return new Paginator(new ArrayAdapter($query->getResult()), true);
     }
 
 
-    public function findRatedFeeds($userId, $rating,$firstResult = 0, $maxResults = 20)
+    public function findRatedFeeds($userId, $rating, $firstResult = 0, $maxResults = 20)
     {
-        if(!empty($userId) && ($rating == '1' || $rating == '0')){
+        if (!empty($userId) && ($rating == '1' || $rating == '0')) {
             $qb = $this->createQueryBuilder('f');
             $qb->select('f')
                 ->add('from', 'Feed\Entity\Feed f LEFT JOIN f.ratings fr')
-                ->where($qb->expr()->eq('fr.user','?1'))
-                ->andWhere($qb->expr()->eq('fr.rating','?2'))
-                ->orderBy('f.postTime','DESC')
-                ->setParameters(array('1' => $userId,'2' =>$rating))
+                ->where($qb->expr()->eq('fr.user', '?1'))
+                ->andWhere($qb->expr()->eq('fr.rating', '?2'))
+                ->orderBy('f.postTime', 'DESC')
+                ->setParameters(array('1' => $userId, '2' => $rating))
                 ->setFirstResult($firstResult)
                 ->setMaxResults($maxResults);
 
             $query = $qb->getQuery();
-            return new Paginator(new ArrayAdapter($query->getResult()),true);
-        }else {
+            return new Paginator(new ArrayAdapter($query->getResult()), true);
+        } else {
             throw new InvalidArgumentException('The provided arguments are invalid.');
         }
     }

@@ -39,11 +39,13 @@ return array(
                     'feeds' => array(
                         'type' => 'segment',
                         'options' => array(
-                            'route' => '[:category[/:sort]]',
+                            'route' => '[:category[/:page[/:index]]]',
                             'defaults' => array(
                                 'controller' => 'Game\Controller\Game',
                                 'action' => 'feeds',
                                 'category' => 'feeds',
+                                'page' => 1,
+                                'index' => 1
                             )
                         )
                     ),

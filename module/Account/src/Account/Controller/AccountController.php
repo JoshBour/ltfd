@@ -19,40 +19,59 @@ class AccountController extends AbstractActionController
     const MESSAGE_INVALID_CREDENTIALS = 'The username/password combination is invalid.';
 
     /**
+     * The login form.
+     *
      * @var Form
      */
     private $loginForm = null;
 
     /**
+     * The register form.
+     *
      * @var Form
      */
     private $registerForm = null;
 
     /**
+     * The account service.
+     *
      * @var \Account\Service\Account
      */
     private $accountService = null;
 
     /**
+     * The authentication service.
+     *
      * @var AuthenticationService
      */
     private $authService = null;
 
     /**
+     * The authentication storage.
+     *
      * @var \Account\Model\AuthStorage
      */
     private $authStorage = null;
 
     /**
+     * The entity manager.
+     *
      * @var \Doctrine\ORM\EntityManager
      */
     private $entityManager;
 
     /**
+     * The zend translator.
+     *
      * @var \Zend\I18n\Translator\Translator
      */
     private $translator;
 
+    /**
+     * The login action.
+     *
+     * @return mixed|\Zend\Http\Response|ViewModel
+     */
     public function loginAction()
     {
         if (!$user = $this->identity()) {
@@ -81,6 +100,11 @@ class AccountController extends AbstractActionController
         }
     }
 
+    /**
+     * The logout action
+     *
+     * @return \Zend\Http\Response
+     */
     public function logoutAction()
     {
         if ($this->identity()) {
@@ -90,6 +114,11 @@ class AccountController extends AbstractActionController
         return $this->redirect()->toRoute(self::ROUTE_LOGIN);
     }
 
+    /**
+     * The register action.
+     *
+     * @return mixed|\Zend\Http\Response|ViewModel
+     */
     public function registerAction()
     {
         if (!$this->identity()) {
@@ -116,6 +145,11 @@ class AccountController extends AbstractActionController
         }
     }
 
+    /**
+     * The authentication action.
+     *
+     * @return \Zend\Http\Response
+     */
     public function authenticateAction()
     {
         $authService = $this->getAuthenticationService();

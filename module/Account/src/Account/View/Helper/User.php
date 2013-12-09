@@ -17,7 +17,7 @@ class User extends AbstractHelper{
         $auth = $this->getServiceManager()->get('auth_service');
         if($auth->hasIdentity()){
             $em = $this->getServiceManager()->get('Doctrine\ORM\EntityManager');
-            return $em->getRepository('Account\Entity\Account')->find($auth->getIdentity()->getId());
+            return $em->getRepository('Account\Entity\Account')->find($auth->getIdentity()->getAccountId());
         }
         return null;
 

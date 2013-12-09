@@ -16,7 +16,7 @@ class ActiveAccount extends AbstractPlugin{
 
     public function __invoke(){
         $em = $this->getServiceManager()->get('Doctrine\ORM\EntityManager');
-        $auth = $this->getServiceManager()->get('auth_service')->getIdentity()->getId();
+        $auth = $this->getServiceManager()->get('auth_service')->getIdentity()->getAccountId();
         return $em->getRepository('Account\Entity\Account')->find($auth);
 
     }

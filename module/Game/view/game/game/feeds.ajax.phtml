@@ -1,0 +1,18 @@
+<?php
+/**
+ * @var $user \Account\Entity\Account
+ */
+$user = $this->user();
+$gameName = $game->getName();
+$urlName = $game->getUrlName();
+?>
+<?php if ($feeds->count() > 0) { ?>
+    <?php
+    foreach ($feeds as $feed) {
+        echo $this->partial("/Feed/Partial/feed.phtml", array('feed' => $feed, 'user' => $user, 'likedFeeds' => $user->getInteractedFeeds(false, "leet", true), 'favoriteFeeds' => $user->getInteractedFeeds(false, "favorites")));
+    }
+    ?>
+<?php } else { ?>
+    <div class="notFound"><?php echo $this->translate('There are no more feeds available.'); ?></div>
+<?php } ?>
+</div>

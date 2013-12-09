@@ -152,9 +152,8 @@ class FeedController extends AbstractActionController
             if ($this->identity()) {
                 $feedId = $this->params()->fromPost('feedId');
                 $type = $this->params()->fromPost('type');
-                $activeGame = $this->params()->fromPost('activeGame');
 
-                $feed = $this->getFeedService()->setFavorite($feedId, $type,$activeGame);
+                $feed = $this->getFeedService()->setFavorite($feedId, $type);
                 if ($feed) {
                     if($type == "favorite"){
                         $message = $this->getTranslator()->translate(self::MESSAGE_FAVORITE_SUCCESS);

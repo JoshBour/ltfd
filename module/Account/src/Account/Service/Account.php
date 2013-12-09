@@ -54,7 +54,7 @@ class Account implements ServiceManagerAwareInterface{
         try{
             $em->persist($account);
             $em->flush();
-            mkdir(PUBLIC_PATH . '/images/users/' . $account->getId());
+            mkdir(PUBLIC_PATH . '/images/users/' . $account->getAccountId());
             return $account;
         }catch(Exception $e){
             return false;
