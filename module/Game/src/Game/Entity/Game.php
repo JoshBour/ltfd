@@ -5,6 +5,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
+ * Class Game
+ * @package Game\Entity
  * @ORM\Entity(repositoryClass="\Game\Repository\GameRepository")
  * @ORM\Table(name="games")
  */
@@ -15,8 +17,9 @@ class Game
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
      * @ORM\Column(length=11)
+     * @ORM\Column(name="game_id")
      */
-    private $id;
+    private $gameId;
 
     /**
      * @ORM\Column(type="string")
@@ -34,8 +37,9 @@ class Game
     /**
      * @ORM\Column(type="string")
      * @ORM\Column(length=75)
+     * @ORM\Column(name="company_name")
      */
-    private $company;
+    private $companyName;
 
     /**
      * @ORM\Column(type="string")
@@ -49,8 +53,8 @@ class Game
     private $description;
 
     /**
-     * @ORM\Column(type="integer")
-     * @ORM\Column(length=11)
+     * @ORM\Column(type="BigInt")
+     * @ORM\Column(length=20)
      * @ORM\Column(name="followers")
      */
     private $followersCount;
@@ -65,10 +69,16 @@ class Game
      */
     private $feeds;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Feed\Entity\Queue", mappedBy="game")
+     */
+    private $queues;
+
     public function __construct()
     {
         $this->followers = new ArrayCollection();
         $this->feeds = new ArrayCollection();
+        $this->queues = new ArrayCollection();
     }
 
     /**
@@ -78,18 +88,18 @@ class Game
      */
     public function getAvatar()
     {
-        return 'games/' . strtolower(implode('', preg_split("/[\s,\:\-\!]+/", $this->name)));
+        return 'games/' . strtolower(implode('', preg_split("/[\s,\'\:\-\!]+/", $this->name)));
     }
 
     /**
      * Sets the game's company name.
      *
-     * @param string $company
+     * @param string $companyName
      * @return Game
      */
-    public function setCompany($company)
+    public function setCompanyName($companyName)
     {
-        $this->company = $company;
+        $this->companyName = $companyName;
         return $this;
     }
 
@@ -98,9 +108,9 @@ class Game
      *
      * @return string
      */
-    public function getCompany()
+    public function getCompanyName()
     {
-        return $this->company;
+        return $this->companyName;
     }
 
     /**
@@ -262,12 +272,12 @@ class Game
     /**
      * Sets the game's id.
      *
-     * @param int $id
+     * @param int $gameId
      * @return Game
      */
-    public function setId($id)
+    public function setGameId($gameId)
     {
-        $this->id = $id;
+        $this->gameId = $gameId;
         return $this;
     }
 
@@ -276,9 +286,9 @@ class Game
      *
      * @return int
      */
-    public function getId()
+    public function getGameId()
     {
-        return $this->id;
+        return $this->gameId;
     }
 
     /**
@@ -301,6 +311,57 @@ class Game
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Sets the queues in which the game is referenced.
+     *
+     * @param \Feed\Entity\Queue $queues
+     * @return Game
+     */
+    public function setQueues($queues)
+    {
+        $this->queues[] = $queues;
+        return $this;
+    }
+
+    /**
+     * Gets the queues in which the game is referenced.
+     *
+     * @return ArrayCollection
+     */
+    public function getQueues()
+    {
+        return $this->queues;
+    }
+
+    /**
+     * Adds queue(s) to the ones in which the game is referenced.
+     *
+     * @param array|\Feed\Entity\Queue $queues
+     */
+    public function addQueues($queues)
+    {
+        if (is_array($queues)) {
+            foreach ($queues as $queue)
+                $this->queues->add($queue);
+        }else{
+            $this->queues->add($queues);
+        }
+    }
+
+    /**
+     * Removes queue(s) to the ones in which the game is referenced.
+     *
+     * @param array|\Feed\Entity\Queue $queues
+     */
+    public function deleteQueues($queues){
+        if (is_array($queues)) {
+            foreach ($queues as $queue)
+                $this->queues->removeElement($queue);
+        }else{
+            $this->queues->removeElement($queues);
+        }
     }
 
     /**

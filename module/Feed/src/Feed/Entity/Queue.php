@@ -21,20 +21,23 @@ use Game\Entity\Game;
 class Queue {
 
     /**
-     * @ManyToOne(targetEntity="Account\Entity\Account", inversedBy="queues")
-     * @JoinColumn(name="account_id", referencedColumnName="account_id")
+     * @ORM\ManyToOne(targetEntity="Account\Entity\Account", inversedBy="queues")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="account_id")
      */
     private $account;
 
     /**
      * @ORM\ManyToMany(targetEntity="Feed", inversedBy="referencedQueues")
-     * @ORM\JoinTable(name="queues_feeds")
+     * @ORM\JoinTable(name="queues_feeds",
+     *      joinColumns={@ORM\JoinColumn(name="feed_id", referencedColumnName="feed_id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="queue_id", referencedColumnName="queue_id")}
+     *      )
      */
     private $feeds;
 
     /**
-     * @ManyToOne(targetEntity="Game\Entity\Game", inversedBy="queues")
-     * @JoinColumn(name="game_id", referencedColumnName="game_id")
+     * @ORM\ManyToOne(targetEntity="Game\Entity\Game", inversedBy="queues")
+     * @ORM\JoinColumn(name="game_id", referencedColumnName="game_id")
      */
     private $game;
 

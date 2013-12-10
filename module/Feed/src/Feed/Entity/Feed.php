@@ -95,18 +95,9 @@ class Feed
     private $videoId;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Account\Entity\Account", mappedBy="watchedFeeds")
+     * @ORM\OneToMany(targetEntity="Account\Entity\AccountsHistory", mappedBy="feed")
      */
-    private $watchedFeedsAccounts;
-
-    public function __construct()
-    {
-        $this->deletedFeedsAccounts = new ArrayCollection();
-        $this->favoritedFeedsAccounts = new ArrayCollection();
-        $this->watchedFeedsAccounts = new ArrayCollection();
-        $this->likedFeedsAccounts = new ArrayCollection();
-        $this->referencedQueues = new ArrayCollection();
-    }
+    private $watchedHistory;
 
     public static function createFromEntry($entry, $game)
     {
@@ -133,6 +124,15 @@ class Feed
             $data = $filter->filter($data);
         }
         return $data;
+    }
+
+    public function __construct()
+    {
+        $this->deletedFeedsAccounts = new ArrayCollection();
+        $this->favoritedFeedsAccounts = new ArrayCollection();
+        $this->watchedHistory = new ArrayCollection();
+        $this->likedFeedsAccounts = new ArrayCollection();
+        $this->referencedQueues = new ArrayCollection();
     }
 
     /**
@@ -469,12 +469,12 @@ class Feed
     /**
      * Sets the owners of the watched feeds.
      *
-     * @param mixed $watchedFeedsAccounts
+     * @param mixed $watchedHistory
      * @return Feed
      */
-    public function setWatchedFeedsAccounts($watchedFeedsAccounts)
+    public function setWatchedHistory($watchedHistory)
     {
-        $this->watchedFeedsAccounts[] = $watchedFeedsAccounts;
+        $this->watchedHistory[] = $watchedHistory;
         return $this;
     }
 
@@ -483,9 +483,9 @@ class Feed
      *
      * @return mixed
      */
-    public function getWatchedFeedsAccounts()
+    public function getWatchedHistory()
     {
-        return $this->watchedFeedsAccounts;
+        return $this->watchedHistory;
     }
 
 

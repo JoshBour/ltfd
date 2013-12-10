@@ -78,19 +78,12 @@ class GameController extends AbstractActionController
             return;
         }
         if ($category == 'feeds') {
-            $indexedFeeds = $this->getFeedService()->generateFeedsFromYoutube($game,$page,$index);
-            $feeds = $indexedFeeds["feeds"];
-            $index = $indexedFeeds["index"];
         } else {
-            $feeds = $this->getFeedRepository()->findFeedsByType($game->getId(), $category);
-            $index = 0;
         }
-        $feeds->setItemCountPerPage($maxResults)
-            ->setCurrentPageNumber($page);
 
         $viewModel->setVariables(array(
             'game' => $game,
-            'feeds' => $feeds,
+           # 'feeds' => $feeds,
             'category' => $category,
             'bodyClass' => 'gameFeeds',
             'index' => $index

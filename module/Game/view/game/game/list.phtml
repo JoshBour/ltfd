@@ -18,7 +18,7 @@ $user = $this->user();
                 $name = $game->getName();
                 $urlName = $game->getUrlName();
         ?>
-            <li class="game-<?php echo $game->getId(); ?>">
+            <li class="game-<?php echo $game->getGameId(); ?>">
                 <a href="<?php echo $this->url('game/feeds',array('name' => $urlName)); ?>" class="gameName" title="<?php echo $name ?>">
                     <span><?php echo substr($name,0,20); if(strlen($name) > 20) echo ' ..'?></span>
                     <img src="<?php echo $this->basePath() . '/images/' . $game->getAvatar() . '-list-icon.jpg'; ?>">

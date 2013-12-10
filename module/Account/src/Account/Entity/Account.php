@@ -36,7 +36,10 @@ class Account
 
     /**
      * @ORM\ManyToMany(targetEntity="Feed\Entity\Feed", inversedBy="deletedFeedsAccounts")
-     * @ORM\JoinTable(name="accounts_feeds_deleted")
+     * @ORM\JoinTable(name="accounts_feeds_deleted",
+     *      joinColumns={@ORM\JoinColumn(name="account_id", referencedColumnName="account_id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="feed_id", referencedColumnName="feed_id")}
+     *      )
      */
     private $deletedFeeds;
 
@@ -48,7 +51,10 @@ class Account
 
     /**
      * @ORM\ManyToMany(targetEntity="Feed\Entity\Feed", inversedBy="favoritedFeedsAccounts")
-     * @ORM\JoinTable(name="accounts_feeds_favorites")
+     * @ORM\JoinTable(name="accounts_feeds_favorites",
+     *      joinColumns={@ORM\JoinColumn(name="account_id", referencedColumnName="account_id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="feed_id", referencedColumnName="feed_id")}
+     *      )
      */
     private $favoriteFeeds;
 
@@ -60,21 +66,27 @@ class Account
     /**
      * @ORM\ManyToMany(targetEntity="Account\Entity\Account", inversedBy="followers")
      * @ORM\JoinTable(name="followers",
-     *      joinColumns={@ORM\JoinColumn(name="account_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="follower_id", referencedColumnName="id")}
+     *      joinColumns={@ORM\JoinColumn(name="account_id", referencedColumnName="account_id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="follower_id", referencedColumnName="account_id")}
      *      )
      */
     private $following;
 
     /**
      * @ORM\ManyToMany(targetEntity="Game\Entity\Game", inversedBy="followers")
-     * @ORM\JoinTable(name="accounts_games")
+     * @ORM\JoinTable(name="accounts_games",
+     *      joinColumns={@ORM\JoinColumn(name="account_id", referencedColumnName="account_id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="game_id", referencedColumnName="game_id")}
+     *      )
      */
     private $games;
 
     /**
      * @ORM\ManyToMany(targetEntity="Group", inversedBy="accounts")
-     * @ORM\JoinTable(name="accounts_groups")
+     * @ORM\JoinTable(name="accounts_groups",
+     *      joinColumns={@ORM\JoinColumn(name="account_id", referencedColumnName="account_id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="group_id", referencedColumnName="group_id")}
+     *      )
      */
     private $groups;
 
@@ -106,7 +118,10 @@ class Account
 
     /**
      * @ORM\ManyToMany(targetEntity="Feed\Entity\Feed", inversedBy="likedFeedsAccounts")
-     * @ORM\JoinTable(name="accounts_feeds_liked")
+     * @ORM\JoinTable(name="accounts_feeds_liked",
+     *      joinColumns={@ORM\JoinColumn(name="account_id", referencedColumnName="account_id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="feed_id", referencedColumnName="feed_id")}
+     *      )
      */
     private $likedFeeds;
 
@@ -178,6 +193,7 @@ class Account
         $this->deletedFeeds = new ArrayCollection();
         $this->likedFeeds = new ArrayCollection();
         $this->queues = new ArrayCollection();
+        $this->watchedFeeds = new ArrayCollection();
     }
 
     public function hasInteractedWithFeed(Feed $feed)

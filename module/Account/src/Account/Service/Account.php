@@ -49,6 +49,7 @@ class Account implements ServiceManagerAwareInterface{
         $em = $this->getEntityManager();
         $account->setRegisterDate(date("Y-m-d H:i:s", time()));
         $account->setIsActivated(0);
+        $account->setIsActive(0);
         $account->setIp($_SERVER['REMOTE_ADDR']);
         $account->setPassword(\Account\Entity\Account::getHashedPassword($account->getPassword()));
         try{

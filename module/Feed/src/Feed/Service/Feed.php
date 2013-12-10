@@ -110,7 +110,7 @@ class Feed implements ServiceManagerAwareInterface
         $form->bind($entity);
         $form->setData($data);
         if ($form->isValid()) {
-            $entity = FeedEntity::create($entity, $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getId()), $data['feed']['video']);
+            $entity = FeedEntity::create($entity, $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getAccountId()), $data['feed']['video']);
             $em = $this->getEntityManager();
             try {
                 $em->persist($entity);
@@ -129,7 +129,7 @@ class Feed implements ServiceManagerAwareInterface
         /**
          * @var \Account\Entity\Account $user
          */
-        $user = $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getId());
+        $user = $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getAccountId());
         /**
          * @var FeedEntity $feed
          */
@@ -166,7 +166,7 @@ class Feed implements ServiceManagerAwareInterface
         /**
          * @var \Account\Entity\Account $user
          */
-        $user = $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getId());
+        $user = $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getAccountId());
         /**
          * @var FeedEntity $feed
          */
@@ -200,7 +200,7 @@ class Feed implements ServiceManagerAwareInterface
         /**
          * @var \Account\Entity\Account $user
          */
-        $user = $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getId());
+        $user = $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getAccountId());
         /**
          * @var FeedEntity $feed
          */
@@ -232,7 +232,7 @@ class Feed implements ServiceManagerAwareInterface
         /**
          * @var \Account\Entity\Account $user
          */
-        $user = $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getId());
+        $user = $this->getAccountRepository()->find($this->getAuthService()->getIdentity()->getAccountId());
         $feed = $this->getFeedRepository()->find($id);
         $em = $this->getEntityManager();
 

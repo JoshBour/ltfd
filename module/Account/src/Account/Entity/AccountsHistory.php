@@ -21,21 +21,21 @@ class AccountsHistory
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Account", inversedBy="socials")
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="Account", inversedBy="watchedFeeds")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="account_id")
      **/
     private $account;
 
     /**
-     * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Application\Entity\Social", inversedBy="accounts")
-     * @ORM\JoinColumn(name="social_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="Feed\Entity\Feed", inversedBy="watchedHistory")
+     * @ORM\JoinColumn(name="feed_id", referencedColumnName="feed_id")
      **/
     private $feed;
 
     /**
      * @ORM\Column(type="string")
      * @ORM\Column(length=100)
+     * @ORM\Column(name="view_time")
      */
     private $viewTime;
 

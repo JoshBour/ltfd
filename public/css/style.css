@@ -275,10 +275,8 @@ body.connectPage{
 }
 
 #login input:focus, #register input:focus{
-
-    border-color: #fff;
-    -webkit-box-shadow: inset 0 1px 3px rgba(0,0,0,.05),0 0 8px rgba(82,168,236,.6);
-    box-shadow: inset 0 1px 3px rgba(0,0,0,.05),0 0 8px rgba(82,168,236,.6);
+    -webkit-box-shadow: inset 0 1px 3px rgba(0,0,0,.05),0 0 8px rgba(170,170,170,.6);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,.05),0 0 8px rgba(170,170,170,.6);
 }
 
 #login h1, #register h1{

@@ -16,14 +16,14 @@ class AccountsSocials
     /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Account", inversedBy="socials")
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="account_id")
      **/
     private $account;
 
     /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Application\Entity\Social", inversedBy="accounts")
-     * @ORM\JoinColumn(name="social_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="social_id", referencedColumnName="social_id")
      **/
     private $social;
 
